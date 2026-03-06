@@ -1,5 +1,31 @@
 # Milestones
 
+## v1.1 Profile and Catalog (Shipped: 2026-03-06)
+
+**Scope delivered:**
+- 5 phases
+- 11 plans
+- 33 tasks
+- Timeline: 2026-03-06 -> 2026-03-06
+- Git range: `6a3e801` -> `a0fd0cb`
+
+**Key accomplishments:**
+1. Self-service profile update (`PATCH /profile`) with strict token-derived identity and multi-tenant protection.
+2. Seller product domain shipped with secure ownership derivation and forged owner payload rejection.
+3. Full seller lifecycle (update/deactivate/soft-delete) with 404 ownership masking and idempotent deactivate route.
+4. Public catalog listing (`GET /public/products`) with safe visibility filters, search, price range, and deterministic sorting.
+5. Public product detail (`GET /public/products/:id`) with dedicated safe serializer, 404 anti-enumeration masking, and stock integrity check constraint.
+
+**Known tech debt accepted:**
+- Nyquist validation artifacts (`*-VALIDATION.md`) for phases 06-09 remain `draft` with `nyquist_compliant: false`.
+
+**Archives:**
+- `.planning/milestones/v1.1-ROADMAP.md`
+- `.planning/milestones/v1.1-REQUIREMENTS.md`
+- `.planning/milestones/v1.1-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.0 Milestone (Shipped: 2026-03-06)
 
 **Name:** Milestone
