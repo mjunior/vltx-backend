@@ -13,18 +13,20 @@
 ActiveRecord::Schema[8.0].define(version: 2026_03_05_221600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
 
-  create_table "profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "full_name"
+    t.string "address"
     t.string "photo_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
   end
 
-  create_table "refresh_sessions", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "refresh_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "refresh_jti", null: false
     t.string "refresh_token_hash", null: false
     t.datetime "expires_at", null: false
@@ -38,7 +40,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_221600) do
     t.index ["user_id"], name: "index_refresh_sessions_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
