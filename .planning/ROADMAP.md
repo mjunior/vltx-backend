@@ -15,7 +15,7 @@
     2. Requisições sem auth válida são recusadas.
     3. Tentativas de editar perfil de outro usuário são bloqueadas.
 
-- [ ] **Phase 7: Seller Product Creation (Owner Derived from Token)**
+- [x] **Phase 7: Seller Product Creation (Owner Derived from Token)**
   - Goal: permitir criação de anúncios sem confiar em `owner_id/user_id` do frontend.
   - Requirements: `PROD-01`, `AUTHZ-03`
   - Success criteria:
@@ -74,8 +74,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: Criar model/serviço/controlador de criação de produto com owner pelo token
-- [ ] 07-02: Cobrir validações de criação e bloqueio de payloads com owner forjado
+- [x] 07-01: Criar model/serviço/controlador de criação de produto com owner pelo token
+- [x] 07-02: Cobrir validações de criação e bloqueio de payloads com owner forjado
 
 ### Phase 8: Seller Product Lifecycle (Edit/Deactivate/Delete)
 **Goal**: Garantir que vendedor gerencie somente anúncios próprios.
@@ -125,7 +125,7 @@ Plans:
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
 | 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Complete | 2026-03-06 |
-| 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Planned | - |
+| 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Complete | 2026-03-06 |
 | 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Not started | - |
 | 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Not started | - |
 | 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Not started | - |

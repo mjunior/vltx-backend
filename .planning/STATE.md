@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Profile and Catalog
 status: ready_to_execute
-stopped_at: Phase 7 planned
-last_updated: "2026-03-06T04:12:05Z"
-last_activity: 2026-03-06 — Phase 7 planned with research and validation
+stopped_at: Phase 7 executed and verified
+last_updated: "2026-03-06T04:20:09Z"
+last_activity: 2026-03-06 — Phase 7 complete; next phase is 8
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 2
-  percent: 20
+  completed_plans: 4
+  percent: 36
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Garantir autenticação segura e previsível com controle forte de sessão.
-**Current focus:** Phase 7 — Seller Product Creation (Owner Derived from Token)
+**Current focus:** Phase 8 — Seller Product Lifecycle (Edit/Deactivate/Delete)
 
 ## Current Position
 
-Phase: 7 of 10 (Seller Product Creation (Owner Derived from Token))
-Plan: 0 of 2 completed in current phase
+Phase: 8 of 10 (Seller Product Lifecycle (Edit/Deactivate/Delete))
+Plan: 0 of 3 completed in current phase
 Status: Ready to execute
-Last activity: 2026-03-06 — Phase 7 planned with research and validation
+Last activity: 2026-03-06 — Phase 7 executed and verified as passed
 
-Progress: [██░░░░░░░░] 20%
+Progress: [████░░░░░░] 36%
 
 ## Accumulated Context
 
@@ -40,6 +40,7 @@ Progress: [██░░░░░░░░] 20%
 - Endpoints públicos de catálogo sob `/public` com serializer dedicado seguro.
 - Fase 6 deve usar `PATCH /profile` com `name`/`address` e semântica PATCH parcial.
 - Fase 6 concluída com verificação `passed`; payload de perfil aceita apenas `String`/`null` para campos editáveis.
+- Fase 7 concluída com criação de produto autenticada, owner token-derived e bloqueio explícito de `owner_id/user_id` no payload.
 
 ### Blockers/Concerns
 
@@ -47,6 +48,6 @@ Progress: [██░░░░░░░░] 20%
 
 ## Session Continuity
 
-Last session: 2026-03-06T04:12:05Z
-Stopped at: Phase 7 planned
-Resume file: .planning/phases/07-seller-product-creation-owner-derived-from-token/07-01-PLAN.md
+Last session: 2026-03-06T04:20:09Z
+Stopped at: Phase 7 executed and verified
+Resume file: .planning/ROADMAP.md
