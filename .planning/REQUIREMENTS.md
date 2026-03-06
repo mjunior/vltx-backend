@@ -23,8 +23,8 @@
 - [x] **PUB-02**: Listagem pública permite busca por texto (`title`/`description`).
 - [x] **PUB-03**: Listagem pública permite filtro por faixa de preço (`min_price`, `max_price`).
 - [x] **PUB-04**: Listagem pública permite ordenação configurável (ex.: preço asc/desc, mais recentes).
-- [ ] **PUB-05**: Sistema expõe detalhe público em `/public/products/:id` com descrição, preço e estoque disponível.
-- [ ] **PUB-06**: Endpoints públicos retornam apenas campos permitidos via serializer específico sem dados sensíveis.
+- [x] **PUB-05**: Sistema expõe detalhe público em `/public/products/:id` com descrição, preço e estoque disponível.
+- [x] **PUB-06**: Endpoints públicos retornam apenas campos permitidos via serializer específico sem dados sensíveis.
 
 ### Security / Authorization
 
@@ -59,8 +59,8 @@
 | PUB-02 | Phase 9 | Complete |
 | PUB-03 | Phase 9 | Complete |
 | PUB-04 | Phase 9 | Complete |
-| PUB-05 | Phase 10 | Planned |
-| PUB-06 | Phase 10 | Planned |
+| PUB-05 | Phase 10 | Complete |
+| PUB-06 | Phase 10 | Complete |
 | AUTHZ-01 | Phase 6 | Complete |
 | AUTHZ-02 | Phase 8 | Complete |
 | AUTHZ-03 | Phase 7 | Complete |

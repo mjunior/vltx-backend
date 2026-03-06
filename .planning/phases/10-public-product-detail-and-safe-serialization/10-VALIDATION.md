@@ -2,8 +2,8 @@
 phase: 10
 slug: public-product-detail-and-safe-serialization
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-06
 ---
 
@@ -38,10 +38,10 @@ created: 2026-03-06
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 10-01-01 | 01 | 1 | PUB-05 | integration | `rails test test/integration/public_product_show_test.rb` | ❌ W0 | ⬜ pending |
-| 10-01-02 | 01 | 1 | PUB-05 | service | `rails test test/services/products/public_product_detail_test.rb` | ❌ W0 | ⬜ pending |
-| 10-02-01 | 02 | 2 | PUB-06 | serializer/integration | `rails test test/serializers/products/public_product_detail_serializer_test.rb test/integration/public_product_show_test.rb` | ❌ W0 | ⬜ pending |
-| 10-02-02 | 02 | 2 | PUB-05, PUB-06 | integration | `rails test test/integration/public_product_show_test.rb test/services/products/public_product_detail_test.rb test/serializers/products/public_product_detail_serializer_test.rb` | ❌ W0 | ⬜ pending |
+| 10-01-01 | 01 | 1 | PUB-05 | integration | `rails test test/integration/public_product_show_test.rb` | ✅ | ✅ green |
+| 10-01-02 | 01 | 1 | PUB-05 | service | `rails test test/services/products/public_product_detail_test.rb` | ✅ | ✅ green |
+| 10-02-01 | 02 | 2 | PUB-06 | serializer/integration | `rails test test/serializers/products/public_product_detail_serializer_test.rb test/integration/public_product_show_test.rb` | ✅ | ✅ green |
+| 10-02-02 | 02 | 2 | PUB-05, PUB-06 | integration | `rails test test/integration/public_product_show_test.rb test/services/products/public_product_detail_test.rb test/serializers/products/public_product_detail_serializer_test.rb` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -49,9 +49,9 @@ created: 2026-03-06
 
 ## Wave 0 Requirements
 
-- [ ] `marketplace_backend/test/integration/public_product_show_test.rb`
-- [ ] `marketplace_backend/test/services/products/public_product_detail_test.rb`
-- [ ] `marketplace_backend/test/serializers/products/public_product_detail_serializer_test.rb`
+- [x] `marketplace_backend/test/integration/public_product_show_test.rb`
+- [x] `marketplace_backend/test/services/products/public_product_detail_test.rb`
+- [x] `marketplace_backend/test/serializers/products/public_product_detail_serializer_test.rb`
 
 ---
 
@@ -65,11 +65,11 @@ created: 2026-03-06
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 120s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 120s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-03-06

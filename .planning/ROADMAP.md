@@ -39,7 +39,7 @@
     2. Busca textual funciona por termos relevantes.
     3. Filtro por faixa de preço e ordenação funcionam de forma determinística.
 
-- [ ] **Phase 10: Public Product Detail and Safe Serialization**
+- [x] **Phase 10: Public Product Detail and Safe Serialization** (completed 2026-03-06)
   - Goal: expor detalhe público do produto com serializer dedicado e sem dados sensíveis.
   - Requirements: `PUB-05`, `PUB-06`
   - Success criteria:
@@ -117,8 +117,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: Implementar endpoint público de detalhe de produto
-- [ ] 10-02: Implementar serializer público específico e testes de não-vazamento
+- [x] 10-01: Implementar endpoint público de detalhe de produto
+- [x] 10-02: Implementar serializer público específico e testes de não-vazamento
 
 ## Progress
 
@@ -128,4 +128,4 @@ Plans:
 | 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Complete | 2026-03-06 |
 | 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Complete | 2026-03-06 |
 | 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Complete | 2026-03-06 |
-| 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Not started | - |
+| 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Complete | 2026-03-06 |
