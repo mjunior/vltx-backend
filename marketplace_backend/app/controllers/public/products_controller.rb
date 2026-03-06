@@ -10,6 +10,15 @@ module Public
       }, status: :ok
     end
 
+    def show
+      result = Products::PublicProductDetail.call(id: params[:id])
+      return head :not_found unless result.success?
+
+      render json: {
+        data: Products::PublicProductSerializer.call(product: result.product),
+      }, status: :ok
+    end
+
     private
 
     def listing_params
