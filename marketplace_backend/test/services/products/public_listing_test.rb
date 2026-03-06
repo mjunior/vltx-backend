@@ -60,5 +60,26 @@ module Products
       assert_not invalid.success?
       assert_equal :invalid_payload, invalid.error_code
     end
+
+    test "supports deterministic sorting options" do
+      user = create_user(email: "sort-service@example.com")
+      oldest = create_product_for(user, title: "Produto Antigo", description: "Descricao antiga valida", price: "300.00")
+      sleep 1
+      newest = create_product_for(user, title: "Produto Novo", description: "Descricao nova valida", price: "200.00")
+      sleep 1
+      expensive = create_product_for(user, title: "Produto Caro", description: "Descricao cara valida", price: "900.00")
+
+      newest_sorted = PublicListing.call(params: { sort: "newest" })
+      asc_sorted = PublicListing.call(params: { sort: "price_asc" })
+      desc_sorted = PublicListing.call(params: { sort: "price_desc" })
+      invalid = PublicListing.call(params: { sort: "unknown_sort" })
+
+      assert newest_sorted.success?
+      assert_equal [expensive.id, newest.id, oldest.id], newest_sorted.products.map(&:id)
+      assert_equal [newest.id, oldest.id, expensive.id], asc_sorted.products.map(&:id)
+      assert_equal [expensive.id, oldest.id, newest.id], desc_sorted.products.map(&:id)
+      assert_not invalid.success?
+      assert_equal :invalid_payload, invalid.error_code
+    end
   end
 end

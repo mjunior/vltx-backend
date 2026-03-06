@@ -63,4 +63,33 @@ class PublicProductsIndexTest < ActionDispatch::IntegrationTest
     assert_equal [], body.fetch("data")
     assert_equal 0, body.dig("meta", "total")
   end
+
+  test "supports sort options and newest as default" do
+    user = create_user(email: "public-index-sort@example.com")
+    oldest = create_product_for(user, title: "Produto Antigo", description: "Descricao antiga valida", price: "300.00")
+    sleep 1
+    newest = create_product_for(user, title: "Produto Novo", description: "Descricao nova valida", price: "200.00")
+    sleep 1
+    expensive = create_product_for(user, title: "Produto Caro", description: "Descricao cara valida", price: "900.00")
+
+    get "/public/products"
+    default_ids = JSON.parse(response.body).fetch("data").map { |item| item.fetch("id") }
+
+    get "/public/products", params: { sort: "price_asc" }
+    asc_ids = JSON.parse(response.body).fetch("data").map { |item| item.fetch("id") }
+
+    get "/public/products", params: { sort: "price_desc" }
+    desc_ids = JSON.parse(response.body).fetch("data").map { |item| item.fetch("id") }
+
+    assert_equal [expensive.id, newest.id, oldest.id], default_ids
+    assert_equal [newest.id, oldest.id, expensive.id], asc_ids
+    assert_equal [expensive.id, oldest.id, newest.id], desc_ids
+  end
+
+  test "returns payload invalido for invalid sort" do
+    get "/public/products", params: { sort: "invalid_sort" }
+
+    assert_response :unprocessable_entity
+    assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
 end
