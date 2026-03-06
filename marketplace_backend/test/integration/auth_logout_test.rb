@@ -64,4 +64,21 @@ class AuthLogoutTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
   end
+
+  test "logout returns token invalido for expired access token" do
+    user = Users::Create.call(
+      email: "expired-access@example.com",
+      password: "password123",
+      password_confirmation: "password123"
+    ).user
+    expired_access = Auth::Jwt::Issuer.issue_access(user_id: user.id, now: 16.minutes.ago)
+
+    post "/auth/logout", headers: {
+      "Authorization" => "Bearer #{expired_access.token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
 end

@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AuthRefreshTest < ActionDispatch::IntegrationTest
+  include ActiveSupport::Testing::TimeHelpers
+
   def create_user(email: "refresh-flow@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -62,5 +64,23 @@ class AuthRefreshTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "refresh rejects expired token" do
+    user = create_user
+    expired_refresh = Auth::Jwt::Issuer.issue_refresh(user_id: user.id, now: 8.days.ago)
+    Auth::Sessions::CreateSession.call(user: user, refresh_token: expired_refresh)
+
+    post "/auth/refresh", params: { refresh_token: expired_refresh.token }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "refresh rejects malformed token string" do
+    post "/auth/refresh", params: { refresh_token: "bad-token" }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
   end
 end
