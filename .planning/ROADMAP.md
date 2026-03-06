@@ -125,7 +125,7 @@ Plans:
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
 | 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Complete | 2026-03-06 |
-| 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Not started | - |
+| 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Planned | - |
 | 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Not started | - |
 | 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Not started | - |
 | 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Not started | - |
