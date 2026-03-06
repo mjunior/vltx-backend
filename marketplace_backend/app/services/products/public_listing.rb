@@ -25,8 +25,8 @@ module Products
       relation = apply_price_range(relation, normalized[:min_price], normalized[:max_price])
       relation = apply_sort(relation, normalized[:sort])
 
-      products = relation.to_a
-      Result.new(success?: true, products: products, total: products.size)
+      total = relation.count
+      Result.new(success?: true, products: relation.to_a, total: total)
     rescue StandardError
       Result.new(success?: false, error_code: :invalid_payload)
     end
@@ -66,11 +66,11 @@ module Products
       sort = sort_param.to_s
       case sort
       when "price_asc"
-        relation.order(price: :asc, created_at: :desc)
+        relation.order(price: :asc, created_at: :desc, id: :desc)
       when "price_desc"
-        relation.order(price: :desc, created_at: :desc)
+        relation.order(price: :desc, created_at: :desc, id: :desc)
       else
-        relation.order(created_at: :desc)
+        relation.order(created_at: :desc, id: :desc)
       end
     end
 
