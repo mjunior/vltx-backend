@@ -1,5 +1,15 @@
 class ApplicationController < ActionController::API
   private
+  attr_reader :current_user
+
+  def authenticate_user!
+    @current_user = Auth::Jwt::AccessSubject.call(
+      authorization_header: request.headers["Authorization"]
+    )
+    return if @current_user
+
+    render_invalid_token
+  end
 
   def render_invalid_signup
     render json: { error: "cadastro invalido" }, status: :unprocessable_entity
