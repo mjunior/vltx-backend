@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
+  get "public/products" => "public/products#index"
   patch "profile" => "profiles#update"
   post "products" => "products#create"
   patch "products/:id" => "products#update"
