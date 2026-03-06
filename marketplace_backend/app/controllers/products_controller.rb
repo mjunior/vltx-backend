@@ -28,6 +28,14 @@ class ProductsController < ApplicationController
     render json: Products::PrivateProductSerializer.call(product: result.product), status: :ok
   end
 
+  def deactivate
+    result = Products::Deactivate.call(user: current_user, product_id: params[:id])
+    return render_not_found if result.error_code == :not_found
+    return render_invalid_payload unless result.success?
+
+    render json: Products::PrivateProductSerializer.call(product: result.product), status: :ok
+  end
+
   private
 
   def raw_payload
