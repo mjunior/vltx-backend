@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_05_220100) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_05_221600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_220100) do
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
   end
 
+  create_table "refresh_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "refresh_jti", null: false
+    t.string "refresh_token_hash", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "rotated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_refresh_sessions_on_expires_at"
+    t.index ["refresh_jti"], name: "index_refresh_sessions_on_refresh_jti", unique: true
+    t.index ["user_id", "revoked_at"], name: "index_refresh_sessions_on_user_id_and_revoked_at"
+    t.index ["user_id"], name: "index_refresh_sessions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
@@ -32,4 +47,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_220100) do
   end
 
   add_foreign_key "profiles", "users"
+  add_foreign_key "refresh_sessions", "users"
 end

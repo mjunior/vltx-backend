@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_secure_password
 
   has_one :profile, dependent: :destroy
+  has_many :refresh_sessions, dependent: :destroy
 
   before_validation :normalize_email
 
