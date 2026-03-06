@@ -29,8 +29,21 @@ module Auth
         end
 
         def trigger_incident(user)
+          log_reuse_incident(user)
           RevokeAll.call(user: user)
           Result.new(reuse_detected: true, user_id: user.id)
+        end
+
+        def log_reuse_incident(user)
+          payload = {
+            event: "auth.refresh_reuse_detected",
+            user_id: user.id,
+            occurred_at: Time.current.utc.iso8601
+          }
+
+          Rails.logger.warn(payload.to_json)
+        rescue StandardError
+          nil
         end
       end
     end
