@@ -11,16 +11,16 @@
 - [ ] **AUTH-02**: User can log in with valid email and password.
 - [ ] **AUTH-03**: Login and signup return an access token with 15-minute expiration.
 - [ ] **AUTH-04**: Login and signup return a refresh token with 7-day expiration.
-- [ ] **AUTH-05**: Access and refresh tokens are signed with different JWT secrets.
+- [x] **AUTH-05**: Access and refresh tokens are signed with different JWT secrets.
 
 ### Session Security
 
-- [ ] **SESS-01**: Refresh token is stored only as hash in persistence (never plaintext).
+- [x] **SESS-01**: Refresh token is stored only as hash in persistence (never plaintext).
 - [ ] **SESS-02**: Refresh token can be used only once and is rotated on successful refresh.
 - [ ] **SESS-03**: Successful refresh invalidates previous refresh token and returns a new token pair.
 - [ ] **SESS-04**: Using revoked/previously-used refresh token triggers global logout of all user sessions.
 - [ ] **SESS-05**: Logout endpoint revokes all active sessions for the authenticated user.
-- [ ] **SESS-06**: JWT payload includes `jti` and revocation checks are enforced in refresh/logout flows.
+- [x] **SESS-06**: JWT payload includes `jti` and revocation checks are enforced in refresh/logout flows.
 
 ### User Profile
 
@@ -50,13 +50,13 @@
 | AUTH-02 | Phase 3 | Pending |
 | AUTH-03 | Phase 3 | Pending |
 | AUTH-04 | Phase 3 | Pending |
-| AUTH-05 | Phase 2 | Pending |
-| SESS-01 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Complete |
+| SESS-01 | Phase 2 | Complete |
 | SESS-02 | Phase 3 | Pending |
 | SESS-03 | Phase 3 | Pending |
 | SESS-04 | Phase 4 | Pending |
 | SESS-05 | Phase 4 | Pending |
-| SESS-06 | Phase 2 | Pending |
+| SESS-06 | Phase 2 | Complete |
 | PROF-01 | Phase 1 | Complete |
 | PROF-02 | Phase 1 | Complete |
 
@@ -67,4 +67,4 @@
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-06 after phase 1 execution*
+*Last updated: 2026-03-06 after phase 2 execution*
