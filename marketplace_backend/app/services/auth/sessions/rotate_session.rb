@@ -7,18 +7,21 @@ module Auth
         def call(refresh_token:)
           decoded = Auth::Jwt::Verifier.verify!(token: refresh_token, expected_type: "refresh")
           refresh_jti = decoded.payload.fetch("jti")
+          user_id = decoded.payload.fetch("sub")
 
-          reuse_result = DetectReuse.call(refresh_jti: refresh_jti)
+          reuse_result = DetectReuse.call(
+            refresh_jti: refresh_jti,
+            user_id: user_id,
+            refresh_token: refresh_token
+          )
           return Result.new(success?: false) if reuse_result.reuse_detected
 
-          session = RefreshSession.find_by(refresh_jti: refresh_jti)
+          session = FindActiveSession.call(refresh_jti: refresh_jti, refresh_token: refresh_token)
           return Result.new(success?: false) unless session
-
-          expected_hash = TokenDigest.call(refresh_token)
 
           session.with_lock do
             session.reload
-            return Result.new(success?: false) unless active_session?(session, refresh_jti, expected_hash)
+            return Result.new(success?: false) unless active_session?(session, refresh_jti, refresh_token)
 
             access = Auth::Jwt::Issuer.issue_access(user_id: session.user_id)
             new_refresh = Auth::Jwt::Issuer.issue_refresh(user_id: session.user_id)
@@ -39,7 +42,9 @@ module Auth
 
         private
 
-        def active_session?(session, refresh_jti, expected_hash)
+        def active_session?(session, refresh_jti, refresh_token)
+          expected_hash = TokenDigest.call(refresh_token)
+
           session.refresh_jti == refresh_jti &&
             session.refresh_token_hash == expected_hash &&
             session.active?

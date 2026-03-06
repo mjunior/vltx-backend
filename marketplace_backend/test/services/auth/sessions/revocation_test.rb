@@ -104,6 +104,17 @@ module Auth
         assert_not result.reuse_detected
         assert_equal user.id, result.user_id
       end
+
+      test "detect reuse triggers incident when signed token jti is missing from sessions" do
+        user = create_user
+        create_refresh_session(user: user, refresh_jti: "jti-active", token: "token-active")
+
+        result = DetectReuse.call(refresh_jti: "jti-missing", user_id: user.id)
+
+        assert result.reuse_detected
+        assert_equal user.id, result.user_id
+        assert_equal 1, user.refresh_sessions.where.not(revoked_at: nil).count
+      end
     end
   end
 end
