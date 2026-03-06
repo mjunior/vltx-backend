@@ -97,4 +97,48 @@ class ProductLifecycleTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
   end
+
+  test "deactivates own product and returns success" do
+    user = create_user(email: "deactivate-own@example.com")
+    product = create_product_for(user)
+    token = access_token_for(user)
+
+    patch "/products/#{product.id}/deactivate", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :success
+    assert_equal false, product.reload.active
+  end
+
+  test "deactivate is idempotent when product already inactive" do
+    user = create_user(email: "deactivate-idempotent@example.com")
+    product = create_product_for(user)
+    product.update!(active: false)
+    token = access_token_for(user)
+
+    patch "/products/#{product.id}/deactivate", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :success
+    assert_equal false, product.reload.active
+  end
+
+  test "returns 404 when deactivating product from another seller" do
+    owner = create_user(email: "owner-deactivate-404@example.com")
+    intruder = create_user(email: "intruder-deactivate-404@example.com")
+    product = create_product_for(owner)
+    token = access_token_for(intruder)
+
+    patch "/products/#{product.id}/deactivate", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :not_found
+    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
 end
