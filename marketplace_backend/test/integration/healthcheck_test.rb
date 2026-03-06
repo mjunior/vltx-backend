@@ -12,8 +12,9 @@ class HealthcheckTest < ActionDispatch::IntegrationTest
       route.defaults[:controller].present? && !route.path.spec.to_s.start_with?("/rails/")
     end
 
-    assert_equal 10, app_routes.count
+    assert_equal 11, app_routes.count
     assert_routing "/up", controller: "rails/health", action: "show"
+    assert_routing({ method: "get", path: "/public/products" }, controller: "public/products", action: "index")
     assert_routing({ method: "patch", path: "/profile" }, controller: "profiles", action: "update")
     assert_routing({ method: "post", path: "/products" }, controller: "products", action: "create")
     assert_routing({ method: "patch", path: "/products/123" }, controller: "products", action: "update", id: "123")
