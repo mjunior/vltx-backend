@@ -7,6 +7,16 @@ class ProductsController < ApplicationController
 
   before_action :authenticate_user!
 
+  def index
+    result = Products::PrivateListing.call(user: current_user)
+    return render_invalid_payload unless result.success?
+
+    render json: {
+      data: result.products.map { |product| Products::PrivateProductSerializer.call(product: product).fetch(:data) },
+      meta: { total: result.total },
+    }, status: :ok
+  end
+
   def create
     return render_invalid_payload unless request.content_mime_type&.json?
     return render_invalid_payload unless valid_payload_shape?(allowed_keys: CREATE_ALLOWED_KEYS)

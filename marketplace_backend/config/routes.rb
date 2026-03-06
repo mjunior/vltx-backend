@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
   patch "profile" => "profiles#update"
+  get "products" => "products#index"
   post "products" => "products#create"
   patch "products/:id" => "products#update"
   patch "products/:id/deactivate" => "products#deactivate"
