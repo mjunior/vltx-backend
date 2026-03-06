@@ -37,7 +37,8 @@ Implementar o núcleo criptográfico e o estado de sessão revogável para JWT: 
 
 ### Refresh Hashing Strategy
 - Hash do refresh token com `SHA-256` + `pepper` global da aplicação.
-- `pepper` deve vir de variável de ambiente (não persistido no banco).
+- `pepper` deve vir de variável de ambiente (`JWT_REFRESH_PEPPER`) e não pode ser persistido no banco.
+- `JWT_REFRESH_PEPPER` é separado de `JWT_ACCESS_SECRET` e `JWT_REFRESH_SECRET`.
 
 ### Refresh Session Schema (minimum required)
 - Campos mínimos aprovados para sessão:
