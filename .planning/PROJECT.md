@@ -2,12 +2,12 @@
 
 ## What This Is
 
-API backend em Rails 8 para autenticação segura baseada em JWT, com cadastro, login, refresh token rotativo de uso único e logout global.
-A autenticação acontece no recurso `User` (email + senha), enquanto `Profile` mantém os dados de apresentação.
+API backend em Rails 8 para autenticação segura baseada em JWT, com suporte a cadastro/login, refresh rotativo, logout global, gestão de perfil e catálogo público de produtos.
+A autenticação continua no recurso `User`; dados de perfil e anúncios são controlados por escopo de dono (owner) derivado do token.
 
 ## Core Value
 
-Garantir autenticação segura e previsível, com controle forte de sessão (rotação + revogação) e resposta defensiva a replay/reuse.
+Garantir autenticação segura e previsível com isolamento multi-tenant estrito e exposição pública mínima de dados.
 
 ## Requirements
 
@@ -21,32 +21,44 @@ Garantir autenticação segura e previsível, com controle forte de sessão (rot
 
 ### Active
 
-- [ ] MFA/2FA para contas sensíveis (SECV2-01)
-- [ ] Gestão seletiva de sessões por dispositivo (SECV2-02)
-- [ ] Fechar dívida de Nyquist validation (`nyquist_compliant: true` por fase)
+- [ ] Edição de perfil próprio (nome e endereço)
+- [ ] CRUD de anúncios do vendedor com ownership estrito
+- [ ] Listagem pública de produtos com busca, faixa de preço e ordenação
+- [ ] Página pública de detalhe do produto com serializer seguro (sem dados sensíveis)
+- [ ] Regras de segurança anti-forgery de owner (`owner_id`/`user_id` nunca vindo do frontend)
 
 ### Out of Scope
 
-- Login social (OAuth) — continua fora do escopo imediato
-- Password reset / email verification — ainda não priorizado para o próximo ciclo
+- Login social (OAuth)
+- Password reset / email verification
+- MFA/2FA neste milestone
+
+## Current Milestone: v1.1 Profile and Catalog
+
+**Goal:** Entregar perfil editável e domínio de produtos com controles de ownership e catálogo público seguro.
+
+**Target features:**
+- Edição de perfil próprio (`name`, `address`)
+- Criação, edição, desativação e deleção de anúncios do próprio vendedor
+- Listagem pública de produtos com busca/filtros/ordenação
+- Detalhe público de produto com serializer dedicado sem dados sensíveis
 
 ## Context
 
 - Stack atual: Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`.
-- Endpoints entregues em v1.0:
-  - `GET /up`
-  - `POST /auth/signup`
-  - `POST /auth/login`
-  - `POST /auth/refresh`
-  - `POST /auth/logout`
-- Milestone v1.0 finalizada com cobertura de testes para casos de sucesso/falha, expiração, revogação e reuse incidente.
+- Milestone v1.0 validada e arquivada.
+- Regras mandatórias desta milestone:
+  - Multi-tenant estrito: usuário só altera recursos próprios
+  - Nunca confiar em `user_id`/`owner_id` enviados pelo frontend
+  - Contexto autenticado derivado exclusivamente do token
+  - Endpoints públicos sob `/public`
 
 ## Constraints
 
-- Refresh token persistido apenas como hash.
-- Segredos JWT de access e refresh obrigatoriamente distintos.
-- Reuse de refresh revogado dispara revogação global.
-- Manter contratos públicos de erro genéricos (sem vazamento de estado interno).
+- Toda autorização de recursos privados deve usar usuário do token.
+- Endpoints privados exigem autenticação.
+- Endpoints públicos não devem expor dados sensíveis (email, IDs internos de owner, hashes, etc.).
+- Rotas públicas de catálogo devem ficar em `/public/products` e `/public/products/:id`.
 
 ## Key Decisions
 
@@ -57,18 +69,20 @@ Garantir autenticação segura e previsível, com controle forte de sessão (rot
 | Refresh token rotativo one-time | Mitiga replay e roubo de token | ✓ Good (v1.0) |
 | Reuse de refresh revogado causa logout global | Resposta defensiva em evento suspeito | ✓ Good (v1.0) |
 | Auth no `User`, dados pessoais no `Profile` | Separa credenciais de dados de apresentação | ✓ Good (v1.0) |
+| Ownership sempre derivado do token | Evita spoofing multi-tenant via payload do frontend | ✓ Locked (v1.1) |
+| Catálogo público com serializer específico | Evita vazamento de dados sensíveis | ✓ Locked (v1.1) |
 
 ## Current State
 
 - **Shipped version:** v1.0
-- **Milestone health:** requisitos v1 satisfeitos (13/13) com integração e fluxos E2E validados.
-- **Accepted debt:** validações Nyquist ainda em draft.
+- **Current milestone:** v1.1 Profile and Catalog
+- **Focus:** recursos de vendedor e catálogo público seguro
 
 ## Next Milestone Goals
 
-1. Elevar baseline de validação (Nyquist compliance por fase).
-2. Planejar e implementar MFA/2FA.
-3. Evoluir gerenciamento de sessões por dispositivo.
+1. Implementar edição de perfil próprio com autorização por token.
+2. Implementar lifecycle de produtos do vendedor com ownership enforcement.
+3. Expor catálogo público seguro com busca/filtro/sort e detalhe de produto.
 
 ---
-*Last updated: 2026-03-06 after v1.0 completion*
+*Last updated: 2026-03-06 after v1.1 kickoff*
