@@ -7,7 +7,7 @@
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up with email and password.
+- [x] **AUTH-01**: User can sign up with email and password.
 - [ ] **AUTH-02**: User can log in with valid email and password.
 - [ ] **AUTH-03**: Login and signup return an access token with 15-minute expiration.
 - [ ] **AUTH-04**: Login and signup return a refresh token with 7-day expiration.
@@ -24,8 +24,8 @@
 
 ### User Profile
 
-- [ ] **PROF-01**: User has exactly one profile (`User has_one Profile`).
-- [ ] **PROF-02**: Profile stores personal data fields (full name, photo URL, address) separately from authentication credentials.
+- [x] **PROF-01**: User has exactly one profile (`User has_one Profile`).
+- [x] **PROF-02**: Profile stores personal data fields (full name, photo URL) separately from authentication credentials.
 
 ## v2 Requirements
 
@@ -46,7 +46,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
 | AUTH-02 | Phase 3 | Pending |
 | AUTH-03 | Phase 3 | Pending |
 | AUTH-04 | Phase 3 | Pending |
@@ -57,8 +57,8 @@
 | SESS-04 | Phase 4 | Pending |
 | SESS-05 | Phase 4 | Pending |
 | SESS-06 | Phase 2 | Pending |
-| PROF-01 | Phase 1 | Pending |
-| PROF-02 | Phase 1 | Pending |
+| PROF-01 | Phase 1 | Complete |
+| PROF-02 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 13 total
@@ -67,4 +67,4 @@
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial milestone definition*
+*Last updated: 2026-03-06 after phase 1 execution*
