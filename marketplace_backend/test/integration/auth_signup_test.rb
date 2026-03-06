@@ -82,4 +82,17 @@ class AuthSignupTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert_equal "cadastro invalido", body["error"]
   end
+
+  test "signup returns generic message when payload does not include user root key" do
+    post "/auth/signup", params: {
+      email: "missing-root@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+    }, as: :json
+
+    assert_response :unprocessable_entity
+
+    body = JSON.parse(response.body)
+    assert_equal "cadastro invalido", body["error"]
+  end
 end

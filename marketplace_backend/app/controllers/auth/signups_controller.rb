@@ -16,6 +16,8 @@ module Auth
       else
         render_invalid_signup
       end
+    rescue ActionController::ParameterMissing
+      render_invalid_signup
     end
 
     private
