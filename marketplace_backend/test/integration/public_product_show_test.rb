@@ -36,8 +36,26 @@ class PublicProductShowTest < ActionDispatch::IntegrationTest
     assert_equal product.id, body.dig("data", "id")
     assert_equal product.title, body.dig("data", "title")
     assert_equal product.description, body.dig("data", "description")
-    assert_equal product.price.to_s("F"), body.dig("data", "price")
+    assert_kind_of Numeric, body.dig("data", "price")
+    assert_equal product.price.to_f, body.dig("data", "price")
     assert_equal product.stock_quantity, body.dig("data", "stock_quantity")
+    assert_equal %w[description id price stock_quantity title], body.fetch("data").keys.sort
+  end
+
+  test "ignores unknown query params on detail endpoint" do
+    user = create_user(email: "unknown-param-show@example.com")
+    product = create_product_for(
+      user,
+      title: "Monitor Ultrawide",
+      description: "Descricao valida para endpoint publico",
+      price: "1299.00"
+    )
+
+    get "/public/products/#{product.id}", params: { unexpected: "value" }
+
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal product.id, body.dig("data", "id")
   end
 
   test "returns not found for invalid uuid" do

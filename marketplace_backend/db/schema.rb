@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_06_043000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_06_052200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -30,6 +30,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_06_043000) do
     t.index ["deleted_at"], name: "index_products_on_deleted_at"
     t.index ["user_id", "deleted_at"], name: "index_products_on_user_id_and_deleted_at"
     t.index ["user_id"], name: "index_products_on_user_id"
+    t.check_constraint "stock_quantity >= 0", name: "products_stock_quantity_non_negative"
   end
 
   create_table "profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

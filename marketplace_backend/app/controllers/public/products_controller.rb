@@ -15,7 +15,7 @@ module Public
       return head :not_found unless result.success?
 
       render json: {
-        data: Products::PublicProductSerializer.call(product: result.product),
+        data: Products::PublicProductDetailSerializer.call(product: result.product),
       }, status: :ok
     end
 
