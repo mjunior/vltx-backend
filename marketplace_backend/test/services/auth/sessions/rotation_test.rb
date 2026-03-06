@@ -41,6 +41,27 @@ module Auth
         assert_not_equal refresh.jti, session.refresh_jti
         assert session.rotated_at.present?
       end
+
+      test "rotate session returns failure for expired refresh token" do
+        user = create_user(email: "rotation-expired@example.com")
+        expired_refresh = Auth::Jwt::Issuer.issue_refresh(user_id: user.id, now: 8.days.ago)
+        CreateSession.call(user: user, refresh_token: expired_refresh)
+
+        result = RotateSession.call(refresh_token: expired_refresh.token)
+
+        assert_not result.success?
+      end
+
+      test "rotate session returns failure for revoked session token" do
+        user = create_user(email: "rotation-revoked@example.com")
+        refresh = Auth::Jwt::Issuer.issue_refresh(user_id: user.id)
+        session = CreateSession.call(user: user, refresh_token: refresh)
+        session.update!(revoked_at: Time.current)
+
+        result = RotateSession.call(refresh_token: refresh.token)
+
+        assert_not result.success?
+      end
     end
   end
 end

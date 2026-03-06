@@ -115,6 +115,18 @@ module Auth
         assert_equal user.id, result.user_id
         assert_equal 1, user.refresh_sessions.where.not(revoked_at: nil).count
       end
+
+      test "detect reuse triggers incident when token hash mismatches the stored digest" do
+        user = create_user(email: "hash-mismatch@example.com")
+        create_refresh_session(user: user, refresh_jti: "jti-hash", token: "token-hash")
+        create_refresh_session(user: user, refresh_jti: "jti-active-2", token: "token-active-2")
+
+        result = DetectReuse.call(refresh_jti: "jti-hash", refresh_token: "different-token")
+
+        assert result.reuse_detected
+        assert_equal user.id, result.user_id
+        assert_equal 2, user.refresh_sessions.where.not(revoked_at: nil).count
+      end
     end
   end
 end
