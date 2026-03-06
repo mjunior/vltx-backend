@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   belongs_to :user
 
   scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :public_visible, -> { not_deleted.where(active: true) }
 
   validates :title, presence: true, length: { minimum: 3, maximum: 120 }
   validates :description, presence: true, length: { minimum: 10, maximum: 2000 }
