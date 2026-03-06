@@ -31,7 +31,7 @@
     2. Vendedor desativa e deleta apenas anúncios próprios.
     3. Ações em anúncios de terceiros retornam negação autorizativa.
 
-- [ ] **Phase 9: Public Product Listing with Search/Filter/Sort**
+- [x] **Phase 9: Public Product Listing with Search/Filter/Sort**
   - Goal: expor catálogo público eficiente sob namespace `/public`.
   - Requirements: `PUB-01`, `PUB-02`, `PUB-03`, `PUB-04`
   - Success criteria:
@@ -103,8 +103,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: Implementar endpoint público de listagem com filtros e ordenação
-- [ ] 09-02: Adicionar testes de contrato público para busca/filtro/sort
+- [x] 09-01: Implementar endpoint público de listagem com filtros e ordenação
+- [x] 09-02: Adicionar testes de contrato público para busca/filtro/sort
 
 ### Phase 10: Public Product Detail and Safe Serialization
 **Goal**: Expor detalhe público com serializer dedicado e seguro.
@@ -127,5 +127,5 @@ Plans:
 | 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Complete | 2026-03-06 |
 | 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Complete | 2026-03-06 |
 | 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Complete | 2026-03-06 |
-| 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Not started | - |
+| 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Complete | 2026-03-06 |
 | 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Not started | - |

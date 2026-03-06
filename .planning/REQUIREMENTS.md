@@ -19,10 +19,10 @@
 
 ### Public Catalog
 
-- [ ] **PUB-01**: Sistema expõe listagem pública em `/public/products`.
-- [ ] **PUB-02**: Listagem pública permite busca por texto (`title`/`description`).
-- [ ] **PUB-03**: Listagem pública permite filtro por faixa de preço (`min_price`, `max_price`).
-- [ ] **PUB-04**: Listagem pública permite ordenação configurável (ex.: preço asc/desc, mais recentes).
+- [x] **PUB-01**: Sistema expõe listagem pública em `/public/products`.
+- [x] **PUB-02**: Listagem pública permite busca por texto (`title`/`description`).
+- [x] **PUB-03**: Listagem pública permite filtro por faixa de preço (`min_price`, `max_price`).
+- [x] **PUB-04**: Listagem pública permite ordenação configurável (ex.: preço asc/desc, mais recentes).
 - [ ] **PUB-05**: Sistema expõe detalhe público em `/public/products/:id` com descrição, preço e estoque disponível.
 - [ ] **PUB-06**: Endpoints públicos retornam apenas campos permitidos via serializer específico sem dados sensíveis.
 
@@ -55,10 +55,10 @@
 | PROD-02 | Phase 8 | Complete |
 | PROD-03 | Phase 8 | Complete |
 | PROD-04 | Phase 8 | Complete |
-| PUB-01 | Phase 9 | Planned |
-| PUB-02 | Phase 9 | Planned |
-| PUB-03 | Phase 9 | Planned |
-| PUB-04 | Phase 9 | Planned |
+| PUB-01 | Phase 9 | Complete |
+| PUB-02 | Phase 9 | Complete |
+| PUB-03 | Phase 9 | Complete |
+| PUB-04 | Phase 9 | Complete |
 | PUB-05 | Phase 10 | Planned |
 | PUB-06 | Phase 10 | Planned |
 | AUTHZ-01 | Phase 6 | Complete |
