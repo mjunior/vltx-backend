@@ -2,6 +2,7 @@ class ProductsController < ApplicationController
   wrap_parameters false
 
   ALLOWED_KEYS = %w[title description price stock_quantity].freeze
+  FORBIDDEN_KEYS = %w[owner_id user_id].freeze
 
   before_action :authenticate_user!
 
@@ -31,6 +32,7 @@ class ProductsController < ApplicationController
   def valid_payload_shape?
     return false unless raw_payload.keys.map(&:to_s) == ["product"]
     return false unless product_payload.is_a?(Hash)
+    return false unless (product_payload.keys.map(&:to_s) & FORBIDDEN_KEYS).empty?
 
     (product_payload.keys.map(&:to_s) - ALLOWED_KEYS).empty?
   end

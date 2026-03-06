@@ -59,7 +59,9 @@ module Products
       text = normalize_text(value)
       return nil if text.nil?
 
-      sanitized = ActionController::Base.helpers.strip_tags(text).strip
+      without_dangerous_blocks = text.gsub(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/im, "")
+                                     .gsub(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/im, "")
+      sanitized = ActionController::Base.helpers.strip_tags(without_dangerous_blocks).strip
       return nil if sanitized.empty?
 
       sanitized
