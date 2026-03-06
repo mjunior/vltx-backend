@@ -36,6 +36,14 @@ class ProductsController < ApplicationController
     render json: Products::PrivateProductSerializer.call(product: result.product), status: :ok
   end
 
+  def destroy
+    result = Products::SoftDelete.call(user: current_user, product_id: params[:id])
+    return render_not_found if result.error_code == :not_found
+    return render_invalid_payload unless result.success?
+
+    head :no_content
+  end
+
   private
 
   def raw_payload

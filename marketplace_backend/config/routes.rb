@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   post "products" => "products#create"
   patch "products/:id" => "products#update"
   patch "products/:id/deactivate" => "products#deactivate"
+  delete "products/:id" => "products#destroy"
   post "auth/signup" => "auth/signups#create"
   post "auth/login" => "auth/logins#create"
   post "auth/refresh" => "auth/refreshes#create"
