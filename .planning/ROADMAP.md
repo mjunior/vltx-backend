@@ -98,4 +98,4 @@ Plans:
 | 2. JWT and Session Security Core | 3/3 | Complete   | 2026-03-06 |
 | 3. Auth Endpoints and Rotation Flow | 3/3 | Complete   | 2026-03-06 |
 | 4. Logout Global and Reuse Incident Handling | 2/2 | Complete   | 2026-03-06 |
-| 5. Security Hardening and Verification | 0/2 | Not started | - |
+| 5. Security Hardening and Verification | 1/2 | In Progress|  |
