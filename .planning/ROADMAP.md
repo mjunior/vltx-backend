@@ -13,7 +13,7 @@ Este roadmap entrega autenticação JWT segura em Rails API com foco em defesa c
 - [x] **Phase 1: User and Profile Foundation** - Criar base de identidade e perfil com persistência segura de credenciais. (completed 2026-03-06)
 - [x] **Phase 2: JWT and Session Security Core** - Implementar infraestrutura de token, segredos separados e sessão revogável por `jti`. (completed 2026-03-06)
 - [x] **Phase 3: Auth Endpoints and Rotation Flow** - Entregar signup/login/refresh com rotação de refresh token one-time. (completed 2026-03-06)
-- [ ] **Phase 4: Logout Global and Reuse Incident Handling** - Implementar revogação global e resposta a reutilização de refresh revogado.
+- [x] **Phase 4: Logout Global and Reuse Incident Handling** - Implementar revogação global e resposta a reutilização de refresh revogado. (completed 2026-03-06)
 - [ ] **Phase 5: Security Hardening and Verification** - Consolidar testes de segurança, edge cases e critérios de aceitação.
 
 ## Phase Details
@@ -97,5 +97,5 @@ Plans:
 | 1. User and Profile Foundation | 0/2 | Complete    | 2026-03-06 |
 | 2. JWT and Session Security Core | 3/3 | Complete   | 2026-03-06 |
 | 3. Auth Endpoints and Rotation Flow | 3/3 | Complete   | 2026-03-06 |
-| 4. Logout Global and Reuse Incident Handling | 0/2 | Not started | - |
+| 4. Logout Global and Reuse Incident Handling | 2/2 | Complete   | 2026-03-06 |
 | 5. Security Hardening and Verification | 0/2 | Not started | - |
