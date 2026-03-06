@@ -13,9 +13,9 @@
 ### Seller Products (Private)
 
 - [x] **PROD-01**: Vendedor autenticado pode criar anúncio com `title`, `description`, `price`, `stock_quantity`.
-- [ ] **PROD-02**: Vendedor autenticado pode editar seus próprios anúncios.
-- [ ] **PROD-03**: Vendedor autenticado pode desativar seus próprios anúncios.
-- [ ] **PROD-04**: Vendedor autenticado pode deletar seus próprios anúncios.
+- [x] **PROD-02**: Vendedor autenticado pode editar seus próprios anúncios.
+- [x] **PROD-03**: Vendedor autenticado pode desativar seus próprios anúncios.
+- [x] **PROD-04**: Vendedor autenticado pode deletar seus próprios anúncios.
 
 ### Public Catalog
 
@@ -29,7 +29,7 @@
 ### Security / Authorization
 
 - [x] **AUTHZ-01**: Usuário não pode editar perfil de outro usuário.
-- [ ] **AUTHZ-02**: Vendedor não pode criar/editar/desativar/deletar produto de outro vendedor.
+- [x] **AUTHZ-02**: Vendedor não pode criar/editar/desativar/deletar produto de outro vendedor.
 - [x] **AUTHZ-03**: Backend ignora/rejeita `user_id`, `owner_id` ou equivalentes enviados pelo frontend.
 - [x] **AUTHZ-04**: Endpoints privados exigem usuário autenticado válido.
 
@@ -52,9 +52,9 @@
 |-------------|-------|--------|
 | PROF-03 | Phase 6 | Complete |
 | PROD-01 | Phase 7 | Complete |
-| PROD-02 | Phase 8 | Planned |
-| PROD-03 | Phase 8 | Planned |
-| PROD-04 | Phase 8 | Planned |
+| PROD-02 | Phase 8 | Complete |
+| PROD-03 | Phase 8 | Complete |
+| PROD-04 | Phase 8 | Complete |
 | PUB-01 | Phase 9 | Planned |
 | PUB-02 | Phase 9 | Planned |
 | PUB-03 | Phase 9 | Planned |
@@ -62,7 +62,7 @@
 | PUB-05 | Phase 10 | Planned |
 | PUB-06 | Phase 10 | Planned |
 | AUTHZ-01 | Phase 6 | Complete |
-| AUTHZ-02 | Phase 8 | Planned |
+| AUTHZ-02 | Phase 8 | Complete |
 | AUTHZ-03 | Phase 7 | Complete |
 | AUTHZ-04 | Phase 6 | Complete |
 

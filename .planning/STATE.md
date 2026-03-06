@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Profile and Catalog
 status: ready_to_execute
-stopped_at: Phase 8 planned
-last_updated: "2026-03-06T04:34:22Z"
-last_activity: 2026-03-06 — Phase 8 planned with research and validation
+stopped_at: Phase 8 executed and verified
+last_updated: "2026-03-06T04:42:04Z"
+last_activity: 2026-03-06 — Phase 8 complete; next phase is 9
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 11
-  completed_plans: 4
-  percent: 36
+  completed_plans: 7
+  percent: 64
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Garantir autenticação segura e previsível com controle forte de sessão.
-**Current focus:** Phase 8 — Seller Product Lifecycle (Edit/Deactivate/Delete)
+**Current focus:** Phase 9 — Public Product Listing with Search/Filter/Sort
 
 ## Current Position
 
-Phase: 8 of 10 (Seller Product Lifecycle (Edit/Deactivate/Delete))
-Plan: 0 of 3 completed in current phase
+Phase: 9 of 10 (Public Product Listing with Search/Filter/Sort)
+Plan: 0 of 2 completed in current phase
 Status: Ready to execute
-Last activity: 2026-03-06 — Phase 8 planned with research and validation
+Last activity: 2026-03-06 — Phase 8 executed and verified as passed
 
-Progress: [████░░░░░░] 36%
+Progress: [██████░░░░] 64%
 
 ## Accumulated Context
 
@@ -41,6 +41,7 @@ Progress: [████░░░░░░] 36%
 - Fase 6 deve usar `PATCH /profile` com `name`/`address` e semântica PATCH parcial.
 - Fase 6 concluída com verificação `passed`; payload de perfil aceita apenas `String`/`null` para campos editáveis.
 - Fase 7 concluída com criação de produto autenticada, owner token-derived e bloqueio explícito de `owner_id/user_id` no payload.
+- Fase 8 concluída com lifecycle privado completo: update/deactivate/delete lógico com 404 cross-tenant masking.
 
 ### Blockers/Concerns
 
@@ -48,6 +49,6 @@ Progress: [████░░░░░░] 36%
 
 ## Session Continuity
 
-Last session: 2026-03-06T04:34:22Z
-Stopped at: Phase 8 planned
-Resume file: .planning/phases/08-seller-product-lifecycle-edit-deactivate-delete/08-01-PLAN.md
+Last session: 2026-03-06T04:42:04Z
+Stopped at: Phase 8 executed and verified
+Resume file: .planning/ROADMAP.md

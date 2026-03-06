@@ -23,7 +23,7 @@
     2. Owner do produto é sempre derivado do token.
     3. Payload com `owner_id/user_id` não define ownership.
 
-- [ ] **Phase 8: Seller Product Lifecycle (Edit/Deactivate/Delete)**
+- [x] **Phase 8: Seller Product Lifecycle (Edit/Deactivate/Delete)**
   - Goal: garantir que vendedor gerencie apenas anúncios próprios.
   - Requirements: `PROD-02`, `PROD-03`, `PROD-04`, `AUTHZ-02`
   - Success criteria:
@@ -88,9 +88,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: Implementar update de produto com checagem de ownership
-- [ ] 08-02: Implementar deactivate de produto com checagem de ownership
-- [ ] 08-03: Implementar delete de produto com checagem de ownership
+- [x] 08-01: Implementar update de produto com checagem de ownership
+- [x] 08-02: Implementar deactivate de produto com checagem de ownership
+- [x] 08-03: Implementar delete de produto com checagem de ownership
 
 ### Phase 9: Public Product Listing with Search/Filter/Sort
 **Goal**: Expor listagem pública de produtos sob `/public/products` com consulta eficiente.
@@ -126,6 +126,6 @@ Plans:
 |-------|-----------|--------------|--------|-----------|
 | 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Complete | 2026-03-06 |
 | 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Complete | 2026-03-06 |
-| 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Not started | - |
+| 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Complete | 2026-03-06 |
 | 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Not started | - |
 | 10. Public Product Detail and Safe Serialization | v1.1 | 2 | Not started | - |
