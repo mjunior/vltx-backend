@@ -141,4 +141,50 @@ class ProductLifecycleTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
   end
+
+  test "soft deletes own product and returns 204" do
+    user = create_user(email: "soft-delete-own@example.com")
+    product = create_product_for(user)
+    token = access_token_for(user)
+
+    delete "/products/#{product.id}", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :no_content
+    assert_equal "", response.body
+
+    product.reload
+    assert product.deleted_at.present?
+    assert_equal true, product.active
+  end
+
+  test "returns 404 when deleting product from another seller" do
+    owner = create_user(email: "owner-delete-404@example.com")
+    intruder = create_user(email: "intruder-delete-404@example.com")
+    product = create_product_for(owner)
+    token = access_token_for(intruder)
+
+    delete "/products/#{product.id}", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :not_found
+    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
+  test "returns 404 when deleting non-existent product" do
+    user = create_user(email: "missing-delete-404@example.com")
+    token = access_token_for(user)
+
+    delete "/products/#{SecureRandom.uuid}", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :not_found
+    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
 end
