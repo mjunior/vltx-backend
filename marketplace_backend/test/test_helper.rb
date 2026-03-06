@@ -1,4 +1,7 @@
 ENV["RAILS_ENV"] ||= "test"
+ENV["JWT_ACCESS_SECRET"] ||= "test_access_secret_1234567890"
+ENV["JWT_REFRESH_SECRET"] ||= "test_refresh_secret_1234567890"
+ENV["JWT_REFRESH_PEPPER"] ||= "test_refresh_pepper_1234567890"
 require_relative "../config/environment"
 require "rails/test_help"
 
