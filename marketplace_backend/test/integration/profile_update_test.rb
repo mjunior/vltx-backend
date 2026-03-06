@@ -97,6 +97,35 @@ class ProfileUpdateTest < ActionDispatch::IntegrationTest
     assert_equal "token invalido", JSON.parse(response.body)["error"]
   end
 
+  test "returns token invalido for expired access token" do
+    user = create_user(email: "expired-token-profile@example.com")
+    expired_token = Auth::Jwt::Issuer.issue_access(
+      user_id: user.id,
+      now: 16.minutes.ago
+    ).token
+
+    patch "/profile", params: { name: "Any" }, headers: {
+      "Authorization" => "Bearer #{expired_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "returns token invalido when refresh token is used as bearer token" do
+    user = create_user(email: "refresh-as-access-profile@example.com")
+    refresh_token = Auth::Jwt::Issuer.issue_refresh(user_id: user.id).token
+
+    patch "/profile", params: { name: "Any" }, headers: {
+      "Authorization" => "Bearer #{refresh_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
   test "returns payload invalido for unknown owner fields" do
     user = create_user(email: "owner-forge@example.com")
     other_user = create_user(email: "other-owner@example.com")
@@ -118,6 +147,24 @@ class ProfileUpdateTest < ActionDispatch::IntegrationTest
     other_user.profile.reload
     assert_nil user.profile.full_name
     assert_nil other_user.profile.full_name
+  end
+
+  test "returns payload invalido for non-string field value" do
+    user = create_user(email: "invalid-type-profile@example.com")
+    access_token = access_token_for(user)
+
+    patch "/profile", params: {
+      name: { first: "Joao" }
+    }, headers: {
+      "Authorization" => "Bearer #{access_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal "payload invalido", JSON.parse(response.body)["error"]
+
+    user.profile.reload
+    assert_nil user.profile.full_name
   end
 
   test "returns payload invalido for non-json content type" do

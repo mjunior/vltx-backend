@@ -66,5 +66,15 @@ module Profiles
 
       assert_not result.success?
     end
+
+    test "fails when params contain non-string values" do
+      user = create_user(email: "service-invalid-type@example.com")
+
+      result = UpdateProfile.call(user: user, params: {
+        name: { first: "Nome" }
+      })
+
+      assert_not result.success?
+    end
   end
 end

@@ -21,6 +21,7 @@ module Profiles
       normalized = @params.to_h.deep_symbolize_keys
       return Result.new(success?: false) if normalized.empty?
       return Result.new(success?: false) unless (normalized.keys - ALLOWED_KEYS).empty?
+      return Result.new(success?: false) unless allowed_value_types?(normalized)
 
       update_attrs = {}
       update_attrs[:full_name] = normalize_text(normalized[:name]) if normalized.key?(:name)
@@ -41,6 +42,10 @@ module Profiles
       return nil if value.nil?
 
       value.to_s.strip
+    end
+
+    def allowed_value_types?(normalized)
+      normalized.values.all? { |value| value.nil? || value.is_a?(String) }
     end
   end
 end
