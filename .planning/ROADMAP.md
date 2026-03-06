@@ -7,7 +7,7 @@
 
 ## Phases (v1.1)
 
-- [ ] **Phase 6: Profile Self-Service and AuthZ Guardrails**
+- [x] **Phase 6: Profile Self-Service and AuthZ Guardrails**
   - Goal: permitir edição do próprio perfil com bloqueio explícito de acesso cross-tenant.
   - Requirements: `PROF-03`, `AUTHZ-01`, `AUTHZ-04`
   - Success criteria:
@@ -60,8 +60,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: Implementar endpoint de atualização de perfil próprio
-- [ ] 06-02: Cobrir authz e cenários negativos de multi-tenant para perfil
+- [x] 06-01: Implementar endpoint de atualização de perfil próprio
+- [x] 06-02: Cobrir authz e cenários negativos de multi-tenant para perfil
 
 ### Phase 7: Seller Product Creation (Owner Derived from Token)
 **Goal**: Permitir criação de anúncio sem aceitar ownership do frontend.
@@ -124,7 +124,7 @@ Plans:
 
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
-| 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Not started | - |
+| 6. Profile Self-Service and AuthZ Guardrails | v1.1 | 3 | Complete | 2026-03-06 |
 | 7. Seller Product Creation (Owner Derived from Token) | v1.1 | 2 | Not started | - |
 | 8. Seller Product Lifecycle (Edit/Deactivate/Delete) | v1.1 | 4 | Not started | - |
 | 9. Public Product Listing with Search/Filter/Sort | v1.1 | 4 | Not started | - |

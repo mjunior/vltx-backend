@@ -8,7 +8,7 @@
 
 ### Profile
 
-- [ ] **PROF-03**: Usuário autenticado pode editar seu próprio perfil (`name`, `address`).
+- [x] **PROF-03**: Usuário autenticado pode editar seu próprio perfil (`name`, `address`).
 
 ### Seller Products (Private)
 
@@ -28,10 +28,10 @@
 
 ### Security / Authorization
 
-- [ ] **AUTHZ-01**: Usuário não pode editar perfil de outro usuário.
+- [x] **AUTHZ-01**: Usuário não pode editar perfil de outro usuário.
 - [ ] **AUTHZ-02**: Vendedor não pode criar/editar/desativar/deletar produto de outro vendedor.
 - [ ] **AUTHZ-03**: Backend ignora/rejeita `user_id`, `owner_id` ou equivalentes enviados pelo frontend.
-- [ ] **AUTHZ-04**: Endpoints privados exigem usuário autenticado válido.
+- [x] **AUTHZ-04**: Endpoints privados exigem usuário autenticado válido.
 
 ## Future Requirements
 
@@ -50,7 +50,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-03 | Phase 6 | Planned |
+| PROF-03 | Phase 6 | Complete |
 | PROD-01 | Phase 7 | Planned |
 | PROD-02 | Phase 8 | Planned |
 | PROD-03 | Phase 8 | Planned |
@@ -61,10 +61,10 @@
 | PUB-04 | Phase 9 | Planned |
 | PUB-05 | Phase 10 | Planned |
 | PUB-06 | Phase 10 | Planned |
-| AUTHZ-01 | Phase 6 | Planned |
+| AUTHZ-01 | Phase 6 | Complete |
 | AUTHZ-02 | Phase 8 | Planned |
 | AUTHZ-03 | Phase 7 | Planned |
-| AUTHZ-04 | Phase 6 | Planned |
+| AUTHZ-04 | Phase 6 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 15 total

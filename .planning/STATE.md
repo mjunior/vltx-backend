@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Profile and Catalog
 status: ready_to_execute
-stopped_at: Phase 6 planned
-last_updated: "2026-03-06T03:44:54.000Z"
-last_activity: 2026-03-06 — Phase 6 planned and verified
+stopped_at: Phase 6 executed and verified
+last_updated: "2026-03-06T04:03:34.000Z"
+last_activity: 2026-03-06 — Phase 6 complete; next phase is 7
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 11
+  completed_plans: 2
+  percent: 20
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Garantir autenticação segura e previsível com controle forte de sessão.
-**Current focus:** Phase 6 — Profile Self-Service and AuthZ Guardrails
+**Current focus:** Phase 7 — Seller Product Creation (Owner Derived from Token)
 
 ## Current Position
 
-Phase: 6 of 10 (Profile Self-Service and AuthZ Guardrails)
-Plan: 2 of 2 planned in current phase
+Phase: 7 of 10 (Seller Product Creation (Owner Derived from Token))
+Plan: 0 of 2 completed in current phase
 Status: Ready to execute
-Last activity: 2026-03-06 — Phase 6 planned and verified
+Last activity: 2026-03-06 — Phase 6 executed and verified as passed
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 20%
 
 ## Accumulated Context
 
@@ -39,6 +39,7 @@ Progress: [░░░░░░░░░░] 0%
 - Ownership e autorização sempre derivados do token autenticado.
 - Endpoints públicos de catálogo sob `/public` com serializer dedicado seguro.
 - Fase 6 deve usar `PATCH /profile` com `name`/`address` e semântica PATCH parcial.
+- Fase 6 concluída com verificação `passed`; payload de perfil aceita apenas `String`/`null` para campos editáveis.
 
 ### Blockers/Concerns
 
@@ -46,6 +47,6 @@ Progress: [░░░░░░░░░░] 0%
 
 ## Session Continuity
 
-Last session: 2026-03-06T03:44:54.000Z
-Stopped at: Phase 6 planned
-Resume file: .planning/phases/06-profile-self-service-and-authz-guardrails/06-01-PLAN.md
+Last session: 2026-03-06T04:03:34.000Z
+Stopped at: Phase 6 executed and verified
+Resume file: .planning/ROADMAP.md
