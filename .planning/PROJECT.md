@@ -2,7 +2,7 @@
 
 ## What This Is
 
-API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário e domínio de produtos com catálogo público seguro.
+API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário, domínio de produtos e jornada de compra com carrinho. O foco atual evolui o catálogo público para permitir fluxo de compra seguro sem confiar em payload sensível vindo do frontend.
 
 ## Core Value
 
@@ -24,7 +24,10 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 
 ### Active
 
-- [ ] Definir escopo da v1.2
+- [ ] Carrinho ativo único por usuário autenticado (criar/recuperar com isolamento por tenant)
+- [ ] Operações de item de carrinho (adicionar/remover/atualizar quantidade) com validação server-side transacional
+- [ ] Finalização de carrinho ativo mudando status para `finished` e preparação de service para criação de pedido
+- [ ] Bloqueios de segurança: não confiar em `id`, `quantity` e `price` do frontend; não permitir compra de produto próprio
 
 ### Out of Scope
 
@@ -32,10 +35,20 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Password reset / email verification
 - MFA/2FA neste ciclo
 
+## Current Milestone: v1.2 Cart and Checkout Foundation
+
+**Goal:** Entregar carrinho seguro com operações de item validadas no backend e finalização preparada para iniciar pedidos.
+
+**Target features:**
+- Carrinho ativo único por usuário autenticado
+- Operações de item com validação transacional de quantidade/preço
+- Finalização do carrinho ativo para `finished` com pagamento por carteira
+- Service de preparação para criação de pedido (sem criar pedido ainda)
+
 ## Current State
 
 - **Shipped versions:** v1.0, v1.1
-- **Current milestone:** none active (ready for v1.2 definition)
+- **Current milestone:** v1.2 Cart and Checkout Foundation (active)
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
 
 ## Constraints
@@ -53,11 +66,14 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 | Ownership sempre derivado do token | Bloquear spoofing via frontend | ✓ Good (v1.1) |
 | Catálogo público em `/public` com serializer dedicado | Evitar vazamento e estabilizar contrato | ✓ Good (v1.1) |
 | Detalhe público com máscara uniforme de 404 | Reduzir enumeração de recursos | ✓ Good (v1.1) |
+| Carrinho só aceita dados críticos validados no backend | Evitar fraude/abuso de payload manipulável | — Pending (v1.2) |
+| Um carrinho ativo por usuário | Simplificar checkout e reduzir abuso por multiplicação de carrinhos | — Pending (v1.2) |
 
 ## Next Milestone Goals
 
-1. Definir requisitos da v1.2.
-2. Planejar roadmap incremental sobre base v1.1 já entregue.
+1. Entregar carrinho seguro com operações de item validadas no backend.
+2. Preparar finalização de carrinho e fundação do fluxo de pedido via service dedicado.
+3. Reforçar regras cross-cutting de tenant/authz para impedir acesso indevido e abuso.
 
 ---
-*Last updated: 2026-03-06 after v1.1 milestone completion*
+*Last updated: 2026-03-07 after milestone v1.2 initialization*
