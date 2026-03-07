@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
   post "cart" => "carts#create"
+  post "cart/checkout" => "cart_checkout#create"
   post "cart/items" => "cart_items#create"
   patch "cart/items/:id" => "cart_items#update"
   delete "cart/items/:id" => "cart_items#destroy"
