@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cart and Checkout Foundation
-status: Roadmap definido; pronto para planejamento da fase 11
-stopped_at: Phase 11 executed and verified
-last_updated: "2026-03-07T20:05:52.001Z"
-last_activity: 2026-03-07 — Phase 11 executada e verificada, pronto para fase 12
+status: Fase 11 concluída; pronto para discutir/planejar fase 12
+stopped_at: Phase 12 context gathered
+last_updated: "2026-03-07T20:16:20.320Z"
+last_activity: 2026-03-07 — Fase 11 concluída e requisitos rastreados
 progress:
   total_phases: 4
   completed_phases: 1
@@ -34,6 +34,6 @@ Progress: [███████░░░] 71%
 
 ## Session Continuity
 
-Last session: 2026-03-07T20:10:00Z
-Stopped at: Phase 11 executed and verified
-Resume file: .planning/ROADMAP.md
+Last session: 2026-03-07T20:16:20.316Z
+Stopped at: Phase 12 context gathered
+Resume file: .planning/phases/12-cart-item-operations-with-server-side-validation/12-CONTEXT.md
