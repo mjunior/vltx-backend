@@ -25,7 +25,7 @@
     3. Preço é derivado do produto no banco e operações ocorrem em transação.
     4. Produto próprio do usuário autenticado é bloqueado no carrinho.
 
-- [ ] **Phase 13: Cart State Guards and Abuse Prevention**
+- [x] **Phase 13: Cart State Guards and Abuse Prevention** (completed 2026-03-07)
   - Goal: reforçar travas de estado do carrinho para impedir operações indevidas e abuso.
   - Requirements: `AUTHZ-07`
   - Success criteria:
@@ -106,5 +106,5 @@ Plans:
 |-------|-----------|--------------|--------|-----------|
 | 11. Cart Foundation and Active-Cart Invariant | v1.2 | 4 | Complete | 2026-03-07 |
 | 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Complete | 2026-03-07 |
-| 13. Cart State Guards and Abuse Prevention | v1.2 | 1 | Planned | — |
+| 13. Cart State Guards and Abuse Prevention | v1.2 | Complete    | 2026-03-07 | — |
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Planned | — |
