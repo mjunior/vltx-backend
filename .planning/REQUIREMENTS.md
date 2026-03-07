@@ -8,8 +8,8 @@
 
 ### Cart Management
 
-- [ ] **CART-01**: Usuário autenticado pode criar/obter seu carrinho ativo sem informar `user_id` no payload.
-- [ ] **CART-02**: Sistema garante no máximo um carrinho com status `active` por usuário.
+- [x] **CART-01**: Usuário autenticado pode criar/obter seu carrinho ativo sem informar `user_id` no payload.
+- [x] **CART-02**: Sistema garante no máximo um carrinho com status `active` por usuário.
 - [ ] **CART-03**: Usuário autenticado pode adicionar item no carrinho enviando apenas `product_id` e `quantity`.
 - [ ] **CART-04**: Usuário autenticado pode remover item existente do próprio carrinho ativo.
 - [ ] **CART-05**: Usuário autenticado pode atualizar quantidade de item do próprio carrinho ativo.
@@ -23,8 +23,8 @@
 
 ### Authorization and Tenant Safety
 
-- [ ] **AUTHZ-05**: Apenas usuários autenticados podem criar, visualizar e alterar carrinho.
-- [ ] **AUTHZ-06**: Usuário não pode acessar carrinho de outro usuário (isolamento tenant estrito).
+- [x] **AUTHZ-05**: Apenas usuários autenticados podem criar, visualizar e alterar carrinho.
+- [x] **AUTHZ-06**: Usuário não pode acessar carrinho de outro usuário (isolamento tenant estrito).
 - [ ] **AUTHZ-07**: Usuário não pode operar em carrinhos `finished` ou `abandoned`.
 
 ### Checkout Preparation
@@ -53,10 +53,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CART-01 | Phase 11 | Pending |
-| CART-02 | Phase 11 | Pending |
-| AUTHZ-05 | Phase 11 | Pending |
-| AUTHZ-06 | Phase 11 | Pending |
+| CART-01 | Phase 11 | Complete |
+| CART-02 | Phase 11 | Complete |
+| AUTHZ-05 | Phase 11 | Complete |
+| AUTHZ-06 | Phase 11 | Complete |
 | CART-03 | Phase 12 | Pending |
 | CART-04 | Phase 12 | Pending |
 | CART-05 | Phase 12 | Pending |

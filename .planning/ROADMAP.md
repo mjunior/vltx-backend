@@ -8,7 +8,7 @@
 
 ## Phases (v1.2)
 
-- [ ] **Phase 11: Cart Foundation and Active-Cart Invariant**
+- [x] **Phase 11: Cart Foundation and Active-Cart Invariant** (completed 2026-03-07)
   - Goal: criar base de carrinho autenticado com regra de um carrinho `active` por usuário e isolamento tenant.
   - Requirements: `CART-01`, `CART-02`, `AUTHZ-05`, `AUTHZ-06`
   - Success criteria:
@@ -54,8 +54,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01: Implementar modelagem de carrinho/status e criação idempotente do carrinho ativo por usuário
-- [ ] 11-02: Implementar autorização/escopo para acesso apenas ao carrinho do usuário autenticado
+- [x] 11-01: Implementar modelagem de carrinho/status e criação idempotente do carrinho ativo por usuário
+- [x] 11-02: Implementar autorização/escopo para acesso apenas ao carrinho do usuário autenticado
 
 ### Phase 12: Cart Item Operations with Server-Side Validation
 **Goal**: Entregar operações de item com validações de quantidade/preço no backend e transação atômica.
@@ -104,7 +104,7 @@ Plans:
 
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
-| 11. Cart Foundation and Active-Cart Invariant | v1.2 | 4 | Planned | — |
+| 11. Cart Foundation and Active-Cart Invariant | v1.2 | 4 | Complete | 2026-03-07 |
 | 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Planned | — |
 | 13. Cart State Guards and Abuse Prevention | v1.2 | 1 | Planned | — |
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Planned | — |
