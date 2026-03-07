@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cart and Checkout Foundation
-status: Fase 12 concluída; pronto para discutir/planejar fase 13
-stopped_at: Phase 14 planned
-last_updated: "2026-03-07T21:08:35.584Z"
-last_activity: 2026-03-07 — Fase 12 concluída e requisitos rastreados
+status: Milestone v1.2 concluído e arquivado; pronto para iniciar novo milestone
+stopped_at: Milestone v1.2 archived
+last_updated: "2026-03-07T21:45:00Z"
+last_activity: 2026-03-07 — v1.2 encerrado com fases 11-14 completas
 progress:
   total_phases: 4
   completed_phases: 4
   total_plans: 9
   completed_plans: 9
-  percent: 86
+  percent: 100
 ---
 
 # Project State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Milestone v1.2 — Carrinho e preparação de pedido
+**Current focus:** Planejamento do próximo milestone (orders + wallet debit)
 
 ## Current Position
 
-Phase: 13 (not started)
+Phase: none active
 Plan: none active
-Status: Fase 12 concluída; pronto para discutir/planejar fase 13
-Last activity: 2026-03-07 — Fase 12 concluída e requisitos rastreados
+Status: Milestone v1.2 concluído e arquivado; pronto para `$gsd-new-milestone`
+Last activity: 2026-03-07 — v1.2 encerrado com roadmap e requirements arquivados
 
-Progress: [█████████░] 86%
+Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-07T21:00:54.806Z
-Stopped at: Phase 14 planned
-Resume file: .planning/phases/14-cart-finalization-and-order-service-preparation/14-01-PLAN.md
+Last session: 2026-03-07T21:45:00Z
+Stopped at: Milestone v1.2 archived
+Resume file: .planning/PROJECT.md

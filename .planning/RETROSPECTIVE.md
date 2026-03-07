@@ -36,7 +36,44 @@
 - Janela de execução: 2026-03-05 -> 2026-03-06
 - Notable: foco em testes antecipados reduziu retrabalho no hardening final.
 
+## Milestone: v1.2 — Cart and Checkout Foundation
+
+**Shipped:** 2026-03-07
+**Phases:** 4 | **Plans:** 9 | **Tasks:** 27
+
+### What Was Built
+- Carrinho ativo único por usuário com isolamento tenant e contratos autenticados.
+- Operações de item com validação server-side de quantidade/preço, transação e bloqueio de produto próprio.
+- Guardas de estado para carrinhos inativos com resposta consistente e proteção anti-abuso.
+- Checkout com `wallet` only e transição segura para `finished`.
+- Service `Orders::PrepareFromCart` integrado, sem persistir pedido nesta etapa.
+
+### What Worked
+- Sequenciamento por waves reduziu retrabalho entre domínio, controller e testes.
+- Contrato de erro genérico (`payload invalido` / `nao encontrado`) ficou consistente em todos os fluxos negativos.
+- Cobertura de integração + serviço por fase acelerou fechamento de requisitos com confiança.
+
+### What Was Inefficient
+- `STATE.md` e `ROADMAP.md` ficaram desalinhados em alguns checkpoints e exigiram correção manual no fechamento.
+- Comando de milestone não capturou automaticamente accomplishments/tasks de v1.2.
+
+### Patterns Established
+- Finalização de carrinho deve ser transacional e lockada para prevenir concorrência futura de criação de pedido.
+- Anti-abuso reutiliza revogação de sessão já existente no domínio auth.
+- Serializer de cart item inclui payload de produto público para reduzir round-trips no FE.
+
+### Key Lessons
+- Ordem incremental (cart -> checkout -> order-prep) permitiu evoluir domínio sem pular invariantes.
+- Verificação formal por fase (`*-VERIFICATION.md`) evita dívida de rastreabilidade na virada do milestone.
+- Contratos públicos estáveis ajudam FE a evoluir sem regressão por quebra de shape.
+
+### Cost Observations
+- Commits no repositório (v1.2): 17
+- Janela de execução: 2026-03-07 -> 2026-03-07
+- Notable: foco em regras de domínio + testes request-level reduziu bugs de integração.
+
 ## Cross-Milestone Trends
 
 - v1.0 estabeleceu baseline forte de segurança de sessão.
-- Próximo ciclo deve priorizar maturidade de validação (Nyquist) e segurança de conta (MFA).
+- v1.2 consolidou maturidade de contratos multi-tenant no domínio de carrinho/checkout.
+- Próximo ciclo deve priorizar engine de pedidos e ledger de carteira com idempotência.

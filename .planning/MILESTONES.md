@@ -1,5 +1,30 @@
 # Milestones
 
+## v1.2 Cart and Checkout Foundation (Shipped: 2026-03-07)
+
+**Scope delivered:**
+- 4 phases
+- 9 plans
+- 27 tasks
+- Timeline: 2026-03-07 -> 2026-03-07
+
+**Key accomplishments:**
+1. Invariante de um único carrinho `active` por usuário autenticado com isolamento tenant estrito.
+2. Operações completas de item (`POST/PATCH/DELETE /cart/items`) com validação server-side de `product_id`, `quantity` e preço derivado do banco.
+3. Hardening de estado com bloqueio de mutações em carrinhos `finished/abandoned` e resposta de erro consistente.
+4. Proteção anti-abuso para tentativas repetidas em carrinhos inativos com revogação de sessões de refresh.
+5. Checkout (`POST /cart/checkout`) com pagamento exclusivo por carteira e transição segura `active -> finished`.
+6. Service `Orders::PrepareFromCart` integrado ao checkout para preparação de pedido sem persistência de `Order` neste milestone.
+
+**Known tech debt accepted:**
+- Persistência real de pedido/ledger (`ORD-01..03`) adiada para próximo milestone.
+
+**Archives:**
+- `.planning/milestones/v1.2-ROADMAP.md`
+- `.planning/milestones/v1.2-REQUIREMENTS.md`
+
+---
+
 ## v1.1 Profile and Catalog (Shipped: 2026-03-06)
 
 **Scope delivered:**
