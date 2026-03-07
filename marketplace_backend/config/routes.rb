@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
+  post "cart" => "carts#create"
   patch "profile" => "profiles#update"
   get "products" => "products#index"
   post "products" => "products#create"

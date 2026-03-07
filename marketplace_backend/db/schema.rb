@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_06_052200) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_07_112000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "carts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "status"], name: "index_carts_on_user_id_and_status"
+    t.index ["user_id"], name: "index_carts_on_user_id"
+    t.index ["user_id"], name: "index_carts_on_user_id_active_unique", unique: true, where: "((status)::text = 'active'::text)"
+  end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
@@ -66,6 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_06_052200) do
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
   end
 
+  add_foreign_key "carts", "users"
   add_foreign_key "products", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_sessions", "users"
