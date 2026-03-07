@@ -13,6 +13,12 @@ module Auth
           refresh_secret = ENV["JWT_REFRESH_SECRET"]
           refresh_pepper = ENV["JWT_REFRESH_PEPPER"]
 
+          if development_or_test?
+            access_secret ||= "dev_access_secret_change_me_1234567890"
+            refresh_secret ||= "dev_refresh_secret_change_me_1234567890"
+            refresh_pepper ||= "dev_refresh_pepper_change_me_1234567890"
+          end
+
           missing_keys = []
           missing_keys << "JWT_ACCESS_SECRET" if access_secret.blank?
           missing_keys << "JWT_REFRESH_SECRET" if refresh_secret.blank?
@@ -29,6 +35,8 @@ module Auth
           if [access_secret, refresh_secret].include?(refresh_pepper)
             raise ConfigurationError, "JWT_REFRESH_PEPPER must differ from JWT secrets"
           end
+
+          warn_on_development_defaults(access_secret, refresh_secret, refresh_pepper)
 
           @config = {
             access_secret: access_secret,
@@ -73,6 +81,29 @@ module Auth
         end
 
         private
+
+        def development_or_test?
+          defined?(Rails) && (Rails.env.development? || Rails.env.test?)
+        end
+
+        def warn_on_development_defaults(access_secret, refresh_secret, refresh_pepper)
+          return unless development_or_test?
+
+          defaults = [
+            "dev_access_secret_change_me_1234567890",
+            "dev_refresh_secret_change_me_1234567890",
+            "dev_refresh_pepper_change_me_1234567890"
+          ]
+
+          configured_values = [access_secret, refresh_secret, refresh_pepper]
+          return unless configured_values.any? { |value| defaults.include?(value) }
+
+          Rails.logger&.warn(
+            "[auth-jwt] Using development fallback JWT secrets. Set JWT_ACCESS_SECRET, JWT_REFRESH_SECRET and JWT_REFRESH_PEPPER in your environment."
+          )
+        rescue StandardError
+          nil
+        end
 
         def fetch!(key)
           return @config.fetch(key) if @config
