@@ -16,7 +16,7 @@
     2. Sistema garante somente um carrinho `active` por usuário.
     3. Usuário nunca acessa carrinho de outro usuário.
 
-- [ ] **Phase 12: Cart Item Operations with Server-Side Validation**
+- [x] **Phase 12: Cart Item Operations with Server-Side Validation** (completed 2026-03-07)
   - Goal: implementar adicionar/remover/atualizar item sem confiar em payload crítico do frontend.
   - Requirements: `CART-03`, `CART-04`, `CART-05`, `CART-06`, `CART-07`, `CART-08`, `CART-09`
   - Success criteria:
@@ -68,9 +68,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 12-01: Implementar service transacional para adicionar item no carrinho com validações de domínio
-- [ ] 12-02: Implementar update de quantidade e remoção de item com validações server-side
-- [ ] 12-03: Cobrir cenários negativos de fraude/abuso e consistência transacional em testes
+- [x] 12-01: Implementar service transacional para adicionar item no carrinho com validações de domínio
+- [x] 12-02: Implementar update de quantidade e remoção de item com validações server-side
+- [x] 12-03: Cobrir cenários negativos de fraude/abuso e consistência transacional em testes
 
 ### Phase 13: Cart State Guards and Abuse Prevention
 **Goal**: Impedir mutações indevidas em carrinhos não ativos e reforçar proteção cross-cutting.
@@ -105,6 +105,6 @@ Plans:
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
 | 11. Cart Foundation and Active-Cart Invariant | v1.2 | 4 | Complete | 2026-03-07 |
-| 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Planned | — |
+| 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Complete | 2026-03-07 |
 | 13. Cart State Guards and Abuse Prevention | v1.2 | 1 | Planned | — |
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Planned | — |

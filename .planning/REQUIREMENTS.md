@@ -10,16 +10,16 @@
 
 - [x] **CART-01**: Usuário autenticado pode criar/obter seu carrinho ativo sem informar `user_id` no payload.
 - [x] **CART-02**: Sistema garante no máximo um carrinho com status `active` por usuário.
-- [ ] **CART-03**: Usuário autenticado pode adicionar item no carrinho enviando apenas `product_id` e `quantity`.
-- [ ] **CART-04**: Usuário autenticado pode remover item existente do próprio carrinho ativo.
-- [ ] **CART-05**: Usuário autenticado pode atualizar quantidade de item do próprio carrinho ativo.
-- [ ] **CART-06**: Backend valida quantidade no servidor antes de adicionar/atualizar item (sem confiar no frontend).
+- [x] **CART-03**: Usuário autenticado pode adicionar item no carrinho enviando apenas `product_id` e `quantity`.
+- [x] **CART-04**: Usuário autenticado pode remover item existente do próprio carrinho ativo.
+- [x] **CART-05**: Usuário autenticado pode atualizar quantidade de item do próprio carrinho ativo.
+- [x] **CART-06**: Backend valida quantidade no servidor antes de adicionar/atualizar item (sem confiar no frontend).
 
 ### Pricing and Integrity
 
-- [ ] **CART-07**: Backend calcula/valida preço do item a partir do produto no banco e nunca aceita preço enviado pelo frontend.
-- [ ] **CART-08**: Operações de adicionar/atualizar item no carrinho ocorrem em transação atômica com validações de integridade.
-- [ ] **CART-09**: Usuário não pode adicionar ao carrinho produtos do próprio usuário vendedor.
+- [x] **CART-07**: Backend calcula/valida preço do item a partir do produto no banco e nunca aceita preço enviado pelo frontend.
+- [x] **CART-08**: Operações de adicionar/atualizar item no carrinho ocorrem em transação atômica com validações de integridade.
+- [x] **CART-09**: Usuário não pode adicionar ao carrinho produtos do próprio usuário vendedor.
 
 ### Authorization and Tenant Safety
 
@@ -57,13 +57,13 @@
 | CART-02 | Phase 11 | Complete |
 | AUTHZ-05 | Phase 11 | Complete |
 | AUTHZ-06 | Phase 11 | Complete |
-| CART-03 | Phase 12 | Pending |
-| CART-04 | Phase 12 | Pending |
-| CART-05 | Phase 12 | Pending |
-| CART-06 | Phase 12 | Pending |
-| CART-07 | Phase 12 | Pending |
-| CART-08 | Phase 12 | Pending |
-| CART-09 | Phase 12 | Pending |
+| CART-03 | Phase 12 | Complete |
+| CART-04 | Phase 12 | Complete |
+| CART-05 | Phase 12 | Complete |
+| CART-06 | Phase 12 | Complete |
+| CART-07 | Phase 12 | Complete |
+| CART-08 | Phase 12 | Complete |
+| CART-09 | Phase 12 | Complete |
 | AUTHZ-07 | Phase 13 | Pending |
 | CHK-01 | Phase 14 | Pending |
 | CHK-02 | Phase 14 | Pending |
