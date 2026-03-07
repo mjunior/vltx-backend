@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Cart and Checkout Foundation
 status: Fase 12 concluída; pronto para discutir/planejar fase 13
-stopped_at: Phase 12 executed and verified
-last_updated: "2026-03-07T20:34:00Z"
-last_activity: 2026-03-07 — Phase 12 executada e verificada, pronto para fase 13
+stopped_at: Phase 13 context gathered
+last_updated: "2026-03-07T20:42:07.037Z"
+last_activity: 2026-03-07 — Fase 12 concluída e requisitos rastreados
 progress:
   total_phases: 4
   completed_phases: 2
@@ -34,6 +34,6 @@ Progress: [█████████░] 86%
 
 ## Session Continuity
 
-Last session: 2026-03-07T20:34:00Z
-Stopped at: Phase 12 executed and verified
-Resume file: .planning/ROADMAP.md
+Last session: 2026-03-07T20:42:07.026Z
+Stopped at: Phase 13 context gathered
+Resume file: .planning/phases/13-cart-state-guards-and-abuse-prevention/13-CONTEXT.md
