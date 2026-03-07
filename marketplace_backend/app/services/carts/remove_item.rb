@@ -20,7 +20,9 @@ module Carts
       return Result.new(success?: false, error_code: :not_found) unless cart
 
       cart_item = find_cart_item(cart)
-      return Result.new(success?: false, error_code: :not_found) unless cart_item
+      if cart_item.nil?
+        return inactive_item_error(cart: find_inactive_owned_cart)
+      end
 
       return Result.new(success?: false, error_code: :invalid_payload) unless cart_item.destroy
 
@@ -35,6 +37,23 @@ module Carts
       cart.cart_items.find_by(id: @cart_item_id)
     rescue ActiveRecord::StatementInvalid
       nil
+    end
+
+    def find_inactive_owned_cart
+      Cart.joins(:cart_items)
+          .where(user_id: @user.id, status: [Cart.statuses[:finished], Cart.statuses[:abandoned]])
+          .where(cart_items: { id: @cart_item_id })
+          .distinct
+          .first
+    rescue ActiveRecord::StatementInvalid
+      nil
+    end
+
+    def inactive_item_error(cart:)
+      return Result.new(success?: false, error_code: :not_found) unless cart
+
+      InactiveCartAbuseGuard.track!(user: @user, cart: cart, action: "remove_item")
+      Result.new(success?: false, error_code: :invalid_payload)
     end
   end
 end

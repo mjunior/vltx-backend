@@ -2,6 +2,10 @@ require "test_helper"
 
 module Carts
   class RemoveItemTest < ActiveSupport::TestCase
+    setup do
+      InactiveCartAbuseGuard.reset!
+    end
+
     def create_user(email: "cart-remove-service@example.com")
       Users::Create.call(
         email: email,
@@ -41,6 +45,33 @@ module Carts
       item = CartItem.create!(cart: cart, product: product, quantity: 1)
 
       result = RemoveItem.call(user: intruder, cart_item_id: item.id)
+
+      assert_not result.success?
+      assert_equal :not_found, result.error_code
+    end
+
+    test "returns invalid_payload for item from own abandoned cart when user has active cart" do
+      user = create_user(email: "cart-remove-abandoned-owner@example.com")
+      seller = create_user(email: "cart-remove-abandoned-seller@example.com")
+      product = create_product_for(seller)
+      Cart.create!(user: user, status: :active)
+      abandoned_cart = Cart.create!(user: user, status: :abandoned)
+      abandoned_item = CartItem.create!(cart: abandoned_cart, product: product, quantity: 1)
+
+      result = RemoveItem.call(user: user, cart_item_id: abandoned_item.id)
+
+      assert_not result.success?
+      assert_equal :invalid_payload, result.error_code
+    end
+
+    test "returns not_found when user has no active cart even if item exists in inactive cart" do
+      user = create_user(email: "cart-remove-no-active@example.com")
+      seller = create_user(email: "cart-remove-no-active-seller@example.com")
+      product = create_product_for(seller)
+      finished_cart = Cart.create!(user: user, status: :finished)
+      finished_item = CartItem.create!(cart: finished_cart, product: product, quantity: 1)
+
+      result = RemoveItem.call(user: user, cart_item_id: finished_item.id)
 
       assert_not result.success?
       assert_equal :not_found, result.error_code

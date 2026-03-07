@@ -1,6 +1,7 @@
 module Carts
   class AddItem
     Result = Struct.new(:success?, :cart, :error_code, keyword_init: true)
+    InactiveCartError = Class.new(StandardError)
 
     ALLOWED_KEYS = %i[product_id quantity price].freeze
 
@@ -64,17 +65,23 @@ module Carts
 
     def add_or_increment_item(cart:, product:, requested_quantity:)
       CartItem.transaction do
-        cart_item = cart.cart_items.lock.find_or_initialize_by(product_id: product.id)
+        locked_cart = Cart.lock.find_by(id: cart.id)
+        raise InactiveCartError, "inactive cart mutation blocked" unless locked_cart&.active?
+
+        cart_item = locked_cart.cart_items.lock.find_or_initialize_by(product_id: product.id)
         final_quantity = [target_quantity(cart_item:, requested_quantity:), product.stock_quantity].min
         return nil if final_quantity < 1
 
         cart_item.quantity = final_quantity
         return nil unless cart_item.save
 
-        cart.reload
+        locked_cart.reload
       end
     rescue ActiveRecord::RecordNotUnique
       cart.reload
+    rescue InactiveCartError
+      InactiveCartAbuseGuard.track!(user: @user, cart: cart, action: "add_item")
+      nil
     end
 
     def target_quantity(cart_item:, requested_quantity:)
