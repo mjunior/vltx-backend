@@ -33,7 +33,7 @@
     2. Endpoints não expõem carrinhos de outros usuários nem em cenários negativos.
     3. Fluxo de erro mantém contrato consistente sem vazar informação sensível.
 
-- [ ] **Phase 14: Cart Finalization and Order Service Preparation**
+- [x] **Phase 14: Cart Finalization and Order Service Preparation** (completed 2026-03-07)
   - Goal: finalizar carrinho com pagamento por carteira e preparar service para criação futura de pedido.
   - Requirements: `CHK-01`, `CHK-02`, `CHK-03`
   - Success criteria:
@@ -107,4 +107,4 @@ Plans:
 | 11. Cart Foundation and Active-Cart Invariant | v1.2 | 4 | Complete | 2026-03-07 |
 | 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Complete | 2026-03-07 |
 | 13. Cart State Guards and Abuse Prevention | v1.2 | Complete    | 2026-03-07 | — |
-| 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Planned | — |
+| 14. Cart Finalization and Order Service Preparation | v1.2 | Complete    | 2026-03-07 | — |

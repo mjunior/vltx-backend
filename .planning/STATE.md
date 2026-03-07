@@ -4,13 +4,13 @@ milestone: v1.2
 milestone_name: Cart and Checkout Foundation
 status: Fase 12 concluída; pronto para discutir/planejar fase 13
 stopped_at: Phase 14 planned
-last_updated: "2026-03-07T21:00:54.816Z"
+last_updated: "2026-03-07T21:08:35.584Z"
 last_activity: 2026-03-07 — Fase 12 concluída e requisitos rastreados
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 9
   percent: 86
 ---
 
