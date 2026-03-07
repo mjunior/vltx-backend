@@ -25,7 +25,7 @@
 
 - [x] **AUTHZ-05**: Apenas usuários autenticados podem criar, visualizar e alterar carrinho.
 - [x] **AUTHZ-06**: Usuário não pode acessar carrinho de outro usuário (isolamento tenant estrito).
-- [ ] **AUTHZ-07**: Usuário não pode operar em carrinhos `finished` ou `abandoned`.
+- [x] **AUTHZ-07**: Usuário não pode operar em carrinhos `finished` ou `abandoned`.
 
 ### Checkout Preparation
 
@@ -64,7 +64,7 @@
 | CART-07 | Phase 12 | Complete |
 | CART-08 | Phase 12 | Complete |
 | CART-09 | Phase 12 | Complete |
-| AUTHZ-07 | Phase 13 | Pending |
+| AUTHZ-07 | Phase 13 | Complete |
 | CHK-01 | Phase 14 | Pending |
 | CHK-02 | Phase 14 | Pending |
 | CHK-03 | Phase 14 | Pending |
