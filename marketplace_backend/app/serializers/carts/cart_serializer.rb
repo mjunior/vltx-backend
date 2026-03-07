@@ -21,6 +21,7 @@ module Carts
             {
               id: item.id,
               product_id: item.product_id,
+              product: Products::PublicProductSerializer.call(product: item.product),
               quantity: item.quantity,
               unit_price: format("%.2f", unit_price),
               line_subtotal: format("%.2f", unit_price * item.quantity),

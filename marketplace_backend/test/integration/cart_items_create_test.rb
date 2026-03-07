@@ -49,6 +49,8 @@ class CartItemsCreateTest < ActionDispatch::IntegrationTest
     assert_equal "500.00", cart["subtotal"]
     assert_equal 1, cart["items"].length
     assert_equal 2, cart["items"][0]["quantity"]
+    assert_equal product.title, cart["items"][0].dig("product", "title")
+    assert_equal product.description, cart["items"][0].dig("product", "description")
   end
 
   test "clamps quantity when above stock" do
