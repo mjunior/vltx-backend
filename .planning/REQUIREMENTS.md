@@ -29,9 +29,9 @@
 
 ### Checkout Preparation
 
-- [ ] **CHK-01**: Usuário autenticado pode finalizar carrinho ativo alterando status para `finished`.
-- [ ] **CHK-02**: Finalização registra que o método de pagamento suportado neste milestone é somente carteira no site.
-- [ ] **CHK-03**: Sistema disponibiliza service preparado para futura criação de pedido a partir do carrinho finalizado (sem criar pedido neste milestone).
+- [x] **CHK-01**: Usuário autenticado pode finalizar carrinho ativo alterando status para `finished`.
+- [x] **CHK-02**: Finalização registra que o método de pagamento suportado neste milestone é somente carteira no site.
+- [x] **CHK-03**: Sistema disponibiliza service preparado para futura criação de pedido a partir do carrinho finalizado (sem criar pedido neste milestone).
 
 ## Future Requirements
 
@@ -65,9 +65,9 @@
 | CART-08 | Phase 12 | Complete |
 | CART-09 | Phase 12 | Complete |
 | AUTHZ-07 | Phase 13 | Complete |
-| CHK-01 | Phase 14 | Pending |
-| CHK-02 | Phase 14 | Pending |
-| CHK-03 | Phase 14 | Pending |
+| CHK-01 | Phase 14 | Complete |
+| CHK-02 | Phase 14 | Complete |
+| CHK-03 | Phase 14 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total
