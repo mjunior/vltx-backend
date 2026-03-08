@@ -9,7 +9,7 @@
 
 ## Phases (v1.3)
 
-- [ ] **Phase 15: Wallet Ledger Data Model and Invariants**
+- [x] **Phase 15: Wallet Ledger Data Model and Invariants** (completed 2026-03-08)
   - Goal: estabelecer base imutável de carteira com transações append-only e trilha de saldo em centavos.
   - Requirements: `WAL-01`, `WAL-02`, `WAL-03`, `WAL-04`
   - Success criteria:
@@ -107,7 +107,7 @@ Plans:
 | 12. Cart Item Operations with Server-Side Validation | v1.2 | 7 | Complete | 2026-03-07 |
 | 13. Cart State Guards and Abuse Prevention | v1.2 | 1 | Complete | 2026-03-07 |
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Complete | 2026-03-07 |
-| 15. Wallet Ledger Data Model and Invariants | v1.3 | 4 | Pending | — |
+| 15. Wallet Ledger Data Model and Invariants | 2/2 | Complete    | 2026-03-08 | — |
 | 16. Transaction Safety and Non-Negative Balance Enforcement | v1.3 | 3 | Pending | — |
 | 17. Idempotency and Refund Deduplication | v1.3 | 3 | Pending | — |
 | 18. Wallet Authorization and Tenant Isolation Surface | v1.3 | 2 | Pending | — |
