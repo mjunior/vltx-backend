@@ -82,7 +82,13 @@ module Carts
           }
         )
         unless movement_result.success?
-          error_code = movement_result.error_code == :not_found ? :not_found : :invalid_payload
+          error_code = if movement_result.error_code == :not_found
+                         :not_found
+                       elsif movement_result.error_code == :insufficient_funds
+                         :insufficient_funds
+                       else
+                         :invalid_payload
+                       end
           raise ActiveRecord::Rollback
         end
 

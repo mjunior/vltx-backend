@@ -88,7 +88,7 @@ module Carts
       assert_equal :invalid_payload, result.error_code
     end
 
-    test "returns invalid_payload when wallet has insufficient funds" do
+    test "returns insufficient_funds when wallet has insufficient funds" do
       buyer = create_user(email: "cart-finalize-service-no-funds@example.com")
       seller = create_user(email: "cart-finalize-service-no-funds-seller@example.com")
       product = create_product_for(seller, price: "200.00")
@@ -99,7 +99,7 @@ module Carts
       result = Finalize.call(user: buyer, params: { payment_method: "wallet" })
 
       assert_not result.success?
-      assert_equal :invalid_payload, result.error_code
+      assert_equal :insufficient_funds, result.error_code
       assert_equal "active", cart.reload.status
       assert_equal 50_00, wallet.reload.current_balance_cents
       assert_equal 1, wallet.wallet_transactions.count

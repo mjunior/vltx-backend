@@ -12,7 +12,8 @@ class CartCheckoutController < ApplicationController
 
     result = Carts::Finalize.call(user: current_user, params: resource_payload)
     return render_not_found if result.error_code == :not_found
-    return render_invalid_payload if [:insufficient_funds, :balance_mismatch].include?(result.error_code)
+    return render_payment_refused if result.error_code == :insufficient_funds
+    return render_invalid_payload if result.error_code == :balance_mismatch
     return render_invalid_payload unless result.success?
 
     render json: {
@@ -62,5 +63,9 @@ class CartCheckoutController < ApplicationController
 
   def render_not_found
     render json: { error: "nao encontrado" }, status: :not_found
+  end
+
+  def render_payment_refused
+    render json: { error: "pagamento recusado" }, status: :unprocessable_entity
   end
 end

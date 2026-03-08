@@ -73,7 +73,7 @@ class CartCheckoutWalletSafetyTest < ActionDispatch::IntegrationTest
     assert_equal 1, wallet.wallet_transactions.count
   end
 
-  test "returns payload invalido and keeps wallet untouched when funds are insufficient" do
+  test "returns pagamento recusado and keeps wallet untouched when funds are insufficient" do
     buyer = create_user(email: "cart-checkout-wallet-insufficient@example.com")
     seller = create_user(email: "cart-checkout-wallet-insufficient-seller@example.com")
     product = create_product_for(seller, price: "250.00")
@@ -92,7 +92,7 @@ class CartCheckoutWalletSafetyTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :unprocessable_entity
-    assert_equal "payload invalido", JSON.parse(response.body)["error"]
+    assert_equal "pagamento recusado", JSON.parse(response.body)["error"]
     assert_equal "active", cart.reload.status
     assert_equal 100_00, wallet.reload.current_balance_cents
     assert_equal 1, wallet.wallet_transactions.count
