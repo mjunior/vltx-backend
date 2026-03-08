@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: completed
-stopped_at: Phase 17 planning completed
-last_updated: "2026-03-08T02:26:08.199Z"
-last_activity: 2026-03-08 — phase 16 execution completed and verified
+milestone: v1.3
+milestone_name: Wallet Ledger Hardening
+status: Phase 17 completed; ready for phase 18 planning/execution
+stopped_at: Phase 17 execution completed and verified
+last_updated: "2026-03-08T03:22:00Z"
+last_activity: 2026-03-08 — phase 17 completed with 2/2 plans and verification passed
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 4
-  percent: 50
+  completed_phases: 3
+  total_plans: 8
+  completed_plans: 6
+  percent: 75
 ---
 
 # Project State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Phase 17 planning/execution — Idempotency and Refund Deduplication
+**Current focus:** Phase 18 planning/execution — Wallet Authorization and Tenant Isolation Surface
 
 ## Current Position
 
-Phase: 17 (next)
+Phase: 18 (next)
 Plan: none active
-Status: Phase 16 complete; ready for `$gsd-discuss-phase 17`, `$gsd-plan-phase 17` or `$gsd-execute-phase 17` (if already planned)
-Last activity: 2026-03-08 — phase 16 execution completed and verified
+Status: Phase 17 complete; ready for `$gsd-discuss-phase 18`, `$gsd-plan-phase 18` or `$gsd-execute-phase 18` (if already planned)
+Last activity: 2026-03-08 — phase 17 execution completed and verified
 
-Progress: [█████░░░░░] 50%
+Progress: [███████░░░] 75%
 
 ## Session Continuity
 
-Last session: 2026-03-08T02:26:08.191Z
-Stopped at: Phase 17 planning completed
-Resume file: .planning/phases/17-idempotency-and-refund-deduplication/17-02-PLAN.md
+Last session: 2026-03-08T03:22:00Z
+Stopped at: Phase 17 execution completed and verified
+Resume file: .planning/phases/17-idempotency-and-refund-deduplication/17-VERIFICATION.md

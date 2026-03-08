@@ -15,7 +15,7 @@
 
 ### Wallet Operations Safety
 
-- [ ] **WAL-05**: Sistema impede reembolso duplicado para a mesma referência de negócio/idempotency key.
+- [x] **WAL-05**: Sistema impede reembolso duplicado para a mesma referência de negócio/idempotency key.
 - [x] **WAL-06**: Operações de crédito, débito e reembolso adquirem lock da carteira antes de movimentar saldo.
 - [x] **WAL-07**: Nenhuma operação pode resultar em saldo negativo; débito/reembolso inválido falha sem inserir transação.
 - [x] **WAL-08**: Backend nunca confia em valores críticos enviados pelo frontend e sempre recalcula/valida no servidor e banco.
@@ -27,8 +27,8 @@
 
 ### Idempotency and Race Safety
 
-- [ ] **IDEMP-01**: Requisições repetidas de débito/crédito com a mesma chave idempotente produzem no máximo uma transação efetiva.
-- [ ] **IDEMP-02**: Operações concorrentes sobre a mesma carteira permanecem consistentes e sem dupla movimentação indevida.
+- [x] **IDEMP-01**: Requisições repetidas de débito/crédito com a mesma chave idempotente produzem no máximo uma transação efetiva.
+- [x] **IDEMP-02**: Operações concorrentes sobre a mesma carteira permanecem consistentes e sem dupla movimentação indevida.
 
 ## Future Requirements
 
@@ -57,9 +57,9 @@
 | WAL-06 | Phase 16 | Complete |
 | WAL-07 | Phase 16 | Complete |
 | WAL-08 | Phase 16 | Complete |
-| WAL-05 | Phase 17 | Pending |
-| IDEMP-01 | Phase 17 | Pending |
-| IDEMP-02 | Phase 17 | Pending |
+| WAL-05 | Phase 17 | Complete |
+| IDEMP-01 | Phase 17 | Complete |
+| IDEMP-02 | Phase 17 | Complete |
 | AUTHZ-08 | Phase 18 | Pending |
 | AUTHZ-09 | Phase 18 | Pending |
 
@@ -70,4 +70,4 @@
 
 ---
 *Requirements defined: 2026-03-07 for milestone v1.3*
-*Last updated: 2026-03-08 after phase 16 execution*
+*Last updated: 2026-03-08 after phase 17 execution*

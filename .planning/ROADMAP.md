@@ -25,7 +25,7 @@
     2. Saldo nunca fica negativo; tentativa inválida retorna erro sem persistir transação.
     3. Valores críticos vindos do frontend são ignorados/recalculados a partir de dados confiáveis.
 
-- [ ] **Phase 17: Idempotency and Refund Deduplication**
+- [x] **Phase 17: Idempotency and Refund Deduplication** (completed 2026-03-08)
   - Goal: garantir idempotência forte em retries e concorrência, incluindo bloqueio de reembolso duplicado.
   - Requirements: `WAL-05`, `IDEMP-01`, `IDEMP-02`
   - Success criteria:
@@ -109,5 +109,5 @@ Plans:
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Complete | 2026-03-07 |
 | 15. Wallet Ledger Data Model and Invariants | v1.3 | 4 | Complete | 2026-03-08 |
 | 16. Transaction Safety and Non-Negative Balance Enforcement | v1.3 | 3 | Complete | 2026-03-08 |
-| 17. Idempotency and Refund Deduplication | v1.3 | 3 | Pending | — |
+| 17. Idempotency and Refund Deduplication | v1.3 | 3 | Complete | 2026-03-08 |
 | 18. Wallet Authorization and Tenant Isolation Surface | v1.3 | 2 | Pending | — |
