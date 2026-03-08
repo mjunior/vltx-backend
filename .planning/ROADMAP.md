@@ -33,7 +33,7 @@
     2. Retry de mesma operação retorna resultado consistente sem duplicar débito/crédito.
     3. Corridas concorrentes na mesma carteira preservam consistência do ledger.
 
-- [ ] **Phase 18: Wallet Authorization and Tenant Isolation Surface**
+- [x] **Phase 18: Wallet Authorization and Tenant Isolation Surface** (completed 2026-03-08)
   - Goal: reforçar fronteira de autorização para consulta e operação apenas da carteira própria.
   - Requirements: `AUTHZ-08`, `AUTHZ-09`
   - Success criteria:
@@ -110,4 +110,4 @@ Plans:
 | 15. Wallet Ledger Data Model and Invariants | v1.3 | 4 | Complete | 2026-03-08 |
 | 16. Transaction Safety and Non-Negative Balance Enforcement | v1.3 | 3 | Complete | 2026-03-08 |
 | 17. Idempotency and Refund Deduplication | v1.3 | 3 | Complete | 2026-03-08 |
-| 18. Wallet Authorization and Tenant Isolation Surface | v1.3 | 2 | Pending | — |
+| 18. Wallet Authorization and Tenant Isolation Surface | v1.3 | 2 | Complete | 2026-03-08 |

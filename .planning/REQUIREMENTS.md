@@ -22,8 +22,8 @@
 
 ### Authorization and Tenant Isolation
 
-- [ ] **AUTHZ-08**: Usuário autenticado só pode consultar saldo/extrato da própria carteira.
-- [ ] **AUTHZ-09**: Usuário autenticado não pode acessar nem movimentar carteira de outro usuário, mesmo com IDs forjados.
+- [x] **AUTHZ-08**: Usuário autenticado só pode consultar saldo/extrato da própria carteira.
+- [x] **AUTHZ-09**: Usuário autenticado não pode acessar nem movimentar carteira de outro usuário, mesmo com IDs forjados.
 
 ### Idempotency and Race Safety
 
@@ -60,8 +60,8 @@
 | WAL-05 | Phase 17 | Complete |
 | IDEMP-01 | Phase 17 | Complete |
 | IDEMP-02 | Phase 17 | Complete |
-| AUTHZ-08 | Phase 18 | Pending |
-| AUTHZ-09 | Phase 18 | Pending |
+| AUTHZ-08 | Phase 18 | Complete |
+| AUTHZ-09 | Phase 18 | Complete |
 
 **Coverage:**
 - v1.3 requirements: 12 total
@@ -70,4 +70,4 @@
 
 ---
 *Requirements defined: 2026-03-07 for milestone v1.3*
-*Last updated: 2026-03-08 after phase 17 execution*
+*Last updated: 2026-03-08 after phase 18 execution*
