@@ -2,7 +2,7 @@
 
 ## What This Is
 
-API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário, domínio de produtos e jornada de compra com carrinho. O foco atual evolui o catálogo público para permitir fluxo de compra seguro sem confiar em payload sensível vindo do frontend.
+API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário, domínio de produtos e jornada de compra com carrinho. O foco atual evolui checkout para criação de pedido com débito real de carteira em modelo ledger, priorizando segurança transacional e isolamento multi-tenant.
 
 ## Core Value
 
@@ -29,9 +29,9 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 
 ### Active
 
-- [ ] Criar pedido persistido a partir do carrinho finalizado com snapshot de itens/valores
-- [ ] Debitar carteira com trilha de saldo/ledger e rollback seguro em falha
-- [ ] Introduzir estados do pedido (processing, failed, canceled) e idempotência de criação
+- [ ] Criar carteira em modelo ledger append-only (transactions insert-only com `balance_after`)
+- [ ] Garantir débito/crédito/reembolso idempotentes e seguros contra corrida, sem saldo negativo
+- [ ] Restringir visibilidade/operação da carteira ao próprio usuário autenticado
 
 ### Out of Scope
 
@@ -39,14 +39,19 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Password reset / email verification
 - MFA/2FA neste ciclo
 
-## Current Milestone
+## Current Milestone: v1.3 Wallet Ledger Hardening
 
-Nenhum milestone ativo (v1.2 concluído). Próximo ciclo deve focar criação de pedido e débito de carteira.
+**Goal:** Implementar carteira com ledger append-only e garantias fortes de segurança transacional e isolamento por usuário.
+
+**Target features:**
+- Tabela de transações de carteira com tipos `credit`, `debit`, `refund`, `balance_after` e bloqueio a reembolso duplicado.
+- Operações financeiras com lock, idempotência e proteção contra race conditions.
+- Regras server-side para valores em centavos, validação anti-fraude e proibição de saldo negativo.
 
 ## Current State
 
 - **Shipped versions:** v1.0, v1.1, v1.2
-- **Current milestone:** none (ready for `$gsd-new-milestone`)
+- **Current milestone:** v1.3 Wallet Ledger Hardening
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
 
 ## Constraints
@@ -54,6 +59,8 @@ Nenhum milestone ativo (v1.2 concluído). Próximo ciclo deve focar criação de
 - Toda autorização de recursos privados usa usuário derivado do token.
 - Endpoints privados exigem autenticação.
 - Endpoints públicos não expõem dados sensíveis.
+- Operações de carteira nunca confiam em valores enviados pelo frontend.
+- Ledger de carteira é append-only: sem `UPDATE`/`DELETE` em transações.
 
 ## Key Decisions
 
@@ -68,12 +75,13 @@ Nenhum milestone ativo (v1.2 concluído). Próximo ciclo deve focar criação de
 | Um carrinho ativo por usuário | Simplificar checkout e reduzir abuso por multiplicação de carrinhos | ✓ Good (v1.2) |
 | Checkout `wallet` only com finalização atômica | Garantir caminho de pagamento mínimo seguro antes de persistir pedidos | ✓ Good (v1.2) |
 | Preparação de pedido sem persistência nesta etapa | Permitir evolução incremental para ORD-01..03 | ✓ Good (v1.2) |
+| Ledger de carteira append-only com lock por operação | Priorizar integridade financeira sobre simplicidade | — Pending (v1.3) |
 
 ## Next Milestone Goals
 
-1. Criar `Order` persistido a partir do carrinho finalizado com snapshot financeiro estável.
-2. Integrar débito de carteira/ledger com garantias transacionais e idempotência.
-3. Entregar estados de pedido e tratamento robusto de falha/cancelamento.
+1. Criar modelo de carteira e transações com trilha imutável de saldo em centavos.
+2. Implementar motor de movimentação (crédito/débito/reembolso) com lock e idempotência forte.
+3. Integrar segurança de autorização para impedir qualquer acesso a carteira de terceiros.
 
 ---
-*Last updated: 2026-03-07 after v1.2 milestone completion*
+*Last updated: 2026-03-07 after starting v1.3 milestone*
