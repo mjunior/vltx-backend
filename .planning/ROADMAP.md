@@ -17,7 +17,7 @@
     2. Cada transação persiste `balance_after_cents` calculado no backend.
     3. Fluxos de movimentação operam exclusivamente em centavos inteiros.
 
-- [ ] **Phase 16: Transaction Safety and Non-Negative Balance Enforcement**
+- [x] **Phase 16: Transaction Safety and Non-Negative Balance Enforcement** (completed 2026-03-08)
   - Goal: implementar engine de movimentação com lock e validações anti-fraude server-side.
   - Requirements: `WAL-06`, `WAL-07`, `WAL-08`
   - Success criteria:
@@ -108,6 +108,6 @@ Plans:
 | 13. Cart State Guards and Abuse Prevention | v1.2 | 1 | Complete | 2026-03-07 |
 | 14. Cart Finalization and Order Service Preparation | v1.2 | 3 | Complete | 2026-03-07 |
 | 15. Wallet Ledger Data Model and Invariants | v1.3 | 4 | Complete | 2026-03-08 |
-| 16. Transaction Safety and Non-Negative Balance Enforcement | v1.3 | 3 | Pending | — |
+| 16. Transaction Safety and Non-Negative Balance Enforcement | v1.3 | 3 | Complete | 2026-03-08 |
 | 17. Idempotency and Refund Deduplication | v1.3 | 3 | Pending | — |
 | 18. Wallet Authorization and Tenant Isolation Surface | v1.3 | 2 | Pending | — |
