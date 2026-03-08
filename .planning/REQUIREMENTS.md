@@ -8,10 +8,10 @@
 
 ### Wallet Ledger Core
 
-- [ ] **WAL-01**: Sistema mantém histórico financeiro da carteira em ledger append-only, com criação apenas por INSERT de transações.
-- [ ] **WAL-02**: Cada transação de carteira registra tipo `credit`, `debit` ou `refund` e `amount_cents` inteiro positivo.
-- [ ] **WAL-03**: Cada transação persiste `balance_after_cents` calculado no backend no mesmo fluxo atômico da movimentação.
-- [ ] **WAL-04**: Todos os valores monetários de carteira são armazenados e processados em centavos (inteiro), sem float.
+- [x] **WAL-01**: Sistema mantém histórico financeiro da carteira em ledger append-only, com criação apenas por INSERT de transações.
+- [x] **WAL-02**: Cada transação de carteira registra tipo `credit`, `debit` ou `refund` e `amount_cents` inteiro positivo.
+- [x] **WAL-03**: Cada transação persiste `balance_after_cents` calculado no backend no mesmo fluxo atômico da movimentação.
+- [x] **WAL-04**: Todos os valores monetários de carteira são armazenados e processados em centavos (inteiro), sem float.
 
 ### Wallet Operations Safety
 
@@ -50,10 +50,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WAL-01 | Phase 15 | Pending |
-| WAL-02 | Phase 15 | Pending |
-| WAL-03 | Phase 15 | Pending |
-| WAL-04 | Phase 15 | Pending |
+| WAL-01 | Phase 15 | Complete |
+| WAL-02 | Phase 15 | Complete |
+| WAL-03 | Phase 15 | Complete |
+| WAL-04 | Phase 15 | Complete |
 | WAL-06 | Phase 16 | Pending |
 | WAL-07 | Phase 16 | Pending |
 | WAL-08 | Phase 16 | Pending |
@@ -70,4 +70,4 @@
 
 ---
 *Requirements defined: 2026-03-07 for milestone v1.3*
-*Last updated: 2026-03-07 after initial milestone definition*
+*Last updated: 2026-03-08 after phase 15 execution*
