@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_07_123000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_07_230200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -88,10 +88,40 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_07_123000) do
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
   end
 
+  create_table "wallet_transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "wallet_id", null: false
+    t.string "transaction_type", null: false
+    t.bigint "amount_cents", null: false
+    t.bigint "balance_after_cents", null: false
+    t.string "reference_type", null: false
+    t.string "reference_id", null: false
+    t.string "operation_key", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["wallet_id", "created_at", "id"], name: "idx_wallet_transactions_wallet_timeline"
+    t.index ["wallet_id", "operation_key"], name: "idx_wallet_transactions_wallet_operation_key_unique", unique: true
+    t.index ["wallet_id"], name: "index_wallet_transactions_on_wallet_id"
+    t.check_constraint "amount_cents > 0", name: "wallet_transactions_amount_positive"
+    t.check_constraint "balance_after_cents >= 0", name: "wallet_transactions_balance_after_non_negative"
+    t.check_constraint "transaction_type::text = ANY (ARRAY['credit'::character varying, 'debit'::character varying, 'refund'::character varying]::text[])", name: "wallet_transactions_type_allowed"
+  end
+
+  create_table "wallets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.bigint "current_balance_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id", unique: true
+    t.check_constraint "current_balance_cents >= 0", name: "wallets_current_balance_non_negative"
+  end
+
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
   add_foreign_key "products", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_sessions", "users"
+  add_foreign_key "wallet_transactions", "wallets"
+  add_foreign_key "wallets", "users"
 end

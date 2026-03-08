@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :refresh_sessions, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :carts, dependent: :destroy
+  has_one :wallet, dependent: :destroy
 
   before_validation :normalize_email
 
