@@ -1,5 +1,33 @@
 # Milestones
 
+## v1.3 Wallet Ledger Hardening (Shipped: 2026-03-08)
+
+**Scope delivered:**
+- 4 phases
+- 8 plans
+- 24 tasks
+- Timeline: 2026-03-07 -> 2026-03-08
+- Git range: `0dab28c` -> `1accc0d`
+- Diff summary: 44 files changed, 2983 insertions(+), 50 deletions(-)
+
+**Key accomplishments:**
+1. Wallet e ledger append-only com invariantes de centavos, `balance_after_cents` e proteção contra `UPDATE/DELETE`.
+2. Engine transacional de movimentação com lock de wallet, bloqueio de saldo negativo e fail-closed em inconsistência.
+3. Idempotência forte por `operation_key` com conflito determinístico para payload divergente.
+4. Deduplicação de refund por referência de negócio com guarda determinística no banco e no service.
+5. Cobertura de concorrência/retry comprovando no máximo uma movimentação efetiva por operação lógica.
+6. Endpoints de leitura de wallet (`GET /wallet`, `GET /wallet/transactions`) com isolamento tenant e extrato fixo de 30 transações.
+
+**Known tech debt accepted:**
+- Persistência de pedido e trilha financeira por `order_id` (ORD-01/02/03) ficou para o próximo milestone.
+- Sem paginação/filtros no extrato de wallet (limite hardcoded em 30 por decisão inicial).
+
+**Archives:**
+- `.planning/milestones/v1.3-ROADMAP.md`
+- `.planning/milestones/v1.3-REQUIREMENTS.md`
+
+---
+
 ## v1.2 Cart and Checkout Foundation (Shipped: 2026-03-07)
 
 **Scope delivered:**

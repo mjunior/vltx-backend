@@ -2,7 +2,7 @@
 
 ## What This Is
 
-API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário, domínio de produtos e jornada de compra com carrinho. O foco atual evolui checkout para criação de pedido com débito real de carteira em modelo ledger, priorizando segurança transacional e isolamento multi-tenant.
+API backend em Rails 8 para autenticação JWT segura, gestão de perfil do usuário, domínio de produtos, carrinho e carteira financeira em ledger append-only.
 
 ## Core Value
 
@@ -26,12 +26,17 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - ✓ Guardas de estado para carrinhos `finished`/`abandoned` com prevenção de abuso — v1.2
 - ✓ Checkout com `wallet` only e transição segura para `finished` — v1.2
 - ✓ Service de preparação de pedido sem persistência de `Order` (foundation) — v1.2
+- ✓ Carteira em ledger append-only com `balance_after` e centavos inteiros — v1.3
+- ✓ Movimentação segura com lock, não-negativação e anti-fraude server-side — v1.3
+- ✓ Idempotência de operação e deduplicação de refund sob corrida/retry — v1.3
+- ✓ Surface de wallet com isolamento tenant e authz por token (`GET /wallet`, `GET /wallet/transactions`) — v1.3
 
 ### Active
 
-- [ ] Criar carteira em modelo ledger append-only (transactions insert-only com `balance_after`)
-- [ ] Garantir débito/crédito/reembolso idempotentes e seguros contra corrida, sem saldo negativo
-- [ ] Restringir visibilidade/operação da carteira ao próprio usuário autenticado
+- [ ] Persistir `Order` no checkout com snapshot de itens e totais (`ORD-01`)
+- [ ] Integrar ledger financeiro por `order_id` ponta a ponta (`ORD-02`)
+- [ ] Suportar estado de pedido com cancelamento e refund automático de pedido pago (`ORD-03` + Req 21)
+- [ ] Entregar painel seller com saldo a receber e histórico financeiro de pedidos (Req 22)
 
 ### Out of Scope
 
@@ -39,19 +44,14 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Password reset / email verification
 - MFA/2FA neste ciclo
 
-## Current Milestone: v1.3 Wallet Ledger Hardening
+## Current Milestone: v1.4 Orders and Settlement Foundation (planned)
 
-**Goal:** Implementar carteira com ledger append-only e garantias fortes de segurança transacional e isolamento por usuário.
-
-**Target features:**
-- Tabela de transações de carteira com tipos `credit`, `debit`, `refund`, `balance_after` e bloqueio a reembolso duplicado.
-- Operações financeiras com lock, idempotência e proteção contra race conditions.
-- Regras server-side para valores em centavos, validação anti-fraude e proibição de saldo negativo.
+**Goal:** Evoluir checkout para criação de pedido persistido e iniciar trilha financeira buyer/seller baseada em `order_id`.
 
 ## Current State
 
-- **Shipped versions:** v1.0, v1.1, v1.2
-- **Current milestone:** v1.3 Wallet Ledger Hardening
+- **Shipped versions:** v1.0, v1.1, v1.2, v1.3
+- **Current milestone:** none (v1.4 pendente de abertura)
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
 
 ## Constraints
@@ -75,13 +75,15 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 | Um carrinho ativo por usuário | Simplificar checkout e reduzir abuso por multiplicação de carrinhos | ✓ Good (v1.2) |
 | Checkout `wallet` only com finalização atômica | Garantir caminho de pagamento mínimo seguro antes de persistir pedidos | ✓ Good (v1.2) |
 | Preparação de pedido sem persistência nesta etapa | Permitir evolução incremental para ORD-01..03 | ✓ Good (v1.2) |
-| Ledger de carteira append-only com lock por operação | Priorizar integridade financeira sobre simplicidade | — Pending (v1.3) |
+| Ledger de carteira append-only com lock por operação | Priorizar integridade financeira sobre simplicidade | ✓ Good (v1.3) |
+| Extrato de wallet hardcoded em últimas 30 transações | Simplicidade e previsibilidade com superfície mínima inicial | ✓ Good (v1.3) |
 
 ## Next Milestone Goals
 
-1. Criar modelo de carteira e transações com trilha imutável de saldo em centavos.
-2. Implementar motor de movimentação (crédito/débito/reembolso) com lock e idempotência forte.
-3. Integrar segurança de autorização para impedir qualquer acesso a carteira de terceiros.
+1. Criar `Order` persistido no checkout com snapshot completo.
+2. Vincular movimentações financeiras a `order_id` (buyer/seller) com rastreabilidade fim a fim.
+3. Implementar cancelamento de pedido pago com refund automático idempotente.
+4. Expor visão financeira do seller (saldo a receber e histórico de transações de pedidos).
 
 ---
-*Last updated: 2026-03-07 after starting v1.3 milestone*
+*Last updated: 2026-03-08 after completing v1.3 milestone*

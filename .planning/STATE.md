@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Wallet Ledger Hardening
-status: Phase 18 completed; milestone v1.3 ready for closure
-stopped_at: Phase 18 execution completed and verified
-last_updated: "2026-03-08T04:02:00Z"
-last_activity: 2026-03-08 — phase 18 completed with 2/2 plans and verification passed
+status: Milestone v1.3 archived and tagged; ready for next milestone
+stopped_at: Milestone completion finalized
+last_updated: "2026-03-08T04:20:00Z"
+last_activity: 2026-03-08 — v1.3 archived (roadmap/requirements/project updated)
 progress:
   total_phases: 4
   completed_phases: 4
@@ -18,22 +18,22 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-07)
+See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Milestone v1.3 complete — ready for `$gsd-complete-milestone`
+**Current focus:** Start next milestone definition (orders)
 
 ## Current Position
 
-Phase: none (all milestone phases completed)
+Phase: none (milestone closed)
 Plan: none active
-Status: Phases 15-18 complete; ready to close milestone and open orders milestone
-Last activity: 2026-03-08 — phase 18 execution completed and verified
+Status: v1.3 shipped and archived; ready for `$gsd-new-milestone`
+Last activity: 2026-03-08 — milestone v1.3 archived and tagged
 
 Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-08T04:02:00Z
-Stopped at: Phase 18 execution completed and verified
-Resume file: .planning/phases/18-wallet-authorization-and-tenant-isolation-surface/18-VERIFICATION.md
+Last session: 2026-03-08T04:20:00Z
+Stopped at: Milestone completion finalized
+Resume file: .planning/PROJECT.md
