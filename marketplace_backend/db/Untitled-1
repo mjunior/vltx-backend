@@ -1,0 +1,6 @@
+load Rails.root.join("script/credit_all_wallets.rb")
+CreditAllWallets.run!(batch_key: "bonus-2026-03-08")
+
+
+load Rails.root.join("script/debit_all_wallets.rb")
+DebitAllWallets.run!(batch_key: "debit-2026-03-08")
