@@ -21,12 +21,31 @@ module Carts
       Products::Create.call(user: user, params: defaults.merge(attrs)).product
     end
 
+    def create_wallet_for(user, balance_cents:)
+      wallet = Wallet.create!(user: user, current_balance_cents: 0)
+      return wallet if balance_cents.zero?
+
+      seed = Wallets::Ledger::AppendTransaction.call(
+        wallet: wallet,
+        transaction_type: :credit,
+        amount_cents: balance_cents,
+        reference_type: "seed",
+        reference_id: "seed-#{user.id}",
+        operation_key: "seed-wallet-#{user.id}",
+        metadata: { "source" => "test_seed" }
+      )
+      raise "wallet seed failed" unless seed.success?
+
+      wallet.reload
+    end
+
     test "finalizes active cart with wallet and returns preparation payload" do
       buyer = create_user
       seller = create_user(email: "cart-finalize-service-seller@example.com")
       product = create_product_for(seller)
       cart = Cart.create!(user: buyer, status: :active)
       CartItem.create!(cart: cart, product: product, quantity: 2)
+      wallet = create_wallet_for(buyer, balance_cents: 500_00)
 
       result = Finalize.call(user: buyer, params: { payment_method: "wallet" })
 
@@ -36,6 +55,8 @@ module Carts
       assert_equal "wallet", result.preparation[:payment_method]
       assert_equal 2, result.preparation[:total_items]
       assert_equal "240.00", result.preparation[:subtotal]
+      assert_equal 260_00, wallet.reload.current_balance_cents
+      assert_equal 2, wallet.wallet_transactions.count
     end
 
     test "returns invalid_payload for non-wallet method" do
@@ -65,6 +86,23 @@ module Carts
 
       assert_not result.success?
       assert_equal :invalid_payload, result.error_code
+    end
+
+    test "returns invalid_payload when wallet has insufficient funds" do
+      buyer = create_user(email: "cart-finalize-service-no-funds@example.com")
+      seller = create_user(email: "cart-finalize-service-no-funds-seller@example.com")
+      product = create_product_for(seller, price: "200.00")
+      cart = Cart.create!(user: buyer, status: :active)
+      CartItem.create!(cart: cart, product: product, quantity: 1)
+      wallet = create_wallet_for(buyer, balance_cents: 50_00)
+
+      result = Finalize.call(user: buyer, params: { payment_method: "wallet" })
+
+      assert_not result.success?
+      assert_equal :invalid_payload, result.error_code
+      assert_equal "active", cart.reload.status
+      assert_equal 50_00, wallet.reload.current_balance_cents
+      assert_equal 1, wallet.wallet_transactions.count
     end
   end
 end

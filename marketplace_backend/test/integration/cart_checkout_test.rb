@@ -29,12 +29,31 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     JSON.parse(response.body).dig("data", "access_token")
   end
 
+  def create_wallet_for(user, balance_cents:)
+    wallet = Wallet.create!(user: user, current_balance_cents: 0)
+    return wallet if balance_cents.zero?
+
+    seed = Wallets::Ledger::AppendTransaction.call(
+      wallet: wallet,
+      transaction_type: :credit,
+      amount_cents: balance_cents,
+      reference_type: "seed",
+      reference_id: "seed-#{user.id}",
+      operation_key: "seed-wallet-#{user.id}",
+      metadata: { "source" => "test_seed" }
+    )
+    raise "wallet seed failed" unless seed.success?
+
+    wallet.reload
+  end
+
   test "finalizes active cart with wallet only and returns preparation metadata" do
     buyer = create_user
     seller = create_user(email: "cart-checkout-seller@example.com")
     product = create_product_for(seller)
     cart = Cart.create!(user: buyer, status: :active)
     CartItem.create!(cart: cart, product: product, quantity: 2)
+    wallet = create_wallet_for(buyer, balance_cents: 500_00)
     token = access_token_for(buyer)
 
     post "/cart/checkout", params: {
@@ -54,6 +73,7 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     assert_equal "wallet", preparation["payment_method"]
     assert_equal cart.id, preparation["source_cart_id"]
     assert_equal "180.00", preparation["subtotal"]
+    assert_equal 320_00, wallet.reload.current_balance_cents
   end
 
   test "returns payload invalido for unsupported payment method" do

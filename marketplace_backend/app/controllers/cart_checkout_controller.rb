@@ -12,6 +12,7 @@ class CartCheckoutController < ApplicationController
 
     result = Carts::Finalize.call(user: current_user, params: resource_payload)
     return render_not_found if result.error_code == :not_found
+    return render_invalid_payload if [:insufficient_funds, :balance_mismatch].include?(result.error_code)
     return render_invalid_payload unless result.success?
 
     render json: {
