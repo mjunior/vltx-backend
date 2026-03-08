@@ -1,4 +1,5 @@
 require "test_helper"
+require "concurrent"
 
 module Wallets
   module Ledger
@@ -91,8 +92,127 @@ module Wallets
         second = append(wallet: wallet, transaction_type: :credit, amount_cents: 100, operation_key: "dup-op")
 
         assert first.success?
+        assert second.success?
+        assert_equal first.transaction.id, second.transaction.id
+        assert_equal 1, wallet.reload.wallet_transactions.count
+      end
+
+      test "fails with idempotency conflict when operation key repeats with different payload" do
+        wallet = create_wallet(email: "wallet-ledger-conflict@example.com")
+
+        first = append(wallet: wallet, transaction_type: :credit, amount_cents: 100, operation_key: "conflict-op")
+        second = append(wallet: wallet, transaction_type: :credit, amount_cents: 200, operation_key: "conflict-op")
+
+        assert first.success?
         assert_not second.success?
-        assert_equal :duplicate_operation, second.error_code
+        assert_equal :idempotency_conflict, second.error_code
+        assert_equal 1, wallet.reload.wallet_transactions.count
+      end
+
+      test "deduplicates refund by reference and returns existing transaction" do
+        wallet = create_wallet(email: "wallet-ledger-refund-dedup@example.com")
+        seed = append(wallet: wallet, transaction_type: :credit, amount_cents: 400, operation_key: "refund-seed")
+        assert seed.success?
+
+        first = append(
+          wallet: wallet,
+          transaction_type: :refund,
+          amount_cents: 100,
+          operation_key: "refund-op-1",
+          reference_id: "order-rf-1"
+        )
+        second = append(
+          wallet: wallet,
+          transaction_type: :refund,
+          amount_cents: 100,
+          operation_key: "refund-op-2",
+          reference_id: "order-rf-1"
+        )
+
+        assert first.success?
+        assert second.success?
+        assert_equal first.transaction.id, second.transaction.id
+        assert_equal 2, wallet.reload.wallet_transactions.count
+      end
+
+      test "returns idempotency conflict for refund duplicate reference with different amount" do
+        wallet = create_wallet(email: "wallet-ledger-refund-conflict@example.com")
+        seed = append(wallet: wallet, transaction_type: :credit, amount_cents: 400, operation_key: "refund-conflict-seed")
+        assert seed.success?
+
+        first = append(
+          wallet: wallet,
+          transaction_type: :refund,
+          amount_cents: 100,
+          operation_key: "refund-conflict-op-1",
+          reference_id: "order-rf-conflict-1"
+        )
+        second = append(
+          wallet: wallet,
+          transaction_type: :refund,
+          amount_cents: 80,
+          operation_key: "refund-conflict-op-2",
+          reference_id: "order-rf-conflict-1"
+        )
+
+        assert first.success?
+        assert_not second.success?
+        assert_equal :idempotency_conflict, second.error_code
+        assert_equal 2, wallet.reload.wallet_transactions.count
+      end
+
+      test "keeps at most one effective insert for concurrent identical operation keys" do
+        wallet = create_wallet(email: "wallet-ledger-concurrent-op@example.com")
+        barrier = Concurrent::CyclicBarrier.new(2)
+        results = Array.new(2)
+
+        threads = 2.times.map do |idx|
+          Thread.new do
+            ActiveRecord::Base.connection_pool.with_connection do
+              barrier.wait
+              results[idx] = append(
+                wallet: wallet,
+                transaction_type: :credit,
+                amount_cents: 90,
+                operation_key: "race-op-1"
+              )
+            end
+          end
+        end
+        threads.each(&:join)
+
+        assert results.all?(&:success?)
+        assert_equal results.first.transaction.id, results.second.transaction.id
+        assert_equal 1, wallet.reload.wallet_transactions.where(operation_key: "race-op-1").count
+      end
+
+      test "keeps at most one effective refund insert for concurrent duplicate references" do
+        wallet = create_wallet(email: "wallet-ledger-concurrent-refund@example.com")
+        seed = append(wallet: wallet, transaction_type: :credit, amount_cents: 500, operation_key: "refund-race-seed")
+        assert seed.success?
+
+        barrier = Concurrent::CyclicBarrier.new(2)
+        results = Array.new(2)
+
+        threads = 2.times.map do |idx|
+          Thread.new do
+            ActiveRecord::Base.connection_pool.with_connection do
+              barrier.wait
+              results[idx] = append(
+                wallet: wallet,
+                transaction_type: :refund,
+                amount_cents: 120,
+                operation_key: "race-refund-#{idx + 1}",
+                reference_id: "order-race-refund-1"
+              )
+            end
+          end
+        end
+        threads.each(&:join)
+
+        assert results.all?(&:success?)
+        assert_equal results.first.transaction.id, results.second.transaction.id
+        assert_equal 1, wallet.reload.wallet_transactions.where(transaction_type: :refund, reference_id: "order-race-refund-1").count
       end
 
       test "rejects non-integer amount" do

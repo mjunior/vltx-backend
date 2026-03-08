@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_07_230200) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_08_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -101,6 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_07_230200) do
     t.datetime "updated_at", null: false
     t.index ["wallet_id", "created_at", "id"], name: "idx_wallet_transactions_wallet_timeline"
     t.index ["wallet_id", "operation_key"], name: "idx_wallet_transactions_wallet_operation_key_unique", unique: true
+    t.index ["wallet_id", "reference_type", "reference_id"], name: "idx_wallet_transactions_refund_reference_unique", unique: true, where: "((transaction_type)::text = 'refund'::text)"
     t.index ["wallet_id"], name: "index_wallet_transactions_on_wallet_id"
     t.check_constraint "amount_cents > 0", name: "wallet_transactions_amount_positive"
     t.check_constraint "balance_after_cents >= 0", name: "wallet_transactions_balance_after_non_negative"

@@ -74,8 +74,21 @@ module Wallets
         second = apply(wallet: wallet, transaction_type: :credit, trusted_amount_cents: 150, operation_key: "dup-op")
 
         assert first.success?
+        assert second.success?
+        assert_equal first.transaction.id, second.transaction.id
+        assert_equal 1, wallet.reload.wallet_transactions.count
+      end
+
+      test "returns idempotency conflict for repeated operation key with different payload" do
+        wallet = create_wallet(email: "wallet-operation-conflict@example.com")
+
+        first = apply(wallet: wallet, transaction_type: :credit, trusted_amount_cents: 150, operation_key: "conflict-op")
+        second = apply(wallet: wallet, transaction_type: :credit, trusted_amount_cents: 250, operation_key: "conflict-op")
+
+        assert first.success?
         assert_not second.success?
-        assert_equal :duplicate_operation, second.error_code
+        assert_equal :idempotency_conflict, second.error_code
+        assert_equal 1, wallet.reload.wallet_transactions.count
       end
 
       test "returns balance mismatch and corrects materialized value" do
