@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
+  get "wallet" => "wallets#show"
+  get "wallet/transactions" => "wallets#transactions"
   post "cart" => "carts#create"
   post "cart/checkout" => "cart_checkout#create"
   post "cart/items" => "cart_items#create"
