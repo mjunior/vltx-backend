@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :refresh_sessions, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :carts, dependent: :destroy
+  has_many :orders, dependent: :destroy
+  has_many :seller_orders, class_name: "Order", foreign_key: :seller_id, dependent: :restrict_with_exception, inverse_of: :seller
   has_one :wallet, dependent: :destroy
 
   before_validation :normalize_email

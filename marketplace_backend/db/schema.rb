@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_08_010000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -35,6 +35,48 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_08_010000) do
     t.index ["user_id", "status"], name: "index_carts_on_user_id_and_status"
     t.index ["user_id"], name: "index_carts_on_user_id"
     t.index ["user_id"], name: "index_carts_on_user_id_active_unique", unique: true, where: "((status)::text = 'active'::text)"
+  end
+
+  create_table "order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.uuid "product_id", null: false
+    t.uuid "seller_id", null: false
+    t.string "product_title", null: false
+    t.integer "quantity", null: false
+    t.bigint "unit_price_cents", null: false
+    t.bigint "line_subtotal_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id", "product_id"], name: "idx_order_items_order_product_unique", unique: true
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+    t.index ["seller_id", "created_at", "id"], name: "idx_order_items_seller_timeline"
+    t.index ["seller_id"], name: "index_order_items_on_seller_id"
+    t.check_constraint "line_subtotal_cents = (quantity * unit_price_cents)", name: "order_items_line_subtotal_matches_quantity"
+    t.check_constraint "line_subtotal_cents > 0", name: "order_items_line_subtotal_positive"
+    t.check_constraint "quantity > 0", name: "order_items_quantity_positive"
+    t.check_constraint "unit_price_cents > 0", name: "order_items_unit_price_positive"
+  end
+
+  create_table "orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "seller_id", null: false
+    t.uuid "source_cart_id", null: false
+    t.string "status", default: "paid", null: false
+    t.string "currency", default: "BRL", null: false
+    t.integer "total_items", null: false
+    t.bigint "subtotal_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["seller_id", "created_at", "id"], name: "idx_orders_seller_timeline"
+    t.index ["seller_id"], name: "index_orders_on_seller_id"
+    t.index ["source_cart_id", "seller_id"], name: "idx_orders_source_cart_seller_unique", unique: true
+    t.index ["source_cart_id"], name: "index_orders_on_source_cart_id"
+    t.index ["user_id", "created_at", "id"], name: "idx_orders_buyer_timeline"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+    t.check_constraint "status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'canceled'::character varying]::text[])", name: "orders_status_allowed"
+    t.check_constraint "subtotal_cents > 0", name: "orders_subtotal_positive"
+    t.check_constraint "total_items > 0", name: "orders_total_items_positive"
   end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -120,6 +162,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_08_010000) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "order_items", "users", column: "seller_id"
+  add_foreign_key "orders", "carts", column: "source_cart_id"
+  add_foreign_key "orders", "users"
+  add_foreign_key "orders", "users", column: "seller_id"
   add_foreign_key "products", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_sessions", "users"

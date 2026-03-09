@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
   belongs_to :user
   has_many :cart_items, dependent: :restrict_with_exception
+  has_many :order_items, dependent: :restrict_with_exception
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :public_visible, -> { not_deleted.where(active: true) }
