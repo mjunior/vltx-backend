@@ -2,7 +2,7 @@ require "bigdecimal"
 
 module Carts
   class Finalize
-    Result = Struct.new(:success?, :cart, :preparation, :error_code, keyword_init: true)
+    Result = Struct.new(:success?, :cart, :order_ids, :summary, :error_code, keyword_init: true)
 
     ALLOWED_KEYS = %i[payment_method].freeze
     PAYMENT_METHOD_WALLET = "wallet".freeze
@@ -29,7 +29,12 @@ module Carts
       finalized = finalize_cart!(cart)
       return Result.new(success?: false, error_code: finalized[:error_code] || :invalid_payload) unless finalized[:success]
 
-      Result.new(success?: true, cart: finalized[:cart], preparation: finalized[:preparation])
+      Result.new(
+        success?: true,
+        cart: finalized[:cart],
+        order_ids: finalized[:order_ids],
+        summary: finalized[:summary]
+      )
     rescue StandardError
       Result.new(success?: false, error_code: :invalid_payload)
     end
@@ -50,7 +55,7 @@ module Carts
       payload = nil
       error_code = nil
 
-      Cart.transaction do
+      ActiveRecord::Base.transaction do
         locked_cart = Cart.lock.find_by(id: cart.id, user_id: @user.id, status: Cart.statuses[:active])
         unless locked_cart
           error_code = :not_found
@@ -62,7 +67,6 @@ module Carts
           raise ActiveRecord::Rollback
         end
 
-        locked_cart.update!(status: :finished)
         preparation_result = Orders::PrepareFromCart.call(cart: locked_cart)
         unless preparation_result.success?
           error_code = :invalid_payload
@@ -92,20 +96,29 @@ module Carts
           raise ActiveRecord::Rollback
         end
 
+        order_result = Orders::CreateFromCart.call(cart: locked_cart, buyer: @user)
+        unless order_result.success?
+          error_code = :invalid_payload
+          raise ActiveRecord::Rollback
+        end
+
+        locked_cart.update!(status: :finished)
+        locked_cart.cart_items.delete_all
+
         payload = {
           cart: locked_cart.reload,
-          preparation: preparation_result.preparation,
+          order_ids: order_result.orders.map(&:id),
+          summary: order_result.summary,
         }
       end
 
-      return { success: true, cart: payload[:cart], preparation: payload[:preparation] } if payload
+      return { success: true, cart: payload[:cart], order_ids: payload[:order_ids], summary: payload[:summary] } if payload
 
       { success: false, error_code: error_code || :invalid_payload }
     end
 
     def subtotal_cents(preparation)
-      subtotal = preparation[:subtotal].to_s
-      (BigDecimal(subtotal) * 100).to_i
+      preparation[:subtotal_cents].to_i
     end
 
     def wallet_for(user:)

@@ -18,8 +18,8 @@ class CartCheckoutController < ApplicationController
 
     render json: {
       data: {
-        cart: Carts::CartSerializer.call(cart: result.cart),
-        order_preparation: result.preparation,
+        order_ids: result.order_ids,
+        summary: result.summary,
       },
     }, status: :ok
   end

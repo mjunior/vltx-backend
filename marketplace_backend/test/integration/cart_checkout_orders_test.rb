@@ -1,7 +1,7 @@
 require "test_helper"
 
-class CartCheckoutTest < ActionDispatch::IntegrationTest
-  def create_user(email: "cart-checkout@example.com", password: "password123")
+class CartCheckoutOrdersTest < ActionDispatch::IntegrationTest
+  def create_user(email: "cart-checkout-orders@example.com", password: "password123")
     Users::Create.call(
       email: email,
       password: password,
@@ -11,8 +11,8 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
 
   def create_product_for(user, attrs = {})
     defaults = {
-      title: "Produto Checkout",
-      description: "Descricao valida para checkout de carrinho",
+      title: "Produto Checkout Orders",
+      description: "Descricao valida para checkout com orders reais",
       price: "90.00",
       stock_quantity: 6,
     }
@@ -47,15 +47,15 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     wallet.reload
   end
 
-  test "finalizes active cart with wallet only and returns order ids plus summary" do
+  test "checkout returns order ids and summary for mixed seller cart" do
     buyer = create_user
-    seller_a = create_user(email: "cart-checkout-seller-a@example.com")
-    seller_b = create_user(email: "cart-checkout-seller-b@example.com")
-    first_product = create_product_for(seller_a)
-    second_product = create_product_for(seller_b, title: "Produto Checkout B", price: "30.00")
+    seller_a = create_user(email: "cart-checkout-orders-seller-a@example.com")
+    seller_b = create_user(email: "cart-checkout-orders-seller-b@example.com")
+    product_a = create_product_for(seller_a, title: "Produto A", price: "90.00", stock_quantity: 4)
+    product_b = create_product_for(seller_b, title: "Produto B", price: "30.00", stock_quantity: 5)
     cart = Cart.create!(user: buyer, status: :active)
-    CartItem.create!(cart: cart, product: first_product, quantity: 2)
-    CartItem.create!(cart: cart, product: second_product, quantity: 1)
+    CartItem.create!(cart: cart, product: product_a, quantity: 2)
+    CartItem.create!(cart: cart, product: product_b, quantity: 1)
     wallet = create_wallet_for(buyer, balance_cents: 500_00)
     token = access_token_for(buyer)
 
@@ -76,23 +76,31 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     assert_equal "finished", cart.reload.status
     assert_equal 0, cart.cart_items.reload.count
     assert_equal 2, order_ids.length
+    assert_equal 2, Order.where(id: order_ids).count
     assert_equal 2, summary["orders_count"]
-    assert_equal "wallet", summary["payment_method"]
+    assert_equal 3, summary["total_items"]
     assert_equal "210.00", summary["subtotal"]
+    assert_equal "wallet", summary["payment_method"]
     assert_equal 290_00, wallet.reload.current_balance_cents
+    assert_equal 2, product_a.reload.stock_quantity
+    assert_equal 4, product_b.reload.stock_quantity
   end
 
-  test "returns payload invalido for unsupported payment method" do
-    buyer = create_user(email: "cart-checkout-wallet-only@example.com")
-    seller = create_user(email: "cart-checkout-wallet-only-seller@example.com")
-    product = create_product_for(seller)
+  test "checkout fails entirely when one item is out of stock" do
+    buyer = create_user(email: "cart-checkout-orders-insufficient@example.com")
+    seller_a = create_user(email: "cart-checkout-orders-insufficient-seller-a@example.com")
+    seller_b = create_user(email: "cart-checkout-orders-insufficient-seller-b@example.com")
+    product_a = create_product_for(seller_a, title: "Produto A", price: "90.00", stock_quantity: 1)
+    product_b = create_product_for(seller_b, title: "Produto B", price: "30.00", stock_quantity: 5)
     cart = Cart.create!(user: buyer, status: :active)
-    CartItem.create!(cart: cart, product: product, quantity: 1)
+    CartItem.create!(cart: cart, product: product_a, quantity: 2)
+    CartItem.create!(cart: cart, product: product_b, quantity: 1)
+    wallet = create_wallet_for(buyer, balance_cents: 500_00)
     token = access_token_for(buyer)
 
     post "/cart/checkout", params: {
       checkout: {
-        payment_method: "pix",
+        payment_method: "wallet",
       },
     }, headers: {
       "Authorization" => "Bearer #{token}",
@@ -102,41 +110,11 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
     assert_equal "active", cart.reload.status
-  end
-
-  test "returns payload invalido when active cart is empty" do
-    buyer = create_user(email: "cart-checkout-empty@example.com")
-    Cart.create!(user: buyer, status: :active)
-    token = access_token_for(buyer)
-
-    post "/cart/checkout", params: {
-      checkout: {
-        payment_method: "wallet",
-      },
-    }, headers: {
-      "Authorization" => "Bearer #{token}",
-      "CONTENT_TYPE" => "application/json",
-    }, as: :json
-
-    assert_response :unprocessable_entity
-    assert_equal "payload invalido", JSON.parse(response.body)["error"]
-  end
-
-  test "returns nao encontrado when user has no active cart" do
-    buyer = create_user(email: "cart-checkout-no-active@example.com")
-    Cart.create!(user: buyer, status: :finished)
-    token = access_token_for(buyer)
-
-    post "/cart/checkout", params: {
-      checkout: {
-        payment_method: "wallet",
-      },
-    }, headers: {
-      "Authorization" => "Bearer #{token}",
-      "CONTENT_TYPE" => "application/json",
-    }, as: :json
-
-    assert_response :not_found
-    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+    assert_equal 2, cart.cart_items.reload.count
+    assert_equal 500_00, wallet.reload.current_balance_cents
+    assert_equal 1, wallet.wallet_transactions.count
+    assert_equal 1, product_a.reload.stock_quantity
+    assert_equal 5, product_b.reload.stock_quantity
+    assert_equal 0, Order.count
   end
 end

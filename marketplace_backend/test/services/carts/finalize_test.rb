@@ -39,23 +39,28 @@ module Carts
       wallet.reload
     end
 
-    test "finalizes active cart with wallet and returns preparation payload" do
+    test "finalizes active cart with wallet and returns order ids and summary" do
       buyer = create_user
-      seller = create_user(email: "cart-finalize-service-seller@example.com")
-      product = create_product_for(seller)
+      seller_a = create_user(email: "cart-finalize-service-seller-a@example.com")
+      seller_b = create_user(email: "cart-finalize-service-seller-b@example.com")
+      first_product = create_product_for(seller_a)
+      second_product = create_product_for(seller_b, title: "Produto Finalize B", price: "50.00")
       cart = Cart.create!(user: buyer, status: :active)
-      CartItem.create!(cart: cart, product: product, quantity: 2)
+      CartItem.create!(cart: cart, product: first_product, quantity: 2)
+      CartItem.create!(cart: cart, product: second_product, quantity: 1)
       wallet = create_wallet_for(buyer, balance_cents: 500_00)
 
       result = Finalize.call(user: buyer, params: { payment_method: "wallet" })
 
       assert result.success?
       assert_equal "finished", result.cart.status
-      assert_equal cart.id, result.preparation[:source_cart_id]
-      assert_equal "wallet", result.preparation[:payment_method]
-      assert_equal 2, result.preparation[:total_items]
-      assert_equal "240.00", result.preparation[:subtotal]
-      assert_equal 260_00, wallet.reload.current_balance_cents
+      assert_equal 0, result.cart.cart_items.reload.count
+      assert_equal 2, result.order_ids.length
+      assert_equal 2, result.summary[:orders_count]
+      assert_equal "wallet", result.summary[:payment_method]
+      assert_equal 3, result.summary[:total_items]
+      assert_equal "290.00", result.summary[:subtotal]
+      assert_equal 210_00, wallet.reload.current_balance_cents
       assert_equal 2, wallet.wallet_transactions.count
     end
 
@@ -103,6 +108,28 @@ module Carts
       assert_equal "active", cart.reload.status
       assert_equal 50_00, wallet.reload.current_balance_cents
       assert_equal 1, wallet.wallet_transactions.count
+    end
+
+    test "returns invalid_payload and preserves cart when one item has insufficient stock" do
+      buyer = create_user(email: "cart-finalize-service-low-stock@example.com")
+      seller_a = create_user(email: "cart-finalize-service-low-stock-seller-a@example.com")
+      seller_b = create_user(email: "cart-finalize-service-low-stock-seller-b@example.com")
+      first_product = create_product_for(seller_a, price: "30.00", stock_quantity: 1)
+      second_product = create_product_for(seller_b, price: "20.00", stock_quantity: 5)
+      cart = Cart.create!(user: buyer, status: :active)
+      CartItem.create!(cart: cart, product: first_product, quantity: 2)
+      CartItem.create!(cart: cart, product: second_product, quantity: 1)
+      wallet = create_wallet_for(buyer, balance_cents: 500_00)
+
+      result = Finalize.call(user: buyer, params: { payment_method: "wallet" })
+
+      assert_not result.success?
+      assert_equal :invalid_payload, result.error_code
+      assert_equal "active", cart.reload.status
+      assert_equal 2, cart.cart_items.reload.count
+      assert_equal 500_00, wallet.reload.current_balance_cents
+      assert_equal 1, wallet.wallet_transactions.count
+      assert_equal 0, Order.count
     end
   end
 end
