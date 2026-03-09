@@ -64,9 +64,9 @@
 **Plans**: 3 plans
 
 Plans:
-- [ ] 19-01: Implementar schema/models de `Order` e `OrderItem` com snapshot e constraints de domínio
-- [ ] 19-02: Integrar checkout transacional para criar pedido persistido e reduzir estoque
-- [ ] 19-03: Cobrir retries/concorrência para evitar duplicidade de pedido e inconsistência de estoque
+- [x] 19-01: Implementar schema/models de `Order` e `OrderItem` com snapshot e constraints de domínio
+- [x] 19-02: Integrar checkout transacional para criar pedido persistido e reduzir estoque
+- [x] 19-03: Cobrir retries/concorrência para evitar duplicidade de pedido e inconsistência de estoque
 
 ### Phase 20: Order-Linked Ledger and Wallet Provisioning
 **Goal**: Fechar a rastreabilidade financeira ponta a ponta por `order_id` e provisionar crédito inicial da carteira.
@@ -116,7 +116,7 @@ Plans:
 
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
-| 19. Order Persistence and Stock Integrity | v1.4 | 4 | Pending | — |
+| 19. Order Persistence and Stock Integrity | v1.4 | 4 | In Progress | 2026-03-09 |
 | 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 2 | Pending | — |
 | 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Pending | — |
 | 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Pending | — |

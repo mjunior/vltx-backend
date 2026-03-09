@@ -62,16 +62,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INV-01 | Phase 19 | Pending |
+| INV-01 | Phase 19 | In Progress |
 | INV-02 | Phase 21 | Pending |
-| ORD-01 | Phase 19 | Pending |
-| ORD-02 | Phase 19 | Pending |
+| ORD-01 | Phase 19 | In Progress |
+| ORD-02 | Phase 19 | In Progress |
 | ORD-03 | Phase 21 | Pending |
 | ORD-04 | Phase 21 | Pending |
 | ORD-05 | Phase 21 | Pending |
 | ORD-06 | Phase 22 | Pending |
 | ORD-07 | Phase 21 | Pending |
-| PAY-01 | Phase 19 | Pending |
+| PAY-01 | Phase 19 | In Progress |
 | PAY-02 | Phase 20 | Pending |
 | PAY-03 | Phase 20 | Pending |
 | PAY-04 | Phase 21 | Pending |
