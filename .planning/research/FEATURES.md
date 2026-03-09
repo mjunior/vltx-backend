@@ -1,7 +1,7 @@
 # Feature Research
 
-**Domain:** Authentication and session lifecycle
-**Researched:** 2026-03-05
+**Domain:** Orders, status workflow, wallet settlement, and ratings
+**Researched:** 2026-03-09
 **Confidence:** HIGH
 
 ## Feature Landscape
@@ -10,72 +10,52 @@
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| Cadastro com email/senha | Fluxo básico de entrada | LOW | Validar unicidade e força mínima de senha |
-| Login com email/senha | Acesso ao sistema | LOW | Respostas uniformes para erro de credencial |
-| Access token curto | Segurança padrão para API | LOW | 15 min definido pelo usuário |
-| Refresh token | Renovação de sessão sem novo login | MEDIUM | Exige armazenamento e revogação correta |
-| Logout | Encerrar acesso | MEDIUM | Aqui será logout global |
+| Pedido persistido a partir do carrinho | Sem isso checkout fica incompleto | MEDIUM | Precisa snapshot e idempotência |
+| Pagamento só com carteira interna | Regra explícita do milestone | LOW | Já existe base parcial |
+| Cancelamento do pedido pago com refund | Essencial para confiança do comprador | MEDIUM | Deve ser idempotente |
+| Seller avança pedido por etapas | Fluxo básico de fulfillment | MEDIUM | Não pode pular estado |
+| Buyer marca entregue e pode contestar | Fecha o pós-compra | MEDIUM | Regras dependem do workflow |
+| Avaliação 1-5 com comentário | Sinal de qualidade pós-entrega | LOW-MEDIUM | Elegibilidade é a parte crítica |
 
 ### Differentiators (Competitive Advantage)
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Refresh rotativo one-time | Proteção forte contra replay | HIGH | Requer detecção de reutilização |
-| Revogação global por reuse suspeito | Resposta ativa a comprometimento | HIGH | Revoga todas as sessões do usuário |
-| Segredos separados por token | Blast radius reduzido | LOW | Operacionalmente simples e seguro |
+| Ledger inteiro por `order_id` | Rastreabilidade ponta a ponta | MEDIUM | Facilita reconciliação e auditoria |
+| Recebível seller separado do saldo buyer | Clareza financeira | MEDIUM | Evita semântica errada de payout |
+| Avaliação separada por produto e vendedor | Métricas futuras simples | LOW | Bom desenho de dados desde o começo |
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| JWT sem persistência de sessão | “Mais simples” | Sem revogação efetiva e sem trilha de sessão | Guardar sessão/refresh hash no banco |
-| Refresh eterno | Menos logins | Aumenta janela de abuso | TTL 7 dias com rotação |
-| Mensagens detalhadas de erro no login | “Melhor UX” | Facilita enumeração de usuários | Mensagem genérica de credenciais inválidas |
-
-## Feature Dependencies
-
-Cadastro/Login
-    └──requires──> User + senha segura
-Refresh rotativo
-    └──requires──> Sessão persistida + hash + jti
-Detecção de reuse
-    └──requires──> Estado de revogação + auditoria de sessão
+| PATCH livre de status | “Mais simples” | Abre brecha de fraude e inconsistência | Ações de transição explícitas |
+| Reembolso manual fora do fluxo do pedido | “Flexível” | Quebra rastreabilidade | Refund vinculado a `order_id` |
+| Avaliação sem vínculo com item entregue | “Menos modelagem” | Gera fraude e duplicidade | Rating ligado a item/pedido elegível |
 
 ## MVP Definition
 
-### Launch With (v1)
+### Launch With (v1.4)
 
-- [ ] Cadastro (`sign up`) com criação de `User` e `Profile`
-- [ ] Login com emissão de access+refresh
-- [ ] Refresh token rotativo one-time
-- [ ] Logout global (revogação de todas as sessões)
-- [ ] Revogação global automática quando detectar refresh reutilizado/revogado
-
-### Add After Validation (v1.x)
-
-- [ ] Rate limit avançado por IP/dispositivo
-- [ ] Tela/endpoints de gerenciamento de sessões por dispositivo
+- [ ] `Order` e `OrderItem` persistidos com snapshot
+- [ ] Baixa e restauração de estoque no fluxo correto
+- [ ] Workflow seguro de status por ator
+- [ ] Crédito inicial de R$ 10,00 na criação de conta
+- [ ] Refund automático ao cancelar pedido pago
+- [ ] Painel financeiro do seller
+- [ ] Avaliações por produto e por vendedor após entrega
 
 ### Future Consideration (v2+)
 
-- [ ] MFA/2FA
-- [ ] OAuth/social login
-
-## Feature Prioritization Matrix
-
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Cadastro/Login | HIGH | LOW | P1 |
-| Access + Refresh | HIGH | MEDIUM | P1 |
-| Refresh rotativo | HIGH | HIGH | P1 |
-| Reuse detection com logout global | HIGH | HIGH | P1 |
-| Sessões por dispositivo | MEDIUM | MEDIUM | P2 |
+- [ ] Saque/payout externo do seller
+- [ ] Card/Pix
+- [ ] Resposta pública do seller à avaliação
 
 ## Sources
 
-- Padrões da indústria para auth API com JWT
-- Práticas OWASP para sessão e token lifecycle
+- Padrões de marketplace fulfillment e fluxo financeiro
+- Documentação das gems de workflow pesquisadas
 
 ---
-*Feature research for: auth lifecycle*
-*Researched: 2026-03-05*
+*Feature research for: marketplace orders milestone*
+*Researched: 2026-03-09*

@@ -1,67 +1,54 @@
 # Pitfalls Research
 
-**Domain:** JWT auth with rotating refresh tokens
-**Researched:** 2026-03-05
+**Domain:** Marketplace orders with workflow and wallet settlement
+**Researched:** 2026-03-09
 **Confidence:** HIGH
 
 ## Critical Pitfalls
 
-### Pitfall 1: Refresh token replay
+### Pitfall 1: Client-controlled status changes
 
-**What goes wrong:** token roubado é reutilizado para manter sessão indevida.
-**Why it happens:** rotação incompleta ou sem estado persistido.
-**How to avoid:** refresh one-time, revogar anterior e persistir estado por `jti`.
-**Warning signs:** múltiplos refreshes quase simultâneos para mesma sessão.
-**Phase to address:** Phase 3-4.
-
----
-
-### Pitfall 2: Secret reuse between token classes
-
-**What goes wrong:** comprometimento único afeta access e refresh.
-**Why it happens:** simplificação operacional insegura.
-**How to avoid:** secrets separados, rotação independente.
-**Warning signs:** mesmo env var para ambos os tokens.
-**Phase to address:** Phase 2.
+**What goes wrong:** buyer ou seller envia estado arbitrário e pula etapas.
+**Why it happens:** controller aceita `status` livre ou model permite update direto.
+**How to avoid:** ações explícitas de transição, guarda por ator, workflow auditável.
+**Warning signs:** endpoint genérico `PATCH /orders/:id` com `status` no payload.
+**Phase to address:** Phase 21.
 
 ---
 
-### Pitfall 3: Inability to revoke stateless JWT
+### Pitfall 2: Financial side effects without a stable business reference
 
-**What goes wrong:** usuário faz logout e token continua válido até expirar.
-**Why it happens:** ausência de `jti` e ledger de revogação.
-**How to avoid:** incluir `jti` e checagem de revogação nas operações críticas.
-**Warning signs:** logout não altera estado persistido.
-**Phase to address:** Phase 2-4.
+**What goes wrong:** débito, refund e recebível ficam difíceis de reconciliar.
+**Why it happens:** ledger continua preso a `cart_id` mesmo após existir pedido.
+**How to avoid:** usar `order_id` como referência principal de negócio.
+**Warning signs:** refund procura checkout pelo carrinho em vez do pedido.
+**Phase to address:** Phase 20-21.
 
-## Security Mistakes
+---
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Mensagem de login muito específica | Enumeração de conta | Mensagem genérica |
-| Hash fraco/ausente de refresh token | Vazamento de sessão | Hash forte e comparação segura |
-| Sem invalidação global em reuse suspeito | Persistência de invasão | Revogar todas as sessões do usuário |
+### Pitfall 3: Order creation without stock or idempotency guarantees
 
-## "Looks Done But Isn't" Checklist
+**What goes wrong:** pedido duplica, estoque fica negativo ou divergente.
+**Why it happens:** criação do pedido, débito e baixa de estoque acontecem em passos independentes.
+**How to avoid:** transação com locks e chaves idempotentes no fluxo de checkout.
+**Warning signs:** retries de rede criam dois pedidos ou debitam duas vezes.
+**Phase to address:** Phase 19.
 
-- [ ] Login retorna tokens, mas sem `jti` auditável
-- [ ] Refresh funciona, mas token antigo segue válido
-- [ ] Logout retorna 200, mas não revoga sessões
-- [ ] Secrets separados no código, porém iguais no ambiente
+---
 
-## Pitfall-to-Phase Mapping
+### Pitfall 4: Ratings disconnected from delivered ownership
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Replay de refresh | 3-4 | Teste de reuse deve disparar logout global |
-| Secret reuse | 2 | Config com duas chaves distintas obrigatórias |
-| Revogação inefetiva | 4 | Logout invalida todas as sessões ativas |
+**What goes wrong:** usuário avalia sem comprar ou avalia várias vezes o mesmo item.
+**Why it happens:** rating não valida elegibilidade contra pedido entregue.
+**How to avoid:** unicidade por buyer + target + ordem elegível e validação pós-entrega.
+**Warning signs:** endpoint aceita `product_id`/`seller_id` sem checar order item entregue.
+**Phase to address:** Phase 22.
 
 ## Sources
 
-- OWASP JWT Cheat Sheet
-- Boas práticas de incident response em auth
+- Padrões de segurança para workflow state machines
+- Requisitos do milestone e arquitetura atual do app
 
 ---
-*Pitfalls research for: secure JWT lifecycle*
-*Researched: 2026-03-05*
+*Pitfalls research for: secure marketplace orders*
+*Researched: 2026-03-09*

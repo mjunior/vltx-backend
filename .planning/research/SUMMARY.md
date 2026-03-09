@@ -1,81 +1,67 @@
 # Project Research Summary
 
 **Project:** Marketplace Backend
-**Domain:** API authentication and secure session lifecycle
-**Researched:** 2026-03-05
+**Domain:** Orders, fulfillment workflow, seller settlement, and ratings
+**Researched:** 2026-03-09
 **Confidence:** HIGH
 
 ## Executive Summary
 
-A milestone deve implementar autenticação JWT segura com sessão controlada por estado persistido para permitir revogação efetiva. O fluxo mínimo inclui cadastro, login, refresh rotativo e logout global.
+Este milestone precisa fechar três lacunas do app atual: pedido persistido, workflow seguro de pós-compra e trilha financeira completa por `order_id`. O app já tem carrinho e ledger fortes; falta conectar isso a um domínio de pedido auditável.
 
-A arquitetura recomendada é Rails API com `User` para credenciais, `Profile` para dados pessoais e uma entidade de sessão para rastrear refresh token por `jti`. A segurança depende de três pilares: secrets separados por tipo de token, refresh token hash no banco e invalidação global em caso de reuse suspeito.
+Para o fluxo de status, a recomendação é usar uma camada explícita de workflow. Entre as referências atuais do ecossistema Rails/Ruby, `Statesman` é a opção mais alinhada ao risco descrito pelo usuário porque separa transições em tabela própria e favorece auditoria. `state_machines-activerecord` continua sendo a segunda melhor opção se a equipe quiser uma DSL mais direta.
 
-Os maiores riscos são replay de refresh, revogação incompleta e vazamento de segredo/token. O roadmap deve isolar primeiro a base criptográfica e de sessão, depois endpoints, e por fim hardening e cobertura de teste.
+As avaliações devem ficar em registros separados por produto e por vendedor, sempre vinculadas ao item comprado e entregue. Isso reduz fraude e simplifica médias futuras.
 
 ## Key Findings
 
 ### Recommended Stack
 
-Use `jwt` gem em Rails 8 com PostgreSQL, mantendo `has_secure_password` para senha e sessão persistida para refresh token rotativo. Evitar soluções totalmente stateless para refresh em cenários com revogação obrigatória.
+- Rails 8 + PostgreSQL + services transacionais continuam suficientes
+- Workflow explícito para `Order`
+- Ledger buyer/seller referenciado por `order_id`
 
-**Core technologies:**
-- `jwt`: assinatura e validação de access/refresh
-- PostgreSQL: estado transacional de sessão e revogação
-- Rails services: separação de emissão/validação/rotação
+### Table Stakes
 
-### Expected Features
+- `Order`/`OrderItem` persistidos com snapshot
+- Estoque decrementado no checkout e restaurado no cancelamento elegível
+- Pagamento wallet-only
+- Refund automático idempotente
+- Seller avança etapas sem pular estado
+- Buyer marca entregue, contesta depois e avalia pós-entrega
 
-**Must have (table stakes):**
-- Signup e login com email/senha
-- Access token (15 min) e refresh token (7 dias)
-- Refresh rotativo one-time
-- Logout global
+### Watch Out For
 
-**Should have (competitive):**
-- Reuse detection com resposta defensiva (deslogar geral)
-
-**Defer (v2+):**
-- MFA e social login
-
-### Architecture Approach
-
-Estruturar em camadas: controller de auth, serviços de token, modelos de usuário/perfil/sessão. Toda operação de refresh deve ser transacional para impedir dupla aceitação de token.
-
-### Critical Pitfalls
-
-1. **Replay de refresh** — rotação estrita com revogação imediata
-2. **Mesmo secret para todos os tokens** — secrets distintos obrigatórios
-3. **Logout sem revogação real** — revogação global baseada em sessão e `jti`
+1. `status` controlado por payload do cliente
+2. Ledger ainda preso a `cart_id`
+3. Rating sem checagem de compra entregue
+4. Recebível seller modelado como payout final cedo demais
 
 ## Implications for Roadmap
 
-### Phase 1: User and Profile Foundation
-**Rationale:** base de dados e credenciais antes de token lifecycle.
+### Phase 19: Order Persistence and Stock Integrity
+Criar base durável do pedido com snapshot e estoque.
 
-### Phase 2: JWT and Session Security Core
-**Rationale:** garantir emissão/validação segura antes de expor endpoints.
+### Phase 20: Order-Linked Ledger and Wallet Provisioning
+Trocar referência financeira para `order_id` e provisionar crédito inicial.
 
-### Phase 3: Auth Endpoints (Signup/Login/Refresh)
-**Rationale:** plugar fluxo completo com rotação segura.
+### Phase 21: Secure Order Workflow and Cancellation Refunds
+Aplicar transições autorizadas, cancelamento buyer e refund seguro.
 
-### Phase 4: Logout Global and Reuse Incident Handling
-**Rationale:** fechar lacunas de sessão e incident response.
-
-### Phase 5: Hardening and Security Test Coverage
-**Rationale:** validar comportamentos de segurança e regressão.
+### Phase 22: Seller Finance Surface, Contestation, and Ratings
+Fechar experiência financeira seller e pós-entrega.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Alinhado com app Rails atual |
-| Features | HIGH | Escopo definido pelo usuário |
-| Architecture | HIGH | Padrão consolidado para JWT rotativo |
-| Pitfalls | HIGH | Riscos clássicos conhecidos e mitigáveis |
+| Stack | HIGH | Compatível com Rails 8 e o estilo atual do app |
+| Features | HIGH | Escopo fornecido com critérios claros |
+| Architecture | HIGH | Reusa service layer existente |
+| Pitfalls | HIGH | Principais brechas estão mapeadas |
 
 **Overall confidence:** HIGH
 
 ---
-*Research completed: 2026-03-05*
+*Research completed: 2026-03-09*
 *Ready for roadmap: yes*

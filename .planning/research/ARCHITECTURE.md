@@ -1,86 +1,87 @@
 # Architecture Research
 
-**Domain:** Secure JWT auth in Rails API
-**Researched:** 2026-03-05
+**Domain:** Orders and post-purchase workflow in Rails API
+**Researched:** 2026-03-09
 **Confidence:** HIGH
 
 ## Standard Architecture
 
 ### System Overview
 
-```
-Client
-  -> AuthController (signup/login/refresh/logout)
-    -> Auth services (issue/verify/revoke tokens)
-      -> Session store (refresh hash + jti + status)
-        -> PostgreSQL
+```text
+Buyer
+  -> CartCheckoutController
+    -> Orders::CreateFromCart
+      -> stock lock + order snapshot + buyer debit
+        -> Order / OrderItem / Wallet ledger
+
+Seller or Buyer
+  -> Orders::TransitionsController
+    -> Orders::Transition service
+      -> workflow guard + audit transition + side effects
+        -> refund / stock restore / delivered / contest
 ```
 
 ### Component Responsibilities
 
 | Component | Responsibility | Typical Implementation |
 |-----------|----------------|------------------------|
-| `User` | Credencial e identidade de autenticação | `has_secure_password`, validações de email |
-| `Profile` | Dados pessoais não sensíveis de login | `has_one :profile` |
-| `UserSession` (ou equivalente) | Estado de refresh token e revogação | tabela com `jti`, hash, expiração, revogado |
-| `JwtIssuer/JwtDecoder` | Emitir/validar access e refresh | serviço com secret e claims separados |
-| `AuthController` | Orquestrar endpoints de auth | actions `signup`, `login`, `refresh`, `logout` |
+| `Order` | Cabeçalho do pedido | buyer, totals, status espelhado, timestamps |
+| `OrderItem` | Snapshot do item comprado | product, seller, quantity, unit price |
+| `OrderTransition` or equivalent | Auditoria de workflow | origem, destino, actor, metadata |
+| `Orders::CreateFromCart` | Criação atômica do pedido | locks, snapshot, estoque, ledger |
+| `Orders::Transition` | Regras de avanço/cancelamento/entrega/contestação | authz + guards + side effects |
+| Seller finance query services | Painel de recebíveis/histórico | apenas leitura, escopo por seller |
+| `ProductRating` / `SellerRating` | Avaliações elegíveis pós-entrega | score, comment, buyer, target, order item |
 
 ## Recommended Project Structure
 
-```
+```text
 marketplace_backend/
-├── app/controllers/auth/
+├── app/controllers/orders/
 ├── app/models/
-│   ├── user.rb
-│   ├── profile.rb
-│   └── user_session.rb
-├── app/services/auth/
-│   ├── token_issuer.rb
-│   ├── token_verifier.rb
-│   └── refresh_rotator.rb
-└── config/initializers/
-    └── jwt.rb
+│   ├── order.rb
+│   ├── order_item.rb
+│   ├── order_transition.rb
+│   ├── product_rating.rb
+│   └── seller_rating.rb
+├── app/services/orders/
+│   ├── create_from_cart.rb
+│   ├── transition.rb
+│   └── seller_finance_summary.rb
+└── app/services/ratings/
+    └── create_from_order_item.rb
 ```
-
-## Architectural Patterns
-
-### Pattern 1: Token pair with separate trust domains
-- Access token e refresh token usam secrets distintos e claims distintas.
-
-### Pattern 2: Rotation with revocation ledger
-- Cada refresh válido é usado uma vez; ao consumir, revoga o antigo e cria novo registro.
-
-### Pattern 3: Reuse detection => incident response
-- Se refresh já revogado reaparece, tratar como possível comprometimento e invalidar todas as sessões do usuário.
 
 ## Data Flow
 
-1. Login
-- valida credenciais
-- cria sessão
-- emite access(15m) + refresh(7d)
+1. Checkout
+- lock do carrinho e produtos
+- cria pedido e itens snapshot
+- debita buyer wallet por `order_id`
+- registra recebível seller
 
-2. Refresh
-- valida assinatura/exp/token type
-- compara hash com sessão ativa
-- revoga token atual
-- cria nova sessão/token rotativo
+2. Transition
+- valida ator e estado atual
+- aplica transição permitida
+- executa side effects (`refund`, `restore_stock`, `delivered`, `contested`)
 
-3. Logout global
-- marca todas as sessões do usuário como revogadas (por `jti`/status)
+3. Rating
+- valida que item foi entregue
+- garante unicidade da avaliação elegível
+- grava registros separados por produto e vendedor
 
 ## Anti-Patterns
 
-- Guardar refresh token plaintext no banco.
-- Reemitir refresh sem invalidar anterior.
-- Não separar secret de access e refresh.
+- Recalcular total histórico lendo `products.price` depois da compra.
+- Guardar apenas `status` no pedido sem trilha de transições.
+- Misturar endpoint de atualização genérica com ações de workflow.
 
 ## Sources
 
-- Rails security practices
-- OWASP session/JWT recommendations
+- Arquitetura já adotada no projeto (services + constraints + authz por token)
+- Documentação de `statesman` e `state_machines-activerecord`
 
 ---
-*Architecture research for: Rails JWT auth*
-*Researched: 2026-03-05*
+*Architecture research for: Rails order workflow*
+*Researched: 2026-03-09*
