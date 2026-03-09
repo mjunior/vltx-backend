@@ -33,10 +33,10 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 
 ### Active
 
-- [ ] Persistir `Order` no checkout com snapshot de itens e totais (`ORD-01`)
-- [ ] Integrar ledger financeiro por `order_id` ponta a ponta (`ORD-02`)
-- [ ] Suportar estado de pedido com cancelamento e refund automático de pedido pago (`ORD-03` + Req 21)
-- [ ] Entregar painel seller com saldo a receber e histórico financeiro de pedidos (Req 22)
+- [ ] Criar domínio de `Order` persistido com snapshot, baixa/reposição de estoque e pagamento exclusivo por carteira (`ORD-01`, `INV-01`, `PAY-01`)
+- [ ] Modelar fluxo seguro de status do pedido com transições permitidas por ator e trilha auditável (`ORD-02`..`ORD-07`)
+- [ ] Integrar ledger financeiro buyer/seller por `order_id`, incluindo crédito inicial, refund automático e painel de recebíveis do seller (`PAY-02`..`PAY-05`)
+- [ ] Permitir avaliação pós-entrega com registros separados por produto e por vendedor para cálculo de média (`RATE-01`, `RATE-02`)
 
 ### Out of Scope
 
@@ -44,14 +44,20 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Password reset / email verification
 - MFA/2FA neste ciclo
 
-## Current Milestone: v1.4 Orders and Settlement Foundation (planned)
+## Current Milestone: v1.4 Orders, Status Flow, and Ratings
 
-**Goal:** Evoluir checkout para criação de pedido persistido e iniciar trilha financeira buyer/seller baseada em `order_id`.
+**Goal:** Transformar checkout em pedido real com fluxo seguro de status, liquidação financeira rastreável por `order_id` e avaliações pós-entrega.
+
+**Target features:**
+- Pedidos persistidos com snapshot, estoque consistente e pagamento apenas via carteira interna
+- Máquina de estados de pedido com avanço controlado pelo seller, cancelamento do buyer e contestação pós-entrega
+- Ledger buyer/seller referenciado por `order_id`, crédito inicial de signup e painel financeiro do seller
+- Avaliações vinculadas a compra entregue com tabela por produto e por vendedor
 
 ## Current State
 
 - **Shipped versions:** v1.0, v1.1, v1.2, v1.3
-- **Current milestone:** none (v1.4 pendente de abertura)
+- **Current milestone:** v1.4 Orders, Status Flow, and Ratings
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
 
 ## Constraints
@@ -61,6 +67,7 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Endpoints públicos não expõem dados sensíveis.
 - Operações de carteira nunca confiam em valores enviados pelo frontend.
 - Ledger de carteira é append-only: sem `UPDATE`/`DELETE` em transações.
+- Transições críticas de pedido devem ser autorizadas por ator e validadas server-side; cliente nunca escolhe estado arbitrário.
 
 ## Key Decisions
 
@@ -77,13 +84,16 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 | Preparação de pedido sem persistência nesta etapa | Permitir evolução incremental para ORD-01..03 | ✓ Good (v1.2) |
 | Ledger de carteira append-only com lock por operação | Priorizar integridade financeira sobre simplicidade | ✓ Good (v1.3) |
 | Extrato de wallet hardcoded em últimas 30 transações | Simplicidade e previsibilidade com superfície mínima inicial | ✓ Good (v1.3) |
+| `order_id` será a referência principal de ledger neste milestone | Rastreabilidade ponta a ponta de cobrança, refund e repasse seller | — Pending |
+| Fluxo de status do pedido exigirá transições explícitas e auditáveis | Evitar troca indevida de estado por payload manipulado ou corrida | — Pending |
+| Avaliações serão persistidas em registros separados por produto e por vendedor | Simplificar cálculo futuro de médias agregadas sem ambiguidade | — Pending |
 
 ## Next Milestone Goals
 
-1. Criar `Order` persistido no checkout com snapshot completo.
-2. Vincular movimentações financeiras a `order_id` (buyer/seller) com rastreabilidade fim a fim.
-3. Implementar cancelamento de pedido pago com refund automático idempotente.
-4. Expor visão financeira do seller (saldo a receber e histórico de transações de pedidos).
+1. Criar `Order` persistido no checkout com snapshot completo e impacto correto em estoque.
+2. Vincular movimentações financeiras buyer/seller a `order_id`, incluindo crédito inicial do usuário.
+3. Implementar fluxo seguro de status com avanço seller, cancelamento buyer, entrega e contestação.
+4. Expor visão financeira do seller e avaliações pós-entrega por produto e por vendedor.
 
 ---
-*Last updated: 2026-03-08 after completing v1.3 milestone*
+*Last updated: 2026-03-09 after starting v1.4 milestone*
