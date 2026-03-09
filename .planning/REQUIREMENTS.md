@@ -1,0 +1,89 @@
+# Requirements: Marketplace Backend
+
+**Defined:** 2026-03-09
+**Milestone:** v1.4 Orders, Status Flow, and Ratings
+**Core Value:** Isolamento multi-tenant estrito com contratos de autenticação e catálogo previsíveis.
+
+## v1.4 Requirements
+
+### Inventory and Checkout
+
+- [ ] **INV-01**: Comprador pode finalizar o carrinho gerando pedido persistido, e o sistema reduz o estoque dos produtos no mesmo fluxo de confirmação.
+- [ ] **INV-02**: Quando um pedido pago é cancelado, o sistema restaura o estoque correspondente sem depender de input do cliente.
+
+### Orders
+
+- [ ] **ORD-01**: Comprador pode finalizar o carrinho e gerar um `Order` com snapshot de itens, preços, seller e totais no momento da compra.
+- [ ] **ORD-02**: Sistema registra pedido em estado inicial `paid` após checkout aprovado e impede criação parcial ou duplicada para o mesmo checkout lógico.
+- [ ] **ORD-03**: Seller pode avançar o pedido apenas pelas etapas permitidas do fluxo (`paid -> in_separation -> confirmed`) sem pular estados.
+- [ ] **ORD-04**: Comprador pode cancelar o pedido somente enquanto o estado atual for `paid`.
+- [ ] **ORD-05**: Comprador pode marcar um pedido comprado como `delivered` somente após o fluxo ter alcançado o estado elegível de confirmação.
+- [ ] **ORD-06**: Comprador pode contestar uma compra somente depois que ela tiver sido marcada como `delivered`.
+- [ ] **ORD-07**: Sistema mantém trilha auditável de transições de pedido e rejeita mudanças de status fora das ações autorizadas para buyer ou seller.
+
+### Payments and Settlement
+
+- [ ] **PAY-01**: Checkout do pedido aceita apenas pagamento pela carteira interna do sistema.
+- [ ] **PAY-02**: Usuário recém-criado começa com crédito inicial de R$ 10,00 na carteira interna.
+- [ ] **PAY-03**: Débito do comprador, refund e lançamentos financeiros relacionados ao pedido usam `order_id` como referência principal no ledger.
+- [ ] **PAY-04**: Sistema processa reembolso automático e idempotente ao cancelar um pedido já pago.
+- [ ] **PAY-05**: Seller pode consultar painel com saldo a receber e histórico financeiro dos próprios pedidos sem acessar dados de outros sellers.
+
+### Ratings
+
+- [ ] **RATE-01**: Comprador pode avaliar um produto comprado com nota de 1 a 5 e comentário somente após o pedido ter sido marcado como `delivered`.
+- [ ] **RATE-02**: Sistema registra avaliações em estruturas separadas por produto e por vendedor, vinculadas ao item comprado, para permitir cálculo futuro de média.
+
+## v2 Requirements
+
+### Payments
+
+- **PAY-06**: Seller pode solicitar saque ou liquidação externa do saldo a receber.
+- **PAY-07**: Sistema suporta meios de pagamento externos como cartão e Pix.
+
+### Orders
+
+- **ORD-08**: Workflow suporta mediação operacional completa da contestação com novos estados internos.
+
+### Ratings
+
+- **RATE-03**: Seller pode responder publicamente a avaliações recebidas.
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Cartão de crédito e Pix | Usuário definiu carteira interna como único meio de pagamento neste milestone |
+| Payout bancário real para seller | Requer fluxo financeiro externo e compliance ainda não modelados |
+| Edição livre de status por payload | Contraria requisito de workflow seguro com transições autorizadas |
+| Avaliação antes de entrega | Contraria regra de elegibilidade pós-entrega |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| INV-01 | Phase 19 | Pending |
+| INV-02 | Phase 21 | Pending |
+| ORD-01 | Phase 19 | Pending |
+| ORD-02 | Phase 19 | Pending |
+| ORD-03 | Phase 21 | Pending |
+| ORD-04 | Phase 21 | Pending |
+| ORD-05 | Phase 21 | Pending |
+| ORD-06 | Phase 22 | Pending |
+| ORD-07 | Phase 21 | Pending |
+| PAY-01 | Phase 19 | Pending |
+| PAY-02 | Phase 20 | Pending |
+| PAY-03 | Phase 20 | Pending |
+| PAY-04 | Phase 21 | Pending |
+| PAY-05 | Phase 22 | Pending |
+| RATE-01 | Phase 22 | Pending |
+| RATE-02 | Phase 22 | Pending |
+
+**Coverage:**
+- v1.4 requirements: 16 total
+- Mapped to phases: 16
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-03-09*
+*Last updated: 2026-03-09 after initial definition*
