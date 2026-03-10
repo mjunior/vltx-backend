@@ -24,8 +24,7 @@
 ### Payments and Settlement
 
 - [ ] **PAY-01**: Checkout do pedido aceita apenas pagamento pela carteira interna do sistema.
-- [ ] **PAY-02**: Usuário recém-criado começa com crédito inicial de R$ 10,00 na carteira interna.
-- [ ] **PAY-03**: Débito do comprador, refund e lançamentos financeiros relacionados ao pedido usam `order_id` como referência principal no ledger.
+- [ ] **PAY-03**: Débito do comprador usa uma referência agregada persistida do checkout e mantém vínculo rastreável com os `order_ids`; refunds e liquidação seller continuam ligados ao pedido.
 - [ ] **PAY-04**: Sistema processa reembolso automático e idempotente ao cancelar um pedido já pago.
 - [ ] **PAY-05**: Seller pode consultar painel com saldo a receber e histórico financeiro dos próprios pedidos sem acessar dados de outros sellers.
 
@@ -38,6 +37,7 @@
 
 ### Payments
 
+- **PAY-02**: Usuário ganha crédito promocional de R$ 10,00 somente após confirmação de e-mail.
 - **PAY-06**: Seller pode solicitar saque ou liquidação externa do saldo a receber.
 - **PAY-07**: Sistema suporta meios de pagamento externos como cartão e Pix.
 
@@ -57,33 +57,34 @@
 | Payout bancário real para seller | Requer fluxo financeiro externo e compliance ainda não modelados |
 | Edição livre de status por payload | Contraria requisito de workflow seguro com transições autorizadas |
 | Avaliação antes de entrega | Contraria regra de elegibilidade pós-entrega |
+| Crédito promocional no signup sem confirmação de e-mail | Usuário moveu o bônus para um futuro fluxo de confirmação de e-mail |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INV-01 | Phase 19 | In Progress |
+| INV-01 | Phase 19 | Completed |
 | INV-02 | Phase 21 | Pending |
-| ORD-01 | Phase 19 | In Progress |
-| ORD-02 | Phase 19 | In Progress |
+| ORD-01 | Phase 19 | Completed |
+| ORD-02 | Phase 19 | Completed |
 | ORD-03 | Phase 21 | Pending |
 | ORD-04 | Phase 21 | Pending |
 | ORD-05 | Phase 21 | Pending |
 | ORD-06 | Phase 22 | Pending |
 | ORD-07 | Phase 21 | Pending |
-| PAY-01 | Phase 19 | In Progress |
-| PAY-02 | Phase 20 | Pending |
-| PAY-03 | Phase 20 | Pending |
+| PAY-01 | Phase 19 | Completed |
+| PAY-02 | Future email confirmation milestone | Deferred |
+| PAY-03 | Phase 20 | Completed |
 | PAY-04 | Phase 21 | Pending |
 | PAY-05 | Phase 22 | Pending |
 | RATE-01 | Phase 22 | Pending |
 | RATE-02 | Phase 22 | Pending |
 
 **Coverage:**
-- v1.4 requirements: 16 total
-- Mapped to phases: 16
+- v1.4 requirements: 15 total
+- Mapped to phases: 15
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after initial definition*
+*Last updated: 2026-03-10 after phase 20 execution*

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Orders, Status Flow, and Ratings
-status: Phase 19 implementation finished; runtime verification pending
-stopped_at: Phase 19 implementation completed; runtime verification pending
-last_updated: "2026-03-09T23:40:00Z"
-last_activity: 2026-03-09 — phase 19 implemented with verification pending
+status: Phase 20 implementation finished; full Rails suite green
+stopped_at: Phase 20 implementation completed; ready to plan phase 21
+last_updated: "2026-03-10T00:25:00Z"
+last_activity: 2026-03-10 — phase 20 implemented and verified with full test suite
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 11
-  completed_plans: 3
-  percent: 27
+  completed_plans: 5
+  percent: 45
 ---
 
 # Project State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Phase 19 verification follow-up, then Phase 20 planning
+**Current focus:** Phase 21 planning and secure order workflow
 
 ## Current Position
 
-Phase: 19
+Phase: 20
 Plan: none active
-Status: Phase 19 implementation finished; Rails runtime verification pending due local Bundler issue
-Last activity: 2026-03-09 — Phase 19 code and plan summaries completed
+Status: Phase 20 implementation finished; targeted and full Rails verification completed
+Last activity: 2026-03-10 — Phase 20 code, summaries and full-suite verification completed
 
-Progress: [███░░░░░░░] 27%
+Progress: [█████░░░░░] 45%
 
 ## Session Continuity
 
-Last session: 2026-03-09T23:40:00Z
-Stopped at: Phase 19 implementation completed; runtime verification pending
-Resume file: .planning/phases/19-order-persistence-and-stock-integrity/19-03-SUMMARY.md
+Last session: 2026-03-10T00:25:00Z
+Stopped at: Phase 20 implementation completed; ready for phase 21
+Resume file: .planning/phases/20-order-linked-ledger-and-wallet-provisioning/20-02-SUMMARY.md

@@ -11,13 +11,13 @@
 
 **v1.4 Orders, Status Flow, and Ratings**
 
-- **Status:** Planned
+- **Status:** In Progress
 - **Phases:** 19-22
-- **Requirements:** 16 mapped / 16 total
+- **Requirements:** 15 mapped / 15 total
 
 ## Phases (v1.4)
 
-- [ ] **Phase 19: Order Persistence and Stock Integrity**
+- [x] **Phase 19: Order Persistence and Stock Integrity**
   - Goal: persistir `Order`/`OrderItem` no checkout com snapshot imutável, pagamento wallet-only e baixa atômica de estoque.
   - Requirements: `INV-01`, `ORD-01`, `ORD-02`, `PAY-01`
   - Success criteria:
@@ -25,13 +25,13 @@
     2. Estoque é reduzido somente no fluxo confirmado de criação do pedido.
     3. Repetição/retry não duplica pedido lógico nem deixa estoque inconsistente.
 
-- [ ] **Phase 20: Order-Linked Ledger and Wallet Provisioning**
-  - Goal: migrar a trilha financeira para `order_id`, provisionar crédito inicial de signup e estruturar recebíveis do seller.
-  - Requirements: `PAY-02`, `PAY-03`
+- [x] **Phase 20: Order-Linked Ledger and Wallet Provisioning**
+  - Goal: fechar a rastreabilidade financeira do checkout com compra agregada persistida e estruturar recebíveis do seller sem payout imediato.
+  - Requirements: `PAY-03`
   - Success criteria:
-    1. Novos usuários passam a ter R$ 10,00 de crédito inicial de forma idempotente.
-    2. Débito do comprador no checkout passa a referenciar `order_id` como chave principal do ledger.
-    3. Lançamentos financeiros necessários para recebíveis seller podem ser consultados sem quebrar invariantes append-only.
+    1. Débito do comprador no checkout passa a referenciar uma compra agregada persistida, em vez de `cart_id`.
+    2. Checkout registra recebível `pending` por pedido/seller sem creditar a wallet do vendedor.
+    3. Seller consegue consultar total pendente e lista por pedido sem quebrar invariantes append-only.
 
 - [ ] **Phase 21: Secure Order Workflow and Cancellation Refunds**
   - Goal: implementar fluxo seguro de status com ações por ator, cancelamento comprador e refund automático com restauração de estoque.
@@ -79,8 +79,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 20-01: Implementar entidade agregadora de checkout e migrar referência do débito buyer
-- [ ] 20-02: Registrar recebíveis seller pendentes e preparar surfaces de leitura do saldo a receber
+- [x] 20-01: Implementar entidade agregadora de checkout e migrar referência do débito buyer
+- [x] 20-02: Registrar recebíveis seller pendentes e preparar surfaces de leitura do saldo a receber
 
 ### Phase 21: Secure Order Workflow and Cancellation Refunds
 **Goal**: Garantir workflow seguro de pedido com transições autorizadas, cancelamento buyer e refund automático.
@@ -116,7 +116,7 @@ Plans:
 
 | Phase | Milestone | Requirements | Status | Completed |
 |-------|-----------|--------------|--------|-----------|
-| 19. Order Persistence and Stock Integrity | v1.4 | 4 | In Progress | 2026-03-09 |
-| 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 2 | Pending | — |
+| 19. Order Persistence and Stock Integrity | v1.4 | 4 | Completed | 2026-03-09 |
+| 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 1 | Completed | 2026-03-10 |
 | 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Pending | — |
 | 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Pending | — |
