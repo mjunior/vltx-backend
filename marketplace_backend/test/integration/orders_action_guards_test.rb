@@ -75,6 +75,17 @@ class OrdersActionGuardsTest < ActionDispatch::IntegrationTest
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
   end
 
+  test "rejects intruder order show as not found" do
+    order = create_paid_order
+    intruder = create_user(email: "orders-guards-show-intruder@example.com")
+    token = access_token_for(intruder)
+
+    get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
+
+    assert_response :not_found
+    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
   test "rejects buyer deliver before order is confirmed" do
     order = create_paid_order
     token = access_token_for(order.user)

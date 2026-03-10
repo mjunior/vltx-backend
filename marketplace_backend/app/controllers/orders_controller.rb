@@ -69,9 +69,13 @@ class OrdersController < ApplicationController
   private
 
   def load_order!
-    @order = Order.includes(:order_items, :order_transitions).find_by(id: params[:id])
+    @order = participant_orders_scope.find_by(id: params[:id])
     return render_not_found unless @order
-    return render_not_found unless [@order.user_id, @order.seller_id].include?(current_user.id)
+  end
+
+  def participant_orders_scope
+    Order.includes(:order_items, :order_transitions)
+         .where("user_id = :user_id OR seller_id = :user_id", user_id: current_user.id)
   end
 
   def unsupported_query_keys
