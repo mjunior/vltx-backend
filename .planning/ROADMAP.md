@@ -79,7 +79,7 @@ Success criteria:
 | 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 1 | Completed | 2026-03-10 |
 | 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Completed | 2026-03-10 |
 | 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Completed | 2026-03-10 |
-| 23. Admin Identity Boundary and Verification Foundation | v1.5 | 4 | Pending | — |
+| 23. Admin Identity Boundary and Verification Foundation | v1.5 | 4 | Completed | 2026-03-10 |
 | 24. Global Moderation Surface | v1.5 | 3 | Pending | — |
 | 25. Administrative User Operations | v1.5 | 1 | Pending | — |
 | 26. Admin Metrics Dashboard | v1.5 | 1 | Pending | — |

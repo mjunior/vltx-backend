@@ -1,4 +1,9 @@
 class User < ApplicationRecord
+  VERIFICATION_STATUSES = {
+    unverified: "unverified",
+    verified: "verified",
+  }.freeze
+
   has_secure_password
 
   has_one :profile, dependent: :destroy
@@ -16,6 +21,8 @@ class User < ApplicationRecord
   has_many :received_seller_ratings, class_name: "SellerRating", foreign_key: :seller_id, dependent: :restrict_with_exception, inverse_of: :seller
   has_many :rated_products, through: :product_ratings, source: :product
   has_one :wallet, dependent: :destroy
+
+  enum :verification_status, VERIFICATION_STATUSES, default: :unverified, validate: true
 
   before_validation :normalize_email
 

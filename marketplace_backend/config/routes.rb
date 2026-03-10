@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
+  post "admin/auth/login" => "admin/auth/logins#create"
+  post "admin/auth/refresh" => "admin/auth/refreshes#create"
+  post "admin/auth/logout" => "admin/auth/logouts#create"
+  get "admin/users/:id/verification-status" => "admin/users#verification_status"
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
   get "wallet" => "wallets#show"

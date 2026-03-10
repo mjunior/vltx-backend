@@ -8,13 +8,13 @@
 
 ### Admin Authentication
 
-- [ ] **ADM-01**: Operador interno pode autenticar em rotas `/admin` usando uma entidade `Admin` separada de `User`.
-- [ ] **ADM-02**: Sessões administrativas usam JWT assinado e validado com secret dedicado, sem reutilizar o secret de usuário padrão.
-- [ ] **ADM-03**: Usuário padrão não consegue obter permissões administrativas por mutação de payload, perfil ou atributos da entidade `User`.
+- [x] **ADM-01**: Operador interno pode autenticar em rotas `/admin` usando uma entidade `Admin` separada de `User`.
+- [x] **ADM-02**: Sessões administrativas usam JWT assinado e validado com secret dedicado, sem reutilizar o secret de usuário padrão.
+- [x] **ADM-03**: Usuário padrão não consegue obter permissões administrativas por mutação de payload, perfil ou atributos da entidade `User`.
 
 ### User Verification and Moderation
 
-- [ ] **USR-01**: Sistema mantém status de verificação do usuário como `unverified` ou `verified` para uso administrativo e futura integração com OTP por e-mail.
+- [x] **USR-01**: Sistema mantém status de verificação do usuário como `unverified` ou `verified` para uso administrativo e futura integração com OTP por e-mail.
 - [ ] **ADM-04**: Admin pode desativar qualquer usuário da plataforma sem depender de ownership buyer/seller.
 - [ ] **ADM-05**: Admin pode remover ou desativar anúncios inapropriados em escopo global.
 
@@ -63,10 +63,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ADM-01 | Phase 23 | Pending |
-| ADM-02 | Phase 23 | Pending |
-| ADM-03 | Phase 23 | Pending |
-| USR-01 | Phase 23 | Pending |
+| ADM-01 | Phase 23 | Complete |
+| ADM-02 | Phase 23 | Complete |
+| ADM-03 | Phase 23 | Complete |
+| USR-01 | Phase 23 | Complete |
 | ADM-04 | Phase 24 | Pending |
 | ADM-05 | Phase 24 | Pending |
 | ADM-06 | Phase 24 | Pending |

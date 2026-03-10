@@ -10,10 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_030100) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_040200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "admin_refresh_sessions", force: :cascade do |t|
+    t.bigint "admin_id", null: false
+    t.string "refresh_jti", null: false
+    t.string "refresh_token_hash", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "rotated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_admin_refresh_sessions_on_admin_id"
+    t.index ["refresh_jti"], name: "index_admin_refresh_sessions_on_refresh_jti", unique: true
+  end
+
+  create_table "admins", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+  end
 
   create_table "cart_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "cart_id", null: false
@@ -220,7 +242,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_030100) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "verification_status", default: "unverified", null: false
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
+    t.index ["verification_status"], name: "index_users_on_verification_status"
   end
 
   create_table "wallet_transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -252,6 +276,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_030100) do
     t.check_constraint "current_balance_cents >= 0", name: "wallets_current_balance_non_negative"
   end
 
+  add_foreign_key "admin_refresh_sessions", "admins"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
