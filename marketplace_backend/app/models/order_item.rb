@@ -2,6 +2,8 @@ class OrderItem < ApplicationRecord
   belongs_to :order
   belongs_to :product
   belongs_to :seller, class_name: "User"
+  has_one :product_rating, dependent: :destroy
+  has_one :seller_rating, dependent: :destroy
 
   validates :product_title, presence: true, length: { minimum: 3, maximum: 120 }
   validates :quantity,

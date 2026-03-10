@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_020100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -48,6 +48,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.index ["buyer_id", "created_at", "id"], name: "idx_checkout_groups_buyer_timeline"
     t.index ["buyer_id"], name: "index_checkout_groups_on_buyer_id"
     t.index ["source_cart_id"], name: "idx_checkout_groups_source_cart_unique", unique: true
+    t.index ["source_cart_id"], name: "index_checkout_groups_on_source_cart_id"
     t.check_constraint "subtotal_cents > 0", name: "checkout_groups_subtotal_positive"
     t.check_constraint "total_items > 0", name: "checkout_groups_total_items_positive"
   end
@@ -97,13 +98,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.uuid "user_id", null: false
     t.uuid "seller_id", null: false
     t.uuid "source_cart_id", null: false
-    t.uuid "checkout_group_id", null: false
     t.string "status", default: "paid", null: false
     t.string "currency", default: "BRL", null: false
     t.integer "total_items", null: false
     t.bigint "subtotal_cents", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "checkout_group_id", null: false
     t.index ["checkout_group_id"], name: "index_orders_on_checkout_group_id"
     t.index ["seller_id", "created_at", "id"], name: "idx_orders_seller_timeline"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
@@ -111,9 +112,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.index ["source_cart_id"], name: "index_orders_on_source_cart_id"
     t.index ["user_id", "created_at", "id"], name: "idx_orders_buyer_timeline"
     t.index ["user_id"], name: "index_orders_on_user_id"
-    t.check_constraint "status::text = ANY (ARRAY['paid'::character varying::text, 'in_separation'::character varying::text, 'confirmed'::character varying::text, 'delivered'::character varying::text, 'contested'::character varying::text, 'canceled'::character varying::text])", name: "orders_status_allowed"
+    t.check_constraint "status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'canceled'::character varying]::text[])", name: "orders_status_allowed"
     t.check_constraint "subtotal_cents > 0", name: "orders_subtotal_positive"
     t.check_constraint "total_items > 0", name: "orders_total_items_positive"
+  end
+
+  create_table "product_ratings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.uuid "order_item_id", null: false
+    t.uuid "buyer_id", null: false
+    t.uuid "product_id", null: false
+    t.integer "score", null: false
+    t.text "comment", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_product_ratings_on_buyer_id"
+    t.index ["order_id"], name: "index_product_ratings_on_order_id"
+    t.index ["order_item_id"], name: "idx_product_ratings_order_item_unique", unique: true
+    t.index ["order_item_id"], name: "index_product_ratings_on_order_item_id"
+    t.index ["product_id", "created_at", "id"], name: "idx_product_ratings_product_timeline"
+    t.index ["product_id"], name: "index_product_ratings_on_product_id"
+    t.check_constraint "score >= 1 AND score <= 5", name: "product_ratings_score_range"
   end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -159,6 +178,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.index ["user_id"], name: "index_refresh_sessions_on_user_id"
   end
 
+  create_table "seller_ratings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.uuid "order_item_id", null: false
+    t.uuid "buyer_id", null: false
+    t.uuid "seller_id", null: false
+    t.integer "score", null: false
+    t.text "comment", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_seller_ratings_on_buyer_id"
+    t.index ["order_id"], name: "index_seller_ratings_on_order_id"
+    t.index ["order_item_id"], name: "idx_seller_ratings_order_item_unique", unique: true
+    t.index ["order_item_id"], name: "index_seller_ratings_on_order_item_id"
+    t.index ["seller_id", "created_at", "id"], name: "idx_seller_ratings_seller_timeline"
+    t.index ["seller_id"], name: "index_seller_ratings_on_seller_id"
+    t.check_constraint "score >= 1 AND score <= 5", name: "seller_ratings_score_range"
+  end
+
   create_table "seller_receivables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "order_id", null: false
     t.uuid "seller_id", null: false
@@ -171,6 +208,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.index ["buyer_id"], name: "index_seller_receivables_on_buyer_id"
     t.index ["checkout_group_id"], name: "index_seller_receivables_on_checkout_group_id"
     t.index ["order_id"], name: "idx_seller_receivables_order_unique", unique: true
+    t.index ["order_id"], name: "index_seller_receivables_on_order_id"
     t.index ["seller_id", "status", "created_at", "id"], name: "idx_seller_receivables_seller_status_timeline"
     t.index ["seller_id"], name: "index_seller_receivables_on_seller_id"
     t.check_constraint "amount_cents > 0", name: "seller_receivables_amount_positive"
@@ -202,7 +240,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
     t.index ["wallet_id"], name: "index_wallet_transactions_on_wallet_id"
     t.check_constraint "amount_cents > 0", name: "wallet_transactions_amount_positive"
     t.check_constraint "balance_after_cents >= 0", name: "wallet_transactions_balance_after_non_negative"
-    t.check_constraint "transaction_type::text = ANY (ARRAY['credit'::character varying::text, 'debit'::character varying::text, 'refund'::character varying::text])", name: "wallet_transactions_type_allowed"
+    t.check_constraint "transaction_type::text = ANY (ARRAY['credit'::character varying, 'debit'::character varying, 'refund'::character varying]::text[])", name: "wallet_transactions_type_allowed"
   end
 
   create_table "wallets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -228,9 +266,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_001000) do
   add_foreign_key "orders", "checkout_groups"
   add_foreign_key "orders", "users"
   add_foreign_key "orders", "users", column: "seller_id"
+  add_foreign_key "product_ratings", "order_items"
+  add_foreign_key "product_ratings", "orders"
+  add_foreign_key "product_ratings", "products"
+  add_foreign_key "product_ratings", "users", column: "buyer_id"
   add_foreign_key "products", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_sessions", "users"
+  add_foreign_key "seller_ratings", "order_items"
+  add_foreign_key "seller_ratings", "orders"
+  add_foreign_key "seller_ratings", "users", column: "buyer_id"
+  add_foreign_key "seller_ratings", "users", column: "seller_id"
   add_foreign_key "seller_receivables", "checkout_groups"
   add_foreign_key "seller_receivables", "orders"
   add_foreign_key "seller_receivables", "users", column: "buyer_id"

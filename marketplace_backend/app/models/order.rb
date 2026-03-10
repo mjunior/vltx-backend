@@ -14,6 +14,8 @@ class Order < ApplicationRecord
   belongs_to :checkout_group
   has_many :order_items, dependent: :destroy
   has_many :order_transitions, -> { order(position: :asc, created_at: :asc, id: :asc) }, dependent: :destroy
+  has_many :product_ratings, dependent: :destroy
+  has_many :seller_ratings, dependent: :destroy
   has_one :seller_receivable, dependent: :destroy
 
   enum :status, STATUSES, default: :paid, validate: true
@@ -46,6 +48,10 @@ class Order < ApplicationRecord
 
   def participant?(user)
     user.is_a?(User) && [user_id, seller_id].include?(user.id)
+  end
+
+  def delivered_purchase?
+    delivered? || contested? || order_transitions.where(to_status: STATUSES[:delivered]).exists?
   end
 
   private

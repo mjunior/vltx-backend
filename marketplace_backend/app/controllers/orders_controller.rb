@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   INTERNAL_KEYS = %w[controller action format id].freeze
 
   before_action :authenticate_user!
-  before_action :load_order!, only: %i[show advance cancel deliver]
+  before_action :load_order!, only: %i[show advance cancel deliver contest]
 
   def index
     return render_invalid_payload if unsupported_query_keys.present?
@@ -50,6 +50,16 @@ class OrdersController < ApplicationController
     return render_invalid_payload if unsupported_mutation_payload?
 
     result = Orders::MarkDelivered.call(order: @order, actor: current_user)
+    return render_not_found if result.error_code == :not_found
+    return render_invalid_payload unless result.success?
+
+    render json: { data: Orders::OrderSerializer.call(order: result.order, viewer: current_user) }, status: :ok
+  end
+
+  def contest
+    return render_invalid_payload if unsupported_mutation_payload?
+
+    result = Orders::Contest.call(order: @order, actor: current_user)
     return render_not_found if result.error_code == :not_found
     return render_invalid_payload unless result.success?
 

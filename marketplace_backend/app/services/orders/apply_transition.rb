@@ -66,6 +66,8 @@ module Orders
         Order::STATUSES[:canceled]
       when [OrderTransition::ACTOR_ROLES[:buyer], "deliver", Order::STATUSES[:confirmed]]
         Order::STATUSES[:delivered]
+      when [OrderTransition::ACTOR_ROLES[:buyer], "contest", Order::STATUSES[:delivered]]
+        Order::STATUSES[:contested]
       else
         nil
       end
