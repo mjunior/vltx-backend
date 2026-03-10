@@ -1,5 +1,34 @@
 # Milestones
 
+## v1.4 Orders, Status Flow, and Ratings (Shipped: 2026-03-10)
+
+**Scope delivered:**
+- 4 phases
+- 11 plans
+- 32 tasks
+- Timeline: 2026-03-09 -> 2026-03-09
+- Git range: `f9f55b6` -> `bdfbc05`
+- Diff summary: 112 files changed, 7241 insertions(+), 310 deletions(-)
+
+**Key accomplishments:**
+1. Checkout passou a criar `Order` real por seller com snapshot imutável de itens e baixa de estoque.
+2. Débito buyer virou compra agregada por `checkout_group`, com recebível seller `pending` por pedido.
+3. Workflow seguro de pedido foi entregue com transições auditáveis, cancelamento com refund/restauração de estoque e entrega liberando crédito seller.
+4. Contestação pós-entrega foi adicionada sem reabrir reversão financeira automática.
+5. Seller ganhou painel financeiro com total pendente por pedido e histórico de créditos já liberados.
+6. Avaliações passaram a ser gravadas separadamente por produto e por vendedor a partir do mesmo `order_item`.
+
+**Known tech debt accepted:**
+- Sem audit formal salvo em `.planning/v1.4-MILESTONE-AUDIT.md`.
+- Contestação ainda não cobre mediação operacional completa nem clawback pós-crédito do seller.
+- Sem leitura agregada de médias de avaliações neste milestone.
+
+**Archives:**
+- `.planning/milestones/v1.4-ROADMAP.md`
+- `.planning/milestones/v1.4-REQUIREMENTS.md`
+
+---
+
 ## v1.3 Wallet Ledger Hardening (Shipped: 2026-03-08)
 
 **Scope delivered:**
