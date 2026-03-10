@@ -57,11 +57,20 @@ module Carts
       assert_equal 0, result.cart.cart_items.reload.count
       assert_equal 2, result.order_ids.length
       assert_equal 2, result.summary[:orders_count]
+      assert result.summary[:checkout_group_id].present?
       assert_equal "wallet", result.summary[:payment_method]
       assert_equal 3, result.summary[:total_items]
       assert_equal "290.00", result.summary[:subtotal]
       assert_equal 210_00, wallet.reload.current_balance_cents
       assert_equal 2, wallet.wallet_transactions.count
+      assert_equal 1, CheckoutGroup.count
+      assert_equal 2, SellerReceivable.count
+
+      debit = wallet.wallet_transactions.recent_first.first
+      assert_equal "checkout_group", debit.reference_type
+      assert_equal result.summary[:checkout_group_id], debit.reference_id
+      assert_equal result.order_ids.sort, Array(debit.metadata["order_ids"]).sort
+      assert_equal 2, debit.metadata["orders_count"]
     end
 
     test "returns invalid_payload for non-wallet method" do
@@ -130,6 +139,8 @@ module Carts
       assert_equal 500_00, wallet.reload.current_balance_cents
       assert_equal 1, wallet.wallet_transactions.count
       assert_equal 0, Order.count
+      assert_equal 0, CheckoutGroup.count
+      assert_equal 0, SellerReceivable.count
     end
   end
 end

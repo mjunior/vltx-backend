@@ -77,6 +77,7 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
     assert_equal 0, cart.cart_items.reload.count
     assert_equal 2, order_ids.length
     assert_equal 2, summary["orders_count"]
+    assert summary["checkout_group_id"].present?
     assert_equal "wallet", summary["payment_method"]
     assert_equal "210.00", summary["subtotal"]
     assert_equal 290_00, wallet.reload.current_balance_cents

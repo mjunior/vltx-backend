@@ -52,6 +52,44 @@ module Wallets
         assert_empty response.transactions
       end
 
+      test "keeps aggregated checkout purchase as one statement line with drill-down metadata" do
+        user = create_user(email: "wallet-read-checkout-group@example.com")
+        wallet = Wallet.create!(user: user, current_balance_cents: 0)
+        seed = Wallets::Ledger::AppendTransaction.call(
+          wallet: wallet,
+          transaction_type: :credit,
+          amount_cents: 100_00,
+          reference_type: "seed",
+          reference_id: "seed-wallet-read-checkout-group",
+          operation_key: "seed-wallet-read-checkout-group",
+          metadata: { "source" => "seed" }
+        )
+        assert seed.success?
+
+        tx = Wallets::Ledger::AppendTransaction.call(
+          wallet: wallet,
+          transaction_type: :debit,
+          amount_cents: 30_00,
+          reference_type: "checkout_group",
+          reference_id: "group-123",
+          operation_key: "checkout-group-123",
+          metadata: {
+            "checkout_group_id" => "group-123",
+            "order_ids" => ["ord-1", "ord-2"],
+            "orders_count" => 2,
+            "source" => "checkout_group"
+          }
+        )
+
+        assert tx.success?
+
+        response = FetchStatement.call(user: user)
+
+        assert response.success?
+        assert_equal "checkout_group", response.transactions.first.reference_type
+        assert_equal "group-123", response.transactions.first.reference_id
+      end
+
       test "returns invalid payload for invalid user" do
         response = FetchStatement.call(user: nil)
 

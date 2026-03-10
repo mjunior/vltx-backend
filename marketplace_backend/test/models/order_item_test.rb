@@ -21,10 +21,18 @@ class OrderItemTest < ActiveSupport::TestCase
   end
 
   def create_order_for(buyer:, seller:)
+    cart = Cart.create!(user: buyer, status: :finished)
     Order.create!(
       user: buyer,
       seller: seller,
-      source_cart: Cart.create!(user: buyer, status: :finished),
+      source_cart: cart,
+      checkout_group: CheckoutGroup.create!(
+        buyer: buyer,
+        source_cart: cart,
+        currency: "BRL",
+        total_items: 1,
+        subtotal_cents: 1250
+      ),
       status: :paid,
       currency: "BRL",
       total_items: 1,

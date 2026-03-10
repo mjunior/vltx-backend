@@ -122,6 +122,28 @@ class WalletTransactionTest < ActiveSupport::TestCase
     assert_match(/unsupported keys/i, tx.errors[:metadata].first)
   end
 
+  test "accepts checkout group drill-down metadata keys" do
+    wallet = create_wallet(email: "wallet-tx-checkout-group@example.com")
+
+    tx = WalletTransaction.new(
+      wallet: wallet,
+      transaction_type: :debit,
+      amount_cents: 100,
+      balance_after_cents: 0,
+      reference_type: "checkout_group",
+      reference_id: "group-1",
+      operation_key: "op-group-1",
+      metadata: {
+        "checkout_group_id" => "group-1",
+        "order_ids" => ["ord-1", "ord-2"],
+        "orders_count" => 2,
+        "source" => "checkout_group"
+      }
+    )
+
+    assert tx.valid?
+  end
+
   test "blocks updates and deletes to enforce append-only ledger" do
     wallet = create_wallet(email: "wallet-tx-append-only@example.com")
 

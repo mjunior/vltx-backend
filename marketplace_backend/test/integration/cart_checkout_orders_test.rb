@@ -78,12 +78,20 @@ class CartCheckoutOrdersTest < ActionDispatch::IntegrationTest
     assert_equal 2, order_ids.length
     assert_equal 2, Order.where(id: order_ids).count
     assert_equal 2, summary["orders_count"]
+    assert summary["checkout_group_id"].present?
     assert_equal 3, summary["total_items"]
     assert_equal "210.00", summary["subtotal"]
     assert_equal "wallet", summary["payment_method"]
     assert_equal 290_00, wallet.reload.current_balance_cents
     assert_equal 2, product_a.reload.stock_quantity
     assert_equal 4, product_b.reload.stock_quantity
+    assert_equal 1, CheckoutGroup.count
+    assert_equal 2, SellerReceivable.count
+
+    debit = wallet.wallet_transactions.recent_first.first
+    assert_equal "checkout_group", debit.reference_type
+    assert_equal summary["checkout_group_id"], debit.reference_id
+    assert_equal order_ids.sort, Array(debit.metadata["order_ids"]).sort
   end
 
   test "checkout fails entirely when one item is out of stock" do
@@ -116,5 +124,7 @@ class CartCheckoutOrdersTest < ActionDispatch::IntegrationTest
     assert_equal 1, product_a.reload.stock_quantity
     assert_equal 5, product_b.reload.stock_quantity
     assert_equal 0, Order.count
+    assert_equal 0, CheckoutGroup.count
+    assert_equal 0, SellerReceivable.count
   end
 end

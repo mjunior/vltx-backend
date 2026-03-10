@@ -5,7 +5,7 @@ class WalletTransaction < ApplicationRecord
     refund: "refund",
   }.freeze
 
-  ALLOWED_METADATA_KEYS = %w[source reason order_id cart_id checkout_id note].freeze
+  ALLOWED_METADATA_KEYS = %w[source reason order_id cart_id checkout_id checkout_group_id order_ids orders_count note].freeze
 
   belongs_to :wallet
 

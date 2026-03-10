@@ -80,6 +80,50 @@ class WalletAuthorizationTest < ActionDispatch::IntegrationTest
     assert_not sample.key?("metadata")
   end
 
+  test "returns safe drill-down fields for aggregated checkout transactions" do
+    user = create_user(email: "wallet-authz-checkout-group@example.com")
+    token = access_token_for(user)
+    wallet = Wallet.find_or_create_by!(user: user)
+    seed = Wallets::Ledger::AppendTransaction.call(
+      wallet: wallet,
+      transaction_type: :credit,
+      amount_cents: 100,
+      reference_type: "seed",
+      reference_id: "seed-checkout-group",
+      operation_key: "seed-checkout-group",
+      metadata: { "source" => "wallet_authz_test" }
+    )
+    raise "wallet seed failed" unless seed.success?
+
+    result = Wallets::Ledger::AppendTransaction.call(
+      wallet: wallet,
+      transaction_type: :debit,
+      amount_cents: 10,
+      reference_type: "checkout_group",
+      reference_id: "group-abc",
+      operation_key: "wallet-checkout-group-abc",
+      metadata: {
+        "checkout_group_id" => "group-abc",
+        "order_ids" => ["ord-a", "ord-b"],
+        "orders_count" => 2,
+        "source" => "checkout_group"
+      }
+    )
+    raise "wallet seed failed" unless result.success?
+
+    get "/wallet/transactions", headers: {
+      "Authorization" => "Bearer #{token}",
+    }
+
+    assert_response :success
+    tx = JSON.parse(response.body).dig("data", "transactions").first
+    assert_equal "checkout_group", tx.fetch("reference_type")
+    assert_equal "group-abc", tx.fetch("checkout_group_id")
+    assert_equal ["ord-a", "ord-b"], tx.fetch("order_ids")
+    assert_equal 2, tx.fetch("orders_count")
+    assert_not tx.key?("metadata")
+  end
+
   test "returns nao encontrado on forged wallet identifier" do
     owner = create_user(email: "wallet-authz-owner@example.com")
     intruder = create_user(email: "wallet-authz-intruder@example.com")

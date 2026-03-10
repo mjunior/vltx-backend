@@ -3,14 +3,15 @@ module Orders
     Result = Struct.new(:success?, :orders, :summary, :error_code, keyword_init: true)
 
     class << self
-      def call(cart:, buyer:)
-        new(cart: cart, buyer: buyer).call
+      def call(cart:, buyer:, checkout_group:)
+        new(cart: cart, buyer: buyer, checkout_group: checkout_group).call
       end
     end
 
-    def initialize(cart:, buyer:)
+    def initialize(cart:, buyer:, checkout_group:)
       @cart = cart
       @buyer = buyer
+      @checkout_group = checkout_group
     end
 
     def call
@@ -47,7 +48,12 @@ module Orders
     private
 
     def valid_input?
-      @cart.is_a?(Cart) && @buyer.is_a?(User) && @cart.user_id == @buyer.id
+      @cart.is_a?(Cart) &&
+        @buyer.is_a?(User) &&
+        @checkout_group.is_a?(CheckoutGroup) &&
+        @cart.user_id == @buyer.id &&
+        @checkout_group.buyer_id == @buyer.id &&
+        @checkout_group.source_cart_id == @cart.id
     end
 
     def lock_products_for(preparation)
@@ -72,6 +78,7 @@ module Orders
           user: @buyer,
           seller_id: group[:seller_id],
           source_cart: @cart,
+          checkout_group: @checkout_group,
           status: :paid,
           currency: preparation[:currency],
           total_items: group[:total_items],
@@ -90,6 +97,15 @@ module Orders
           )
         end
 
+        SellerReceivable.create!(
+          order: order,
+          seller_id: group[:seller_id],
+          buyer: @buyer,
+          checkout_group: @checkout_group,
+          status: :pending,
+          amount_cents: group[:subtotal_cents]
+        )
+
         order
       end
     end
@@ -104,6 +120,7 @@ module Orders
     def build_summary(preparation:, orders:)
       {
         orders_count: orders.length,
+        checkout_group_id: @checkout_group.id,
         order_ids: orders.map(&:id),
         total_items: preparation[:total_items],
         subtotal_cents: preparation[:subtotal_cents],

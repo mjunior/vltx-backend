@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_09_235100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -35,6 +35,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
     t.index ["user_id", "status"], name: "index_carts_on_user_id_and_status"
     t.index ["user_id"], name: "index_carts_on_user_id"
     t.index ["user_id"], name: "index_carts_on_user_id_active_unique", unique: true, where: "((status)::text = 'active'::text)"
+  end
+
+  create_table "checkout_groups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "buyer_id", null: false
+    t.uuid "source_cart_id", null: false
+    t.string "currency", default: "BRL", null: false
+    t.integer "total_items", null: false
+    t.bigint "subtotal_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id", "created_at", "id"], name: "idx_checkout_groups_buyer_timeline"
+    t.index ["buyer_id"], name: "index_checkout_groups_on_buyer_id"
+    t.index ["source_cart_id"], name: "idx_checkout_groups_source_cart_unique", unique: true
+    t.check_constraint "subtotal_cents > 0", name: "checkout_groups_subtotal_positive"
+    t.check_constraint "total_items > 0", name: "checkout_groups_total_items_positive"
   end
 
   create_table "order_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -62,12 +77,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
     t.uuid "user_id", null: false
     t.uuid "seller_id", null: false
     t.uuid "source_cart_id", null: false
+    t.uuid "checkout_group_id", null: false
     t.string "status", default: "paid", null: false
     t.string "currency", default: "BRL", null: false
     t.integer "total_items", null: false
     t.bigint "subtotal_cents", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["checkout_group_id"], name: "index_orders_on_checkout_group_id"
     t.index ["seller_id", "created_at", "id"], name: "idx_orders_seller_timeline"
     t.index ["seller_id"], name: "index_orders_on_seller_id"
     t.index ["source_cart_id", "seller_id"], name: "idx_orders_source_cart_seller_unique", unique: true
@@ -122,6 +139,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
     t.index ["user_id"], name: "index_refresh_sessions_on_user_id"
   end
 
+  create_table "seller_receivables", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.uuid "seller_id", null: false
+    t.uuid "buyer_id", null: false
+    t.uuid "checkout_group_id", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "amount_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_seller_receivables_on_buyer_id"
+    t.index ["checkout_group_id"], name: "index_seller_receivables_on_checkout_group_id"
+    t.index ["order_id"], name: "idx_seller_receivables_order_unique", unique: true
+    t.index ["seller_id", "status", "created_at", "id"], name: "idx_seller_receivables_seller_status_timeline"
+    t.index ["seller_id"], name: "index_seller_receivables_on_seller_id"
+    t.check_constraint "amount_cents > 0", name: "seller_receivables_amount_positive"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'reversed'::character varying, 'credited'::character varying]::text[])", name: "seller_receivables_status_allowed"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
@@ -162,15 +197,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_09_210100) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "checkout_groups", "carts", column: "source_cart_id"
+  add_foreign_key "checkout_groups", "users", column: "buyer_id"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "order_items", "users", column: "seller_id"
+  add_foreign_key "orders", "checkout_groups"
   add_foreign_key "orders", "carts", column: "source_cart_id"
   add_foreign_key "orders", "users"
   add_foreign_key "orders", "users", column: "seller_id"
   add_foreign_key "products", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_sessions", "users"
+  add_foreign_key "seller_receivables", "checkout_groups"
+  add_foreign_key "seller_receivables", "orders"
+  add_foreign_key "seller_receivables", "users", column: "buyer_id"
+  add_foreign_key "seller_receivables", "users", column: "seller_id"
   add_foreign_key "wallet_transactions", "wallets"
   add_foreign_key "wallets", "users"
 end

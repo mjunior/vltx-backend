@@ -73,16 +73,34 @@ module Carts
           raise ActiveRecord::Rollback
         end
 
+        checkout_group = create_checkout_group!(
+          cart: locked_cart,
+          preparation: preparation_result.preparation
+        )
+
+        order_result = Orders::CreateFromCart.call(
+          cart: locked_cart,
+          buyer: @user,
+          checkout_group: checkout_group
+        )
+        unless order_result.success?
+          error_code = :invalid_payload
+          raise ActiveRecord::Rollback
+        end
+
         movement_result = Wallets::Operations::ApplyMovement.call(
           wallet: wallet_for(user: @user),
           transaction_type: :debit,
           trusted_amount_cents: subtotal_cents(preparation_result.preparation),
-          reference_type: "cart_checkout",
-          reference_id: locked_cart.id,
+          reference_type: "checkout_group",
+          reference_id: checkout_group.id,
           operation_key: "checkout:#{locked_cart.id}",
           metadata: {
             "checkout_id" => locked_cart.id,
-            "source" => "cart_checkout",
+            "checkout_group_id" => checkout_group.id,
+            "order_ids" => order_result.orders.map(&:id),
+            "orders_count" => order_result.orders.length,
+            "source" => "checkout_group",
           }
         )
         unless movement_result.success?
@@ -93,12 +111,6 @@ module Carts
                        else
                          :invalid_payload
                        end
-          raise ActiveRecord::Rollback
-        end
-
-        order_result = Orders::CreateFromCart.call(cart: locked_cart, buyer: @user)
-        unless order_result.success?
-          error_code = :invalid_payload
           raise ActiveRecord::Rollback
         end
 
@@ -119,6 +131,16 @@ module Carts
 
     def subtotal_cents(preparation)
       preparation[:subtotal_cents].to_i
+    end
+
+    def create_checkout_group!(cart:, preparation:)
+      CheckoutGroup.create!(
+        buyer: @user,
+        source_cart: cart,
+        currency: preparation[:currency],
+        total_items: preparation[:total_items],
+        subtotal_cents: preparation[:subtotal_cents]
+      )
     end
 
     def wallet_for(user:)
