@@ -37,28 +37,39 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 
 ### Active
 
-- [ ] Confirmar e-mail e emitir bônus promocional de R$ 10 após confirmação (`PAY-02`)
-- [ ] Implementar payout/liquidação externa do saldo seller (`PAY-06`)
-- [ ] Suportar meios de pagamento externos como cartão e Pix (`PAY-07`)
-- [ ] Evoluir contestação para mediação operacional completa com novos estados internos (`ORD-08`)
-- [ ] Expor leitura agregada de médias e resposta pública do seller para avaliações (`RATE-03`)
+- [ ] Criar entidade `Admin` com autenticação própria em `/admin`, fronteira de autorização separada e JWT secret dedicado para sessões administrativas.
+- [ ] Garantir que usuário padrão nunca consiga escalar privilégios para admin por rotas, payloads ou mutações da entidade `User`.
+- [ ] Permitir que admin desative usuários, remova anúncios inapropriados e visualize todos os pedidos da plataforma.
+- [ ] Adicionar status de verificação no usuário (`unverified`/`verified`) como base para futuro OTP por e-mail.
+- [ ] Permitir que admin atualize quaisquer dados do usuário, incluindo foto, saldo e e-mail, com trilha operacional segura.
+- [ ] Entregar dashboard admin com total de usuários, pedidos por status e volume financeiro por período.
+- [ ] Permitir que admin liste contestações e decida por negar ou aprovar, com refund seguro ao comprador quando aprovado.
 
 ### Out of Scope
 
-- Login social (OAuth)
-- Password reset / email verification
-- MFA/2FA neste ciclo
+- Login social (OAuth) — segue fora do foco do milestone administrativo.
+- OTP/e-mail de verificação end-to-end — este ciclo entrega apenas o status `unverified`/`verified` como fundação.
+- MFA/2FA admin — importante, mas adiado para não bloquear a primeira superfície operacional de admin.
+- Payout seller e meios de pagamento externos — permanecem fora deste milestone para não misturar risco operacional com expansão financeira.
 
-## Current Milestone
+## Current Milestone: v1.5 Admin Panel
 
-Nenhum milestone ativo. Último entregue: **v1.4 Orders, Status Flow, and Ratings**.
+**Goal:** Criar uma superfície administrativa segregada para operação interna sem abrir brechas de escalada de privilégio a partir do domínio de usuário padrão.
+
+**Target features:**
+- Entidade `Admin` com auth própria, namespace `/admin` e JWT secret administrativo dedicado.
+- Moderação operacional de usuários, anúncios e pedidos globais.
+- Atualização administrativa de dados de usuário, incluindo saldo e status de verificação.
+- Dashboard admin com métricas agregadas da plataforma.
+- Resolução administrativa de contestações com decisão approve/deny e refund buyer-side quando aplicável.
 
 ## Current State
 
 - **Shipped versions:** v1.0, v1.1, v1.2, v1.3, v1.4
-- **Current milestone:** nenhum ativo; pronto para iniciar o próximo
+- **Current milestone:** v1.5 Admin Panel
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
 - **Functional scope now shipped:** auth JWT, perfil, catálogo, carrinho, checkout wallet-only, pedidos, wallet ledger, painel financeiro seller, contestação e avaliações pós-entrega
+- **Current expansion:** autenticação administrativa segregada, moderação global, dashboard e mediação operacional de contestação
 
 ## Constraints
 
@@ -68,6 +79,8 @@ Nenhum milestone ativo. Último entregue: **v1.4 Orders, Status Flow, and Rating
 - Operações de carteira nunca confiam em valores enviados pelo frontend.
 - Ledger de carteira é append-only: sem `UPDATE`/`DELETE` em transações.
 - Transições críticas de pedido devem ser autorizadas por ator e validadas server-side; cliente nunca escolhe estado arbitrário.
+- Admin não pode ser derivado por flag mutável em `users`; a fronteira de identidade precisa ser separada do domínio de usuário padrão.
+- Rotas administrativas devem viver em escopo `/admin`, mesmo quando reutilizarem services internos já existentes.
 
 ## Key Decisions
 
@@ -89,13 +102,9 @@ Nenhum milestone ativo. Último entregue: **v1.4 Orders, Status Flow, and Rating
 | Crédito seller só em `delivered` | Reduzir risco de refund após liberação financeira | ✓ Good (v1.4) |
 | Avaliações persistidas separadamente por produto e por vendedor | Simplificar cálculo futuro de médias agregadas sem ambiguidade | ✓ Good (v1.4) |
 | Query de pedido deve nascer tenant-scoped, não apenas validar ownership após busca | Reduzir superfície de cross-access e endurecer isolamento | ✓ Good (v1.4) |
-
-## Next Milestone Goals
-
-1. Definir e implementar confirmação de e-mail com crédito promocional pós-confirmação.
-2. Projetar payout real do seller e política de liquidação.
-3. Evoluir mediação de contestação com workflow operacional dedicado.
-4. Expor surfaces de leitura agregada para reputação de produto e seller.
+| Admin será uma entidade própria com autenticação segregada em `/admin` | Reduz risco de privilege escalation e separa políticas operacionais do usuário comum | — Pending (v1.5) |
+| JWT admin terá secret dedicado | Limita blast radius entre sessões admin e user e permite políticas independentes de rotação/revogação | — Pending (v1.5) |
+| Status de verificação do usuário nasce como fundação sem OTP acoplado neste milestone | Permite preparar banner/fluxo futuro sem travar o painel admin na entrega de e-mail | — Pending (v1.5) |
 
 <details>
 <summary>Historical Milestone Context</summary>
@@ -110,4 +119,4 @@ Nenhum milestone ativo. Último entregue: **v1.4 Orders, Status Flow, and Rating
 </details>
 
 ---
-*Last updated: 2026-03-10 after shipping v1.4 milestone*
+*Last updated: 2026-03-10 after starting v1.5 Admin Panel milestone*
