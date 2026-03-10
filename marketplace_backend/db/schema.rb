@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_040200) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_050000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -243,7 +243,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_040200) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "verification_status", default: "unverified", null: false
+    t.boolean "active", default: true, null: false
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
+    t.index ["active"], name: "index_users_on_active"
     t.index ["verification_status"], name: "index_users_on_verification_status"
   end
 

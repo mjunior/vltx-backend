@@ -15,12 +15,12 @@
 ### User Verification and Moderation
 
 - [x] **USR-01**: Sistema mantém status de verificação do usuário como `unverified` ou `verified` para uso administrativo e futura integração com OTP por e-mail.
-- [ ] **ADM-04**: Admin pode desativar qualquer usuário da plataforma sem depender de ownership buyer/seller.
-- [ ] **ADM-05**: Admin pode remover ou desativar anúncios inapropriados em escopo global.
+- [x] **ADM-04**: Admin pode desativar qualquer usuário da plataforma sem depender de ownership buyer/seller.
+- [x] **ADM-05**: Admin pode remover ou desativar anúncios inapropriados em escopo global.
 
 ### Admin Operations
 
-- [ ] **ADM-06**: Admin pode listar e inspecionar todos os pedidos da plataforma com escopo global.
+- [x] **ADM-06**: Admin pode listar e inspecionar todos os pedidos da plataforma com escopo global.
 - [ ] **ADM-07**: Admin pode atualizar quaisquer dados de um usuário, incluindo foto, saldo e e-mail, por fluxo administrativo controlado.
 
 ### Admin Analytics
@@ -67,9 +67,9 @@
 | ADM-02 | Phase 23 | Complete |
 | ADM-03 | Phase 23 | Complete |
 | USR-01 | Phase 23 | Complete |
-| ADM-04 | Phase 24 | Pending |
-| ADM-05 | Phase 24 | Pending |
-| ADM-06 | Phase 24 | Pending |
+| ADM-04 | Phase 24 | Complete |
+| ADM-05 | Phase 24 | Complete |
+| ADM-06 | Phase 24 | Complete |
 | ADM-07 | Phase 25 | Pending |
 | ADM-08 | Phase 26 | Pending |
 | ADM-09 | Phase 27 | Pending |

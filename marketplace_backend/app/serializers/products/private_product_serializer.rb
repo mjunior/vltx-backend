@@ -10,6 +10,7 @@ module Products
             price: product.price.to_s("F"),
             stock_quantity: product.stock_quantity,
             active: product.active,
+            deleted_at: product.deleted_at,
           },
         }
       end

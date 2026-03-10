@@ -57,6 +57,20 @@ class AuthLoginTest < ActionDispatch::IntegrationTest
     assert_equal "credenciais invalidas", body["error"]
   end
 
+  test "login returns generic invalid credentials for inactive user" do
+    user = create_user(email: "inactive-login@example.com")
+    user.update!(active: false)
+
+    post "/auth/login", params: {
+      email: user.email,
+      password: "password123"
+    }, as: :json
+
+    assert_response :unauthorized
+    body = JSON.parse(response.body)
+    assert_equal "credenciais invalidas", body["error"]
+  end
+
   test "login returns payload invalido when params are missing" do
     post "/auth/login", params: {}, as: :json
 

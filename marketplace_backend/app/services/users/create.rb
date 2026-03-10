@@ -45,6 +45,7 @@ module Users
         email: @params[:email],
         password: @params[:password],
         password_confirmation: @params[:password_confirmation],
+        active: true,
       }
     end
   end

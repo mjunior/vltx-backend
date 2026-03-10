@@ -29,7 +29,10 @@ class User < ApplicationRecord
   validates :email, presence: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP },
                     uniqueness: { case_sensitive: false }
+  validates :active, inclusion: { in: [true, false] }
   validates :password, length: { minimum: 8 }, if: :password_validation_required?
+
+  scope :active_only, -> { where(active: true) }
 
   private
 

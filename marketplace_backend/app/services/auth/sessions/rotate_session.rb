@@ -22,6 +22,7 @@ module Auth
           session.with_lock do
             session.reload
             return Result.new(success?: false) unless active_session?(session, refresh_jti, refresh_token)
+            return Result.new(success?: false) unless session.user.active?
 
             access = Auth::Jwt::Issuer.issue_access(user_id: session.user_id)
             new_refresh = Auth::Jwt::Issuer.issue_refresh(user_id: session.user_id)

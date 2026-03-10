@@ -10,6 +10,19 @@ class Admin::UsersController < Admin::ApplicationController
     }, status: :ok
   end
 
+  def deactivate
+    result = AdminUsers::Deactivate.call(user_id: params[:id])
+    return render_not_found if result.error_code == :not_found
+    return render_invalid_payload unless result.success?
+
+    render json: {
+      data: {
+        id: result.user.id,
+        active: result.user.active,
+      }
+    }, status: :ok
+  end
+
   private
 
   def render_not_found

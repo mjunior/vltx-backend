@@ -26,6 +26,7 @@ module Orders
       private
 
       def actor_role_for(order:, viewer:)
+        return "admin" if viewer.is_a?(Admin)
         return "buyer" if order.user_id == viewer.id
         return "seller" if order.seller_id == viewer.id
 
@@ -33,6 +34,16 @@ module Orders
       end
 
       def available_actions_for(order:, actor_role:)
+        return {
+          can_advance: false,
+          can_approve_contest: false,
+          can_cancel: false,
+          can_refund: false,
+          can_deliver: false,
+          can_contest: false,
+          can_rate: false
+        } if actor_role == "admin"
+
         {
           can_advance: actor_role == "seller" && (order.paid? || order.in_separation?),
           can_approve_contest: actor_role == "seller" && order.contested?,

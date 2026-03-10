@@ -15,7 +15,7 @@ module Products
     def call
       return Result.new(success?: false, products: [], total: 0) unless @user
 
-      relation = @user.products.not_deleted.order(created_at: :desc, id: :desc)
+      relation = @user.products.order(created_at: :desc, id: :desc)
       Result.new(success?: true, products: relation.to_a, total: relation.count)
     rescue StandardError
       Result.new(success?: false, products: [], total: 0)

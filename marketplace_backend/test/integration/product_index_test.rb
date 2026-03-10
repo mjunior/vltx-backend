@@ -44,7 +44,7 @@ class ProductIndexTest < ActionDispatch::IntegrationTest
     oldest = create_product_for(owner, title: "Produto Antigo", created_at: 2.hours.ago)
     inactive = create_product_for(owner, title: "Produto Inativo", active: false, created_at: 1.hour.ago)
     newest = create_product_for(owner, title: "Produto Novo", created_at: Time.current)
-    create_product_for(owner, title: "Produto Deletado", deleted_at: Time.current, created_at: 30.minutes.ago)
+    deleted = create_product_for(owner, title: "Produto Deletado", deleted_at: Time.current, created_at: 30.minutes.ago)
     create_product_for(other, title: "Produto Outro User", created_at: 3.hours.ago)
 
     get "/products", headers: {
@@ -53,12 +53,12 @@ class ProductIndexTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     body = JSON.parse(response.body)
-    assert_equal 3, body.dig("meta", "total")
+    assert_equal 4, body.dig("meta", "total")
 
     data = body.fetch("data")
-    assert_equal [newest.id, inactive.id, oldest.id], data.map { |item| item.fetch("id") }
-    assert_equal [true, false, true], data.map { |item| item.fetch("active") }
-    assert_equal %w[active description id price stock_quantity title], data.first.keys.sort
+    assert_equal [newest.id, deleted.id, inactive.id, oldest.id], data.map { |item| item.fetch("id") }
+    assert_equal [true, true, false, true], data.map { |item| item.fetch("active") }
+    assert_equal %w[active deleted_at description id price stock_quantity title], data.first.keys.sort
   end
 
   test "returns empty list when user has no products" do

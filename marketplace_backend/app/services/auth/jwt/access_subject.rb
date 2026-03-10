@@ -10,7 +10,7 @@ module Auth
           user_id = decoded.payload["sub"]
           return nil if user_id.blank?
 
-          User.find_by(id: user_id)
+          User.active_only.find_by(id: user_id)
         rescue Errors::InvalidToken
           nil
         end

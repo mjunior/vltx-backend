@@ -10,6 +10,7 @@ module Auth
 
           return nil unless session
           return nil unless session.active?
+          return nil unless session.user.active?
 
           session
         end

@@ -5,7 +5,7 @@ module Auth
 
       user = User.find_by(email: login_params[:email].to_s.downcase.strip)
 
-      unless user&.authenticate(login_params[:password])
+      unless user&.active? && user.authenticate(login_params[:password])
         return render_invalid_credentials
       end
 

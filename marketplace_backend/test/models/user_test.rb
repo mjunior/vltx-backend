@@ -37,4 +37,10 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "unverified", user.verification_status
     assert user.unverified?
   end
+
+  test "is active by default" do
+    user = User.create!(email: "active-default@example.com", password: "password123", password_confirmation: "password123")
+
+    assert user.active?
+  end
 end
