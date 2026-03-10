@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :carts, dependent: :destroy
   has_many :orders, dependent: :destroy
   has_many :seller_orders, class_name: "Order", foreign_key: :seller_id, dependent: :restrict_with_exception, inverse_of: :seller
+  has_many :order_transitions, foreign_key: :actor_id, dependent: :restrict_with_exception, inverse_of: :actor
   has_many :checkout_groups, foreign_key: :buyer_id, dependent: :restrict_with_exception, inverse_of: :buyer
   has_many :seller_receivables, foreign_key: :seller_id, dependent: :restrict_with_exception, inverse_of: :seller
   has_many :buyer_receivables, class_name: "SellerReceivable", foreign_key: :buyer_id, dependent: :restrict_with_exception, inverse_of: :buyer

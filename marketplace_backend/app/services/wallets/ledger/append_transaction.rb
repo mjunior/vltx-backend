@@ -99,7 +99,7 @@ module Wallets
       end
 
       def signed_delta
-        return @amount_cents if @transaction_type == WalletTransaction::TRANSACTION_TYPES[:credit]
+        return @amount_cents if [WalletTransaction::TRANSACTION_TYPES[:credit], WalletTransaction::TRANSACTION_TYPES[:refund]].include?(@transaction_type)
 
         -@amount_cents
       end

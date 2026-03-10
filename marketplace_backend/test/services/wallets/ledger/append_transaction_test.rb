@@ -50,17 +50,16 @@ module Wallets
         assert_equal 450, wallet.reload.current_balance_cents
       end
 
-      test "rejects operation that would create negative balance" do
+      test "applies refund as positive delta and increases balance" do
         wallet = create_wallet(email: "wallet-ledger-negative@example.com")
         seed = append(wallet: wallet, transaction_type: :credit, amount_cents: 100, operation_key: "negative-seed")
         assert seed.success?
 
         result = append(wallet: wallet, transaction_type: :refund, amount_cents: 250, operation_key: "refund-1")
 
-        assert_not result.success?
-        assert_equal :insufficient_funds, result.error_code
-        assert_equal 1, wallet.wallet_transactions.count
-        assert_equal 100, wallet.reload.current_balance_cents
+        assert result.success?
+        assert_equal 350, result.transaction.balance_after_cents
+        assert_equal 350, wallet.reload.current_balance_cents
       end
 
       test "fails closed when ledger and materialized balance diverge" do

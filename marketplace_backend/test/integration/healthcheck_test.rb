@@ -12,12 +12,17 @@ class HealthcheckTest < ActionDispatch::IntegrationTest
       route.defaults[:controller].present? && !route.path.spec.to_s.start_with?("/rails/")
     end
 
-    assert_equal 20, app_routes.count
+    assert_equal 25, app_routes.count
     assert_routing "/up", controller: "rails/health", action: "show"
     assert_routing({ method: "get", path: "/public/products" }, controller: "public/products", action: "index")
     assert_routing({ method: "get", path: "/public/products/123" }, controller: "public/products", action: "show", id: "123")
     assert_routing({ method: "get", path: "/wallet" }, controller: "wallets", action: "show")
     assert_routing({ method: "get", path: "/wallet/transactions" }, controller: "wallets", action: "transactions")
+    assert_routing({ method: "get", path: "/orders" }, controller: "orders", action: "index")
+    assert_routing({ method: "get", path: "/orders/123" }, controller: "orders", action: "show", id: "123")
+    assert_routing({ method: "post", path: "/orders/123/advance" }, controller: "orders", action: "advance", id: "123")
+    assert_routing({ method: "post", path: "/orders/123/cancel" }, controller: "orders", action: "cancel", id: "123")
+    assert_routing({ method: "post", path: "/orders/123/deliver" }, controller: "orders", action: "deliver", id: "123")
     assert_routing({ method: "post", path: "/cart" }, controller: "carts", action: "create")
     assert_routing({ method: "post", path: "/cart/checkout" }, controller: "cart_checkout", action: "create")
     assert_routing({ method: "post", path: "/cart/items" }, controller: "cart_items", action: "create")

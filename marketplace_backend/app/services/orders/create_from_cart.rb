@@ -106,6 +106,15 @@ module Orders
           amount_cents: group[:subtotal_cents]
         )
 
+        Orders::TransitionRecorder.record!(
+          order: order,
+          to_status: Order::STATUSES[:paid],
+          action: :checkout,
+          actor: @buyer,
+          actor_role: OrderTransition::ACTOR_ROLES[:buyer],
+          metadata: { "source" => "checkout" }
+        )
+
         order
       end
     end

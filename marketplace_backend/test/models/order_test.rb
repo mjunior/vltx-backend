@@ -102,4 +102,24 @@ class OrderTest < ActiveSupport::TestCase
     assert_includes order.errors[:checkout_group_id], "must belong to buyer"
     assert_includes order.errors[:checkout_group_id], "must reference the same source cart"
   end
+
+  test "blocks direct status mutation outside workflow" do
+    buyer = create_user(email: "order-model-status-buyer@example.com")
+    seller = create_user(email: "order-model-status-seller@example.com")
+    cart = create_cart_for(buyer)
+    order = Order.create!(
+      user: buyer,
+      seller: seller,
+      source_cart: cart,
+      checkout_group: create_checkout_group_for(buyer, cart: cart),
+      status: :paid,
+      currency: "BRL",
+      total_items: 1,
+      subtotal_cents: 100
+    )
+
+    assert_raises(ActiveRecord::RecordInvalid) do
+      order.update!(status: :confirmed)
+    end
+  end
 end
