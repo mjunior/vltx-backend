@@ -73,4 +73,30 @@ class OrdersContestTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
   end
+
+  test "seller approves contested order through endpoint" do
+    order = create_delivered_order
+    buyer_token = access_token_for(order.user)
+    seller_token = access_token_for(order.seller)
+
+    post "/orders/#{order.id}/contest", headers: { "Authorization" => "Bearer #{buyer_token}" }, as: :json
+    assert_response :success
+
+    post "/orders/#{order.id}/approve_contest", headers: { "Authorization" => "Bearer #{seller_token}" }, as: :json
+
+    assert_response :success
+    assert_equal "refunded", JSON.parse(response.body).dig("data", "status")
+  end
+
+  test "buyer cannot approve contested order" do
+    order = create_delivered_order
+    buyer_token = access_token_for(order.user)
+    post "/orders/#{order.id}/contest", headers: { "Authorization" => "Bearer #{buyer_token}" }, as: :json
+    assert_response :success
+
+    post "/orders/#{order.id}/approve_contest", headers: { "Authorization" => "Bearer #{buyer_token}" }, as: :json
+
+    assert_response :not_found
+    assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
 end

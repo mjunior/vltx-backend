@@ -82,5 +82,19 @@ module SellerFinance
       assert_empty result.summary[:pending_receivables]
       assert_empty result.summary[:transaction_history]
     end
+
+    test "includes contest reversal debit in seller transaction history" do
+      seller = create_user(email: "seller-finance-reversal-seller@example.com")
+      buyer = create_user(email: "seller-finance-reversal-buyer@example.com")
+      order = create_order_flow_for(seller: seller, buyer: buyer, delivered: true)
+      Orders::Contest.call(order: order, actor: order.user)
+      Orders::ApproveContestation.call(order: order.reload, actor: order.seller)
+
+      result = ReadSummary.call(seller: seller)
+
+      assert result.success?
+      assert_equal ["credit", "debit"].sort, result.summary[:transaction_history].map { |row| row[:transaction_type] }.sort
+      assert_equal "refunded", result.summary[:transaction_history].find { |row| row[:transaction_type] == "debit" }[:order_status]
+    end
   end
 end

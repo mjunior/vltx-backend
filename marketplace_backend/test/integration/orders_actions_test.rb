@@ -58,10 +58,26 @@ class OrdersActionsTest < ActionDispatch::IntegrationTest
     get "/orders", headers: { "Authorization" => "Bearer #{token}" }
     assert_response :success
     assert_equal [order.id], JSON.parse(response.body).dig("data", "orders").map { |item| item["id"] }
+    assert_equal "buyer", JSON.parse(response.body).dig("data", "orders", 0, "actor_role")
+    assert_equal true, JSON.parse(response.body).dig("data", "orders", 0, "available_actions", "can_cancel")
+    assert_equal true, JSON.parse(response.body).dig("data", "orders", 0, "available_actions", "can_refund")
 
     get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
     assert_response :success
     assert_equal order.id, JSON.parse(response.body).dig("data", "id")
+    assert_equal false, JSON.parse(response.body).dig("data", "available_actions", "can_deliver")
+  end
+
+  test "seller sees advance action available in order payload" do
+    order = create_paid_order
+    token = access_token_for(order.seller)
+
+    get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
+
+    assert_response :success
+    assert_equal "seller", JSON.parse(response.body).dig("data", "actor_role")
+    assert_equal true, JSON.parse(response.body).dig("data", "available_actions", "can_advance")
+    assert_equal false, JSON.parse(response.body).dig("data", "available_actions", "can_cancel")
   end
 
   test "seller advances and buyer delivers through action endpoints" do

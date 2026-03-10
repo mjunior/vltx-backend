@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_020100) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_030100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -90,8 +90,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_020100) do
     t.index ["order_id", "position"], name: "idx_order_transitions_order_position_unique", unique: true
     t.index ["order_id"], name: "index_order_transitions_on_order_id"
     t.check_constraint "actor_role::text = ANY (ARRAY['buyer'::character varying::text, 'seller'::character varying::text, 'system'::character varying::text])", name: "order_transitions_actor_role_allowed"
-    t.check_constraint "from_status IS NULL OR (from_status::text = ANY (ARRAY['paid'::character varying::text, 'in_separation'::character varying::text, 'confirmed'::character varying::text, 'delivered'::character varying::text, 'contested'::character varying::text, 'canceled'::character varying::text]))", name: "order_transitions_from_status_allowed"
-    t.check_constraint "to_status::text = ANY (ARRAY['paid'::character varying::text, 'in_separation'::character varying::text, 'confirmed'::character varying::text, 'delivered'::character varying::text, 'contested'::character varying::text, 'canceled'::character varying::text])", name: "order_transitions_to_status_allowed"
+    t.check_constraint "from_status IS NULL OR (from_status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'refunded'::character varying, 'canceled'::character varying]::text[]))", name: "order_transitions_from_status_allowed"
+    t.check_constraint "to_status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'refunded'::character varying, 'canceled'::character varying]::text[])", name: "order_transitions_to_status_allowed"
   end
 
   create_table "orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -112,7 +112,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_020100) do
     t.index ["source_cart_id"], name: "index_orders_on_source_cart_id"
     t.index ["user_id", "created_at", "id"], name: "idx_orders_buyer_timeline"
     t.index ["user_id"], name: "index_orders_on_user_id"
-    t.check_constraint "status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'canceled'::character varying]::text[])", name: "orders_status_allowed"
+    t.check_constraint "status::text = ANY (ARRAY['paid'::character varying, 'in_separation'::character varying, 'confirmed'::character varying, 'delivered'::character varying, 'contested'::character varying, 'refunded'::character varying, 'canceled'::character varying]::text[])", name: "orders_status_allowed"
     t.check_constraint "subtotal_cents > 0", name: "orders_subtotal_positive"
     t.check_constraint "total_items > 0", name: "orders_total_items_positive"
   end

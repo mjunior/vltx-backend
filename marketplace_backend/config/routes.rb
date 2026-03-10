@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post "orders/:id/cancel" => "orders#cancel"
   post "orders/:id/deliver" => "orders#deliver"
   post "orders/:id/contest" => "orders#contest"
+  post "orders/:id/approve_contest" => "orders#approve_contest"
   post "orders/:order_id/items/:id/rating" => "order_item_ratings#create"
   post "cart" => "carts#create"
   post "cart/checkout" => "cart_checkout#create"

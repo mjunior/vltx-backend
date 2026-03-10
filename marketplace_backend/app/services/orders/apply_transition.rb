@@ -68,6 +68,8 @@ module Orders
         Order::STATUSES[:delivered]
       when [OrderTransition::ACTOR_ROLES[:buyer], "contest", Order::STATUSES[:delivered]]
         Order::STATUSES[:contested]
+      when [OrderTransition::ACTOR_ROLES[:seller], "approve_contest", Order::STATUSES[:contested]]
+        Order::STATUSES[:refunded]
       else
         nil
       end

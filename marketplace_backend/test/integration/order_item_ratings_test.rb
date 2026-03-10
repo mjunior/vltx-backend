@@ -58,6 +58,11 @@ class OrderItemRatingsTest < ActionDispatch::IntegrationTest
     buyer, order, item = create_delivered_order_item
     token = access_token_for(buyer)
 
+    get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
+    assert_response :success
+    assert_equal true, JSON.parse(response.body).dig("data", "available_actions", "can_rate")
+    assert_equal true, JSON.parse(response.body).dig("data", "items", 0, "available_actions", "can_rate")
+
     post "/orders/#{order.id}/items/#{item.id}/rating",
          params: { rating: { score: 5, comment: "Excelente compra" } },
          headers: { "Authorization" => "Bearer #{token}" },
@@ -67,6 +72,23 @@ class OrderItemRatingsTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert body.dig("data", "product_rating_id").present?
     assert body.dig("data", "seller_rating_id").present?
+
+    get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
+    assert_response :success
+    assert_equal false, JSON.parse(response.body).dig("data", "items", 0, "available_actions", "can_rate")
+  end
+
+  test "shows contest available but no refund after delivered" do
+    buyer, order, = create_delivered_order_item
+    token = access_token_for(buyer)
+
+    get "/orders/#{order.id}", headers: { "Authorization" => "Bearer #{token}" }
+
+    assert_response :success
+    assert_equal false, JSON.parse(response.body).dig("data", "available_actions", "can_cancel")
+    assert_equal false, JSON.parse(response.body).dig("data", "available_actions", "can_refund")
+    assert_equal false, JSON.parse(response.body).dig("data", "available_actions", "can_deliver")
+    assert_equal true, JSON.parse(response.body).dig("data", "available_actions", "can_contest")
   end
 
   test "rejects forged identifiers in payload" do

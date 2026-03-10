@@ -5,6 +5,7 @@ class Order < ApplicationRecord
     confirmed: "confirmed",
     delivered: "delivered",
     contested: "contested",
+    refunded: "refunded",
     canceled: "canceled",
   }.freeze
 

@@ -18,8 +18,9 @@ module SellerFinance
       pending_receivables = SellerReceivable.includes(:order, :buyer)
                                             .where(seller_id: @seller.id, status: SellerReceivable::STATUSES[:pending])
                                             .recent_first
-      credited_transactions = credited_wallet_transactions
-      credited_orders = Order.where(id: credited_transactions.pluck(:reference_id))
+      order_transactions = order_wallet_transactions
+      credited_transactions = order_transactions.select(&:credit?)
+      order_index = Order.where(id: order_transactions.pluck(:reference_id))
                              .index_by { |order| order.id.to_s }
 
       pending_total_cents = pending_receivables.sum(&:amount_cents)
@@ -34,7 +35,7 @@ module SellerFinance
           credited_total_cents: credited_total_cents,
           credited_total: cents_to_decimal_string(credited_total_cents),
           pending_receivables: pending_receivables.map { |receivable| serialize_receivable(receivable) },
-          transaction_history: credited_transactions.map { |transaction| serialize_transaction(transaction, credited_orders[transaction.reference_id.to_s]) }
+          transaction_history: order_transactions.map { |transaction| serialize_transaction(transaction, order_index[transaction.reference_id.to_s]) }
         }
       )
     rescue StandardError
@@ -43,12 +44,12 @@ module SellerFinance
 
     private
 
-    def credited_wallet_transactions
+    def order_wallet_transactions
       wallet = Wallet.find_by(user_id: @seller.id)
       return WalletTransaction.none unless wallet
 
       wallet.wallet_transactions
-            .where(transaction_type: :credit, reference_type: "order")
+            .where(reference_type: ["order", "order_contest_resolution"])
             .recent_first
     end
 

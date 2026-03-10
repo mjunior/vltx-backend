@@ -4,14 +4,12 @@ class OrdersController < ApplicationController
   INTERNAL_KEYS = %w[controller action format id].freeze
 
   before_action :authenticate_user!
-  before_action :load_order!, only: %i[show advance cancel deliver contest]
+  before_action :load_order!, only: %i[show advance cancel deliver contest approve_contest]
 
   def index
     return render_invalid_payload if unsupported_query_keys.present?
 
-    orders = Order.includes(:order_items, :order_transitions)
-                  .where("user_id = :user_id OR seller_id = :user_id", user_id: current_user.id)
-                  .recent_first
+    orders = participant_orders_scope.recent_first
 
     render json: {
       data: {
@@ -66,6 +64,17 @@ class OrdersController < ApplicationController
     render json: { data: Orders::OrderSerializer.call(order: result.order, viewer: current_user) }, status: :ok
   end
 
+  def approve_contest
+    return render_invalid_payload if unsupported_mutation_payload?
+
+    result = Orders::ApproveContestation.call(order: @order, actor: current_user)
+    return render_not_found if result.error_code == :not_found
+    return render_insufficient_funds if result.error_code == :insufficient_funds
+    return render_invalid_payload unless result.success?
+
+    render json: { data: Orders::OrderSerializer.call(order: result.order, viewer: current_user) }, status: :ok
+  end
+
   private
 
   def load_order!
@@ -74,7 +83,7 @@ class OrdersController < ApplicationController
   end
 
   def participant_orders_scope
-    Order.includes(:order_items, :order_transitions)
+    Order.includes(:order_transitions, order_items: [:product_rating, :seller_rating])
          .where("user_id = :user_id OR seller_id = :user_id", user_id: current_user.id)
   end
 
@@ -88,5 +97,9 @@ class OrdersController < ApplicationController
 
   def render_not_found
     render json: { error: "nao encontrado" }, status: :not_found
+  end
+
+  def render_insufficient_funds
+    render json: { error: "saldo insuficiente" }, status: :unprocessable_entity
   end
 end

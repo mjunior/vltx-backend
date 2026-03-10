@@ -73,5 +73,22 @@ module Orders
       assert_not result.success?
       assert_equal :not_found, result.error_code
     end
+
+    test "seller approves contested order into refunded" do
+      order = create_order(status: :delivered)
+      Orders::TransitionRecorder.record!(
+        order: order,
+        to_status: :contested,
+        action: :contest,
+        actor: order.user,
+        actor_role: OrderTransition::ACTOR_ROLES[:buyer],
+        metadata: { "source" => "seed" }
+      )
+
+      result = ApplyTransition.call(order: order.reload, actor: order.seller, action: :approve_contest)
+
+      assert result.success?
+      assert_equal "refunded", result.order.reload.status
+    end
   end
 end

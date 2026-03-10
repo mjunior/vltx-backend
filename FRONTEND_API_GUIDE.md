@@ -219,9 +219,43 @@ Detalhe:
 
 Caso de uso: listar pedidos do buyer ou seller logado.
 
+Detalhe importante para o frontend:
+- cada pedido já vem com `actor_role`
+- valores possíveis:
+  - `buyer`
+  - `seller`
+- esse campo é derivado do usuário autenticado no token da request
+- a UI pode usar isso para separar "minhas compras" e "minhas vendas" sem inferir pelo `buyer_id`/`seller_id`
+
 ### `GET /orders/:id`
 
 Caso de uso: abrir detalhe do pedido.
+
+Detalhe importante:
+- o payload inclui `available_actions`
+- o frontend deve usar essas flags para decidir quais botões exibir
+- o payload inclui também `items[].available_actions`, especialmente para `can_rate`
+
+Exemplo relevante:
+
+```json
+{
+  "data": {
+    "id": "<order_id>",
+    "status": "contested",
+    "actor_role": "seller",
+    "available_actions": {
+      "can_advance": false,
+      "can_approve_contest": true,
+      "can_cancel": false,
+      "can_refund": false,
+      "can_deliver": false,
+      "can_contest": false,
+      "can_rate": false
+    }
+  }
+}
+```
 
 ### `POST /orders/:id/advance`
 
@@ -262,6 +296,65 @@ Regras:
 - só buyer
 - só depois de `delivered`
 - não existe refund automático neste endpoint
+
+Fluxo de produto:
+- buyer abre a contestação
+- pedido passa para `contested`
+- seller pode então decidir se aprova a contestação
+
+### `POST /orders/:id/approve_contest`
+
+Caso de uso: seller aprovar a contestação e concluir o estorno.
+
+Payload: vazio.
+
+Regras:
+- só seller do pedido
+- só quando o pedido estiver em `contested`
+- o backend debita a wallet do seller e gera `refund` para o buyer no mesmo fluxo transacional
+- se o seller estiver sem saldo suficiente, a ação falha
+
+Flag para exibir botão:
+- usar `available_actions.can_approve_contest`
+- essa flag vem `true` quando:
+  - `actor_role = seller`
+  - `status = contested`
+
+Comportamento esperado da UI:
+- mostrar botão "Aprovar contestação" apenas quando `can_approve_contest = true`
+- ao confirmar a ação, comunicar que:
+  - o comprador será reembolsado
+  - o saldo do seller será debitado
+  - a contestação será encerrada
+
+Resposta típica de sucesso:
+
+```json
+{
+  "data": {
+    "id": "<order_id>",
+    "status": "refunded",
+    "actor_role": "seller",
+    "available_actions": {
+      "can_advance": false,
+      "can_approve_contest": false,
+      "can_cancel": false,
+      "can_refund": false,
+      "can_deliver": false,
+      "can_contest": false,
+      "can_rate": false
+    }
+  }
+}
+```
+
+Erros importantes:
+- `404 nao encontrado`
+  - usuário não é participante autorizado para esse pedido
+- `422 saldo insuficiente`
+  - seller não tem saldo para concluir o estorno
+- `422 payload invalido`
+  - pedido não está em estado elegível
 
 ## 8. Financeiro do Seller
 
@@ -364,5 +457,6 @@ Regras:
 - Não construir frontend assumindo update genérico de `status`.
 - Não assumir um único pedido por checkout.
 - Não assumir refund instantâneo em contestação.
+- Usar `available_actions` do pedido e do item para renderizar ações, em vez de duplicar toda a regra de negócio no cliente.
 - Não enviar IDs sensíveis no payload quando o backend já deriva isso do token ou do path.
 - Sempre tratar `404` privado como possível falta de ownership.
