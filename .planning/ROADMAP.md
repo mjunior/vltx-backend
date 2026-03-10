@@ -11,7 +11,7 @@
 
 **v1.4 Orders, Status Flow, and Ratings**
 
-- **Status:** In Progress
+- **Status:** Implemented
 - **Phases:** 19-22
 - **Requirements:** 15 mapped / 15 total
 
@@ -42,7 +42,7 @@
     3. Buyer só marca `delivered` quando o pedido já estiver em estado elegível.
     4. Toda transição inválida por ator ou sequência é rejeitada e auditada.
 
-- [ ] **Phase 22: Seller Finance Surface, Contestation, and Ratings**
+- [x] **Phase 22: Seller Finance Surface, Contestation, and Ratings**
   - Goal: expor painel financeiro seller e fechar o pós-entrega com contestação e avaliações por produto/vendedor.
   - Requirements: `ORD-06`, `PAY-05`, `RATE-01`, `RATE-02`
   - Success criteria:
@@ -108,9 +108,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 22-01: Implementar surface de consulta financeira do seller com authz estrita
-- [ ] 22-02: Implementar contestação pós-entrega com guardas de elegibilidade
-- [ ] 22-03: Implementar avaliações por produto e por vendedor com testes de unicidade/elegibilidade
+- [x] 22-01: Implementar surface de consulta financeira do seller com authz estrita
+- [x] 22-02: Implementar contestação pós-entrega com guardas de elegibilidade
+- [x] 22-03: Implementar avaliações por produto e por vendedor com testes de unicidade/elegibilidade
 
 ## Progress
 
@@ -119,4 +119,4 @@ Plans:
 | 19. Order Persistence and Stock Integrity | v1.4 | 4 | Completed | 2026-03-09 |
 | 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 1 | Completed | 2026-03-10 |
 | 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Completed | 2026-03-10 |
-| 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Pending | — |
+| 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Completed | 2026-03-10 |

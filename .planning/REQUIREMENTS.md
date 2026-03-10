@@ -18,7 +18,7 @@
 - [ ] **ORD-03**: Seller pode avançar o pedido apenas pelas etapas permitidas do fluxo (`paid -> in_separation -> confirmed`) sem pular estados.
 - [ ] **ORD-04**: Comprador pode cancelar o pedido somente enquanto o estado atual for `paid`.
 - [ ] **ORD-05**: Comprador pode marcar um pedido comprado como `delivered` somente após o fluxo ter alcançado o estado elegível de confirmação.
-- [ ] **ORD-06**: Comprador pode contestar uma compra somente depois que ela tiver sido marcada como `delivered`.
+- [x] **ORD-06**: Comprador pode contestar uma compra somente depois que ela tiver sido marcada como `delivered`.
 - [ ] **ORD-07**: Sistema mantém trilha auditável de transições de pedido e rejeita mudanças de status fora das ações autorizadas para buyer ou seller.
 
 ### Payments and Settlement
@@ -26,12 +26,12 @@
 - [ ] **PAY-01**: Checkout do pedido aceita apenas pagamento pela carteira interna do sistema.
 - [ ] **PAY-03**: Débito do comprador usa uma referência agregada persistida do checkout e mantém vínculo rastreável com os `order_ids`; refunds e liquidação seller continuam ligados ao pedido.
 - [ ] **PAY-04**: Sistema processa reembolso automático e idempotente ao cancelar um pedido já pago.
-- [ ] **PAY-05**: Seller pode consultar painel com saldo a receber e histórico financeiro dos próprios pedidos sem acessar dados de outros sellers.
+- [x] **PAY-05**: Seller pode consultar painel com saldo a receber e histórico financeiro dos próprios pedidos sem acessar dados de outros sellers.
 
 ### Ratings
 
-- [ ] **RATE-01**: Comprador pode avaliar um produto comprado com nota de 1 a 5 e comentário somente após o pedido ter sido marcado como `delivered`.
-- [ ] **RATE-02**: Sistema registra avaliações em estruturas separadas por produto e por vendedor, vinculadas ao item comprado, para permitir cálculo futuro de média.
+- [x] **RATE-01**: Comprador pode avaliar um produto comprado com nota de 1 a 5 e comentário somente após o pedido ter sido marcado como `delivered`.
+- [x] **RATE-02**: Sistema registra avaliações em estruturas separadas por produto e por vendedor, vinculadas ao item comprado, para permitir cálculo futuro de média.
 
 ## v2 Requirements
 
@@ -70,15 +70,15 @@
 | ORD-03 | Phase 21 | Completed |
 | ORD-04 | Phase 21 | Completed |
 | ORD-05 | Phase 21 | Completed |
-| ORD-06 | Phase 22 | Pending |
+| ORD-06 | Phase 22 | Completed |
 | ORD-07 | Phase 21 | Completed |
 | PAY-01 | Phase 19 | Completed |
 | PAY-02 | Future email confirmation milestone | Deferred |
 | PAY-03 | Phase 20 | Completed |
 | PAY-04 | Phase 21 | Completed |
-| PAY-05 | Phase 22 | Pending |
-| RATE-01 | Phase 22 | Pending |
-| RATE-02 | Phase 22 | Pending |
+| PAY-05 | Phase 22 | Completed |
+| RATE-01 | Phase 22 | Completed |
+| RATE-02 | Phase 22 | Completed |
 
 **Coverage:**
 - v1.4 requirements: 15 total
@@ -87,4 +87,4 @@
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-10 after phase 20 execution*
+*Last updated: 2026-03-10 after phase 22 execution*
