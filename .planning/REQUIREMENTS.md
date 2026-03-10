@@ -64,18 +64,18 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INV-01 | Phase 19 | Completed |
-| INV-02 | Phase 21 | Pending |
+| INV-02 | Phase 21 | Completed |
 | ORD-01 | Phase 19 | Completed |
 | ORD-02 | Phase 19 | Completed |
-| ORD-03 | Phase 21 | Pending |
-| ORD-04 | Phase 21 | Pending |
-| ORD-05 | Phase 21 | Pending |
+| ORD-03 | Phase 21 | Completed |
+| ORD-04 | Phase 21 | Completed |
+| ORD-05 | Phase 21 | Completed |
 | ORD-06 | Phase 22 | Pending |
-| ORD-07 | Phase 21 | Pending |
+| ORD-07 | Phase 21 | Completed |
 | PAY-01 | Phase 19 | Completed |
 | PAY-02 | Future email confirmation milestone | Deferred |
 | PAY-03 | Phase 20 | Completed |
-| PAY-04 | Phase 21 | Pending |
+| PAY-04 | Phase 21 | Completed |
 | PAY-05 | Phase 22 | Pending |
 | RATE-01 | Phase 22 | Pending |
 | RATE-02 | Phase 22 | Pending |

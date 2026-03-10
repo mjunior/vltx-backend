@@ -33,7 +33,7 @@
     2. Checkout registra recebível `pending` por pedido/seller sem creditar a wallet do vendedor.
     3. Seller consegue consultar total pendente e lista por pedido sem quebrar invariantes append-only.
 
-- [ ] **Phase 21: Secure Order Workflow and Cancellation Refunds**
+- [x] **Phase 21: Secure Order Workflow and Cancellation Refunds**
   - Goal: implementar fluxo seguro de status com ações por ator, cancelamento comprador e refund automático com restauração de estoque.
   - Requirements: `INV-02`, `ORD-03`, `ORD-04`, `ORD-05`, `ORD-07`, `PAY-04`
   - Success criteria:
@@ -93,9 +93,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 21-01: Implementar camada de workflow/transições auditáveis para pedidos
-- [ ] 21-02: Expor ações seguras de seller e buyer para avanço, cancelamento e entrega
-- [ ] 21-03: Cobrir cenários negativos de transição forjada, refund duplicado e restauração de estoque
+- [x] 21-01: Implementar camada de workflow/transições auditáveis para pedidos
+- [x] 21-02: Expor ações seguras de seller e buyer para avanço, cancelamento e entrega
+- [x] 21-03: Cobrir cenários negativos de transição forjada, refund duplicado e restauração de estoque
 
 ### Phase 22: Seller Finance Surface, Contestation, and Ratings
 **Goal**: Entregar visibilidade financeira seller e o ciclo pós-entrega de contestação/avaliação.
@@ -118,5 +118,5 @@ Plans:
 |-------|-----------|--------------|--------|-----------|
 | 19. Order Persistence and Stock Integrity | v1.4 | 4 | Completed | 2026-03-09 |
 | 20. Order-Linked Ledger and Wallet Provisioning | v1.4 | 1 | Completed | 2026-03-10 |
-| 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Pending | — |
+| 21. Secure Order Workflow and Cancellation Refunds | v1.4 | 6 | Completed | 2026-03-10 |
 | 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Pending | — |
