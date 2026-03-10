@@ -69,18 +69,18 @@ Plans:
 - [x] 19-03: Cobrir retries/concorrência para evitar duplicidade de pedido e inconsistência de estoque
 
 ### Phase 20: Order-Linked Ledger and Wallet Provisioning
-**Goal**: Fechar a rastreabilidade financeira ponta a ponta por `order_id` e provisionar crédito inicial da carteira.
+**Goal**: Fechar a rastreabilidade financeira ponta a ponta do checkout e estruturar recebíveis do seller sem payout imediato.
 **Depends on**: Phase 19
-**Requirements**: PAY-02, PAY-03
+**Requirements**: PAY-03
 **Success Criteria** (what must be TRUE):
-  1. Usuário recém-criado recebe crédito inicial exatamente uma vez.
-  2. Ledger buyer/seller usa `order_id` como referência primária em vez de `cart_id`.
-  3. Recebíveis seller ficam deriváveis do ledger sem expor dados cross-tenant.
+  1. Débito agregado do comprador usa referência rastreável do checkout em vez de `cart_id`.
+  2. Recebíveis seller ficam estruturados sem expor dados cross-tenant.
+  3. Modelo financeiro fica pronto para crédito futuro ao seller apenas após `delivered`.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 20-01: Implementar provisionamento idempotente de crédito inicial na criação do usuário
-- [ ] 20-02: Refatorar lançamentos do checkout/refund para `order_id` e registrar recebíveis seller
+- [ ] 20-01: Implementar entidade agregadora de checkout e migrar referência do débito buyer
+- [ ] 20-02: Registrar recebíveis seller pendentes e preparar surfaces de leitura do saldo a receber
 
 ### Phase 21: Secure Order Workflow and Cancellation Refunds
 **Goal**: Garantir workflow seguro de pedido com transições autorizadas, cancelamento buyer e refund automático.
