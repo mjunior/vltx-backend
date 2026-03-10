@@ -47,6 +47,50 @@ class AdminAuthorizationBoundaryTest < ActionDispatch::IntegrationTest
     assert_equal "token invalido", JSON.parse(response.body)["error"]
   end
 
+  test "user access token is rejected by admin user update endpoint" do
+    user = create_user(email: "admin-users-update-user@example.com")
+    access_token = user_access_token(user)
+
+    patch "/admin/users/#{user.id}", params: {
+      verification_status: "verified"
+    }, headers: {
+      "Authorization" => "Bearer #{access_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "user access token is rejected by admin balance adjustment endpoint" do
+    user = create_user(email: "admin-users-balance-user@example.com")
+    access_token = user_access_token(user)
+
+    post "/admin/users/#{user.id}/balance-adjustments", params: {
+      transaction_type: "credit",
+      amount_cents: 1000,
+      reason: "Tentativa invalida"
+    }, headers: {
+      "Authorization" => "Bearer #{access_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "user access token is rejected by admin products listing" do
+    user = create_user(email: "admin-products-list-user@example.com")
+    access_token = user_access_token(user)
+
+    get "/admin/products", headers: {
+      "Authorization" => "Bearer #{access_token}"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
   test "admin access token is rejected by regular user endpoints" do
     admin = create_admin
     access_token = admin_access_token(admin)

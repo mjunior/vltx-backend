@@ -22,7 +22,7 @@ Goal: criar uma superfície administrativa segregada para operação interna, ma
 |---|-------|------|--------------|------------------|
 | 23 | Admin Identity Boundary and Verification Foundation | Criar a identidade `Admin`, auth `/admin`, JWT secret dedicado e status `unverified`/`verified` no usuário | ADM-01, ADM-02, ADM-03, USR-01 | 4 |
 | 24 | Global Moderation Surface | Permitir moderação global de usuários, anúncios e pedidos via escopo admin | ADM-04, ADM-05, ADM-06 | 4 |
-| 25 | Administrative User Operations | Expor atualização administrativa de dados sensíveis do usuário, incluindo saldo | ADM-07 | 3 |
+| 25 | Administrative User Operations | Expor atualização administrativa de dados sensíveis do usuário, incluindo saldo, e completar leitura admin de anúncios | ADM-07 | 4 |
 | 26 | Admin Metrics Dashboard | Consolidar métricas operacionais e financeiras para leitura de backoffice | ADM-08 | 3 |
 | 27 | Contestation Resolution Workflow | Permitir decisão administrativa sobre contestações com refund seguro quando aprovado | ADM-09, ADM-10 | 4 |
 
@@ -47,12 +47,13 @@ Success criteria:
 4. Endpoints globais não ficam acessíveis para autenticação de usuário comum.
 
 **Phase 25: Administrative User Operations**
-Goal: permitir edição administrativa controlada de dados de usuário, incluindo campos sensíveis e saldo.
+Goal: permitir edição administrativa controlada de dados de usuário, incluindo campos sensíveis e saldo, e completar a listagem administrativa de anúncios para o painel.
 Requirements: ADM-07
 Success criteria:
 1. Admin consegue atualizar e-mail, foto e demais campos permitidos de qualquer usuário.
 2. Ajuste de saldo ocorre por fluxo controlado e auditável, sem violar invariantes do ledger.
 3. Atualizações administrativas mantêm validações de domínio e retornos consistentes.
+4. Painel admin consegue listar e abrir anúncios da plataforma, inclusive moderados.
 
 **Phase 26: Admin Metrics Dashboard**
 Goal: consolidar indicadores essenciais de operação para leitura rápida do backoffice.
@@ -81,6 +82,6 @@ Success criteria:
 | 22. Seller Finance Surface, Contestation, and Ratings | v1.4 | 4 | Completed | 2026-03-10 |
 | 23. Admin Identity Boundary and Verification Foundation | v1.5 | 4 | Completed | 2026-03-10 |
 | 24. Global Moderation Surface | v1.5 | 3 | Completed | 2026-03-10 |
-| 25. Administrative User Operations | v1.5 | 1 | Pending | — |
+| 25. Administrative User Operations | v1.5 | 1 | Completed | 2026-03-10 |
 | 26. Admin Metrics Dashboard | v1.5 | 1 | Pending | — |
 | 27. Contestation Resolution Workflow | v1.5 | 2 | Pending | — |

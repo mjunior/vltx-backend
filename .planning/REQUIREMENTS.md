@@ -21,7 +21,7 @@
 ### Admin Operations
 
 - [x] **ADM-06**: Admin pode listar e inspecionar todos os pedidos da plataforma com escopo global.
-- [ ] **ADM-07**: Admin pode atualizar quaisquer dados de um usuário, incluindo foto, saldo e e-mail, por fluxo administrativo controlado.
+- [x] **ADM-07**: Admin pode atualizar quaisquer dados de um usuário, incluindo foto, saldo e e-mail, por fluxo administrativo controlado.
 
 ### Admin Analytics
 
@@ -70,7 +70,7 @@
 | ADM-04 | Phase 24 | Complete |
 | ADM-05 | Phase 24 | Complete |
 | ADM-06 | Phase 24 | Complete |
-| ADM-07 | Phase 25 | Pending |
+| ADM-07 | Phase 25 | Complete |
 | ADM-08 | Phase 26 | Pending |
 | ADM-09 | Phase 27 | Pending |
 | ADM-10 | Phase 27 | Pending |
@@ -82,4 +82,4 @@
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-10 after initial definition of v1.5 Admin Panel*
+*Last updated: 2026-03-10 after Phase 25 Administrative User Operations*

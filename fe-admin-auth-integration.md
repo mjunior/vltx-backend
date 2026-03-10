@@ -190,6 +190,16 @@ Resposta:
         "email": "user@example.com",
         "active": true,
         "verification_status": "unverified",
+        "profile": {
+          "id": "<profile_id>",
+          "name": null,
+          "address": null,
+          "photo_url": null
+        },
+        "wallet": {
+          "id": null,
+          "current_balance_cents": 0
+        },
         "created_at": "2026-03-10T06:00:00.000Z",
         "updated_at": "2026-03-10T06:00:00.000Z"
       }
@@ -217,8 +227,125 @@ Resposta:
     "email": "user@example.com",
     "active": true,
     "verification_status": "verified",
+    "profile": {
+      "id": "<profile_id>",
+      "name": "Usuario Admin",
+      "address": "Rua A, 1",
+      "photo_url": "https://cdn.example.com/avatar.png"
+    },
+    "wallet": {
+      "id": "<wallet_id>",
+      "current_balance_cents": 5000
+    },
     "created_at": "2026-03-10T06:00:00.000Z",
     "updated_at": "2026-03-10T06:10:00.000Z"
+  }
+}
+```
+
+### `PATCH /admin/users/:id`
+
+Caso de uso: atualizar dados gerais do usuário pelo painel admin.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+Content-Type: application/json
+```
+
+Payload permitido:
+
+```json
+{
+  "email": "updated-user@example.com",
+  "verification_status": "verified",
+  "name": "Nome Atualizado",
+  "address": "Rua B, 200",
+  "photo_url": "https://cdn.example.com/avatar.png"
+}
+```
+
+Regras:
+
+- campos aceitos: `email`, `verification_status`, `name`, `address`, `photo_url`, `active`
+- quando o usuário estiver inativo, esse endpoint só aceita `{ "active": true }`
+- `active: false` também funciona e usa o mesmo bloqueio operacional da desativação
+- payload vazio ou campos desconhecidos retornam `422 payload invalido`
+
+Resposta de sucesso:
+
+```json
+{
+  "data": {
+    "id": "<user_id>",
+    "email": "updated-user@example.com",
+    "active": true,
+    "verification_status": "verified",
+    "profile": {
+      "id": "<profile_id>",
+      "name": "Nome Atualizado",
+      "address": "Rua B, 200",
+      "photo_url": "https://cdn.example.com/avatar.png"
+    },
+    "wallet": {
+      "id": "<wallet_id>",
+      "current_balance_cents": 5000
+    }
+  }
+}
+```
+
+### `POST /admin/users/:id/balance-adjustments`
+
+Caso de uso: aplicar crédito ou débito administrativo no saldo do usuário.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+Content-Type: application/json
+```
+
+Payload:
+
+```json
+{
+  "transaction_type": "credit",
+  "amount_cents": 2500,
+  "reason": "Ajuste manual"
+}
+```
+
+Regras:
+
+- `transaction_type`: `credit` ou `debit`
+- `amount_cents`: inteiro positivo
+- `reason`: string obrigatória
+- débito nao pode deixar saldo negativo
+- usuário inativo retorna `422 payload invalido`
+
+Resposta de sucesso:
+
+```json
+{
+  "data": {
+    "user_id": "<user_id>",
+    "current_balance_cents": 2500,
+    "transaction": {
+      "id": "<tx_id>",
+      "transaction_type": "credit",
+      "amount_cents": 2500,
+      "balance_after_cents": 2500,
+      "reference_type": "admin_adjustment",
+      "reference_id": "<reference_id>",
+      "metadata": {
+        "source": "admin_adjustment",
+        "reason": "Ajuste manual",
+        "note": "admin:admin@example.com"
+      },
+      "created_at": "2026-03-10T23:00:00.000Z"
+    }
   }
 }
 ```
@@ -332,6 +459,73 @@ Erros:
 - `401 {"error":"token invalido"}`
 - `404 {"error":"nao encontrado"}`
 - `422 {"error":"payload invalido"}`
+
+### `GET /admin/products`
+
+Caso de uso: listar anúncios no painel admin.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+```
+
+Resposta:
+
+```json
+{
+  "data": {
+    "products": [
+      {
+        "id": "<product_id>",
+        "title": "Produto A",
+        "description": "Descricao do produto",
+        "price": "20.00",
+        "price_cents": 2000,
+        "stock_quantity": 3,
+        "active": true,
+        "deleted_at": null,
+        "seller_id": "<seller_id>",
+        "created_at": "2026-03-10T23:00:00.000Z",
+        "updated_at": "2026-03-10T23:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+Comportamento esperado:
+
+- inclui anúncios ativos e soft-deletados
+- nao possui filtros nesta primeira versão
+
+### `GET /admin/products/:id`
+
+Caso de uso: abrir detalhe administrativo de um anúncio específico.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+```
+
+Resposta:
+
+```json
+{
+  "data": {
+    "id": "<product_id>",
+    "title": "Produto A",
+    "description": "Descricao do produto",
+    "price": "20.00",
+    "price_cents": 2000,
+    "stock_quantity": 3,
+    "active": true,
+    "deleted_at": null,
+    "seller_id": "<seller_id>"
+  }
+}
+```
 
 ### `GET /admin/orders`
 

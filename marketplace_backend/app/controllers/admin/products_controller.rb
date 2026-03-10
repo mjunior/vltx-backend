@@ -1,6 +1,25 @@
 class Admin::ProductsController < Admin::ApplicationController
   before_action :authenticate_admin!
 
+  def index
+    products = Product.order(created_at: :desc, id: :desc)
+
+    render json: {
+      data: {
+        products: products.map { |product| Admin::Products::ProductSerializer.call(product: product) }
+      }
+    }, status: :ok
+  end
+
+  def show
+    product = Product.find_by(id: params[:id])
+    return render_not_found unless product
+
+    render json: {
+      data: Admin::Products::ProductSerializer.call(product: product)
+    }, status: :ok
+  end
+
   def soft_delete
     result = AdminProducts::SoftDelete.call(product_id: params[:id])
     return render_not_found if result.error_code == :not_found
