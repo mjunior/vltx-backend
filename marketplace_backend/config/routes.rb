@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   post "admin/auth/login" => "admin/auth/logins#create"
   post "admin/auth/refresh" => "admin/auth/refreshes#create"
   post "admin/auth/logout" => "admin/auth/logouts#create"
+  get "admin/users" => "admin/users#index"
+  get "admin/users/:id" => "admin/users#show"
   get "admin/users/:id/verification-status" => "admin/users#verification_status"
   patch "admin/users/:id/deactivate" => "admin/users#deactivate"
   patch "admin/products/:id/soft_delete" => "admin/products#soft_delete"

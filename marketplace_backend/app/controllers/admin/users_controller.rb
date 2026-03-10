@@ -1,12 +1,31 @@
 class Admin::UsersController < Admin::ApplicationController
   before_action :authenticate_admin!
 
+  def index
+    users = User.order(created_at: :desc, id: :desc)
+
+    render json: {
+      data: {
+        users: users.map { |user| Admin::Users::UserSerializer.call(user: user) }
+      }
+    }, status: :ok
+  end
+
+  def show
+    user = User.find_by(id: params[:id])
+    return render_not_found unless user
+
+    render json: {
+      data: Admin::Users::UserSerializer.call(user: user)
+    }, status: :ok
+  end
+
   def verification_status
     user = User.find_by(id: params[:id])
     return render_not_found unless user
 
     render json: {
-      data: Admin::Users::VerificationStatusSerializer.call(user: user)
+      data: Admin::Users::UserSerializer.call(user: user).slice(:id, :email, :verification_status)
     }, status: :ok
   end
 
