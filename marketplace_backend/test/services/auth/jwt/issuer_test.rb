@@ -7,7 +7,13 @@ module Auth
         frozen_time = Time.zone.parse("2026-03-06 10:00:00")
 
         result = Issuer.issue_access(user_id: 123, now: frozen_time)
-        payload, = ::JWT.decode(result.token, Config.access_secret, true, algorithm: Config.algorithm)
+        payload, = ::JWT.decode(
+          result.token,
+          Config.access_secret,
+          true,
+          algorithm: Config.algorithm,
+          verify_expiration: false
+        )
 
         assert_equal "123", payload["sub"]
         assert_equal "access", payload["type"]
@@ -20,7 +26,13 @@ module Auth
         frozen_time = Time.zone.parse("2026-03-06 10:00:00")
 
         result = Issuer.issue_refresh(user_id: 456, now: frozen_time)
-        payload, = ::JWT.decode(result.token, Config.refresh_secret, true, algorithm: Config.algorithm)
+        payload, = ::JWT.decode(
+          result.token,
+          Config.refresh_secret,
+          true,
+          algorithm: Config.algorithm,
+          verify_expiration: false
+        )
 
         assert_equal "456", payload["sub"]
         assert_equal "refresh", payload["type"]
