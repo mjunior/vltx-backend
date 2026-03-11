@@ -26,4 +26,11 @@ class ApplicationController < ActionController::API
   def render_invalid_payload
     render json: { error: "payload invalido" }, status: :unprocessable_entity
   end
+
+  def render_error(message, status:, code: nil)
+    payload = { error: message }
+    payload[:code] = code.to_s if code
+
+    render json: payload, status: status
+  end
 end

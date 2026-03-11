@@ -5,6 +5,7 @@ ruby "3.3.0"
 
 gem "rails", "~> 8.0.4"
 gem "jwt", "~> 2.8"
+gem "aws-sdk-s3", "~> 1.153"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
@@ -39,6 +40,8 @@ gem "image_processing", "~> 1.2"
 gem "rack-cors"
 
 group :development, :test do
+  gem "dotenv-rails"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "minitest", "~> 5.25"

@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   patch "cart/items/:id" => "cart_items#update"
   delete "cart/items/:id" => "cart_items#destroy"
   patch "profile" => "profiles#update"
+  post "profile/photo" => "profiles#upload_photo"
   get "products" => "products#index"
   post "products" => "products#create"
   patch "products/:id" => "products#update"

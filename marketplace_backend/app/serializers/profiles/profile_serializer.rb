@@ -7,6 +7,7 @@ module Profiles
             id: profile.id,
             name: profile.full_name,
             address: profile.address,
+            photo_url: profile.photo_url,
           },
         }
       end

@@ -36,6 +36,7 @@ class ProfileUpdateTest < ActionDispatch::IntegrationTest
     assert_equal user.profile.id, body.dig("data", "id")
     assert_equal "Joao Silva", body.dig("data", "name")
     assert_equal "Rua A, 123", body.dig("data", "address")
+    assert_nil body.dig("data", "photo_url")
 
     user.profile.reload
     assert_equal "Joao Silva", user.profile.full_name
@@ -78,6 +79,24 @@ class ProfileUpdateTest < ActionDispatch::IntegrationTest
     user.profile.reload
     assert_equal "Nome", user.profile.full_name
     assert_nil user.profile.address
+  end
+
+  test "patch response includes current photo_url" do
+    user = create_user(email: "profile-photo-url@example.com")
+    user.profile.update!(photo_url: "https://cdn.example.com/profile.jpg")
+    access_token = access_token_for(user)
+
+    patch "/profile", params: {
+      name: "Nome Atualizado"
+    }, headers: {
+      "Authorization" => "Bearer #{access_token}",
+      "CONTENT_TYPE" => "application/json"
+    }, as: :json
+
+    assert_response :success
+
+    body = JSON.parse(response.body)
+    assert_equal "https://cdn.example.com/profile.jpg", body.dig("data", "photo_url")
   end
 
   test "returns token invalido without authorization header" do
