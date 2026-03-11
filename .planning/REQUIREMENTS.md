@@ -25,7 +25,7 @@
 
 ### Admin Analytics
 
-- [ ] **ADM-08**: Admin pode visualizar dashboard com total de usuários, contagem de pedidos por status e volume financeiro do período informado.
+- [x] **ADM-08**: Admin pode visualizar dashboard com total de usuários, contagem de pedidos por status e volume financeiro do período informado.
 
 ### Contestation Resolution
 
@@ -71,7 +71,7 @@
 | ADM-05 | Phase 24 | Complete |
 | ADM-06 | Phase 24 | Complete |
 | ADM-07 | Phase 25 | Complete |
-| ADM-08 | Phase 26 | Pending |
+| ADM-08 | Phase 26 | Complete |
 | ADM-09 | Phase 27 | Pending |
 | ADM-10 | Phase 27 | Pending |
 
@@ -82,4 +82,4 @@
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-10 after Phase 25 Administrative User Operations*
+*Last updated: 2026-03-11 after Phase 26 Admin Metrics Dashboard*

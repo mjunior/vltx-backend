@@ -169,6 +169,53 @@ Regras para frontend:
 
 Estes endpoints nao são parte do login, mas já podem ser consumidos pelo frontend admin:
 
+### `GET /admin/dashboard`
+
+Caso de uso: carregar os cards principais do dashboard admin.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+```
+
+Payload:
+
+- sem body
+- sem query params nesta primeira versão
+
+Resposta:
+
+```json
+{
+  "data": {
+    "window_days": 30,
+    "starts_at": "2026-02-09T12:00:00Z",
+    "ends_at": "2026-03-11T12:00:00Z",
+    "total_users": 120,
+    "active_users": 115,
+    "total_orders": 48,
+    "orders_by_status": {
+      "paid": 10,
+      "in_separation": 4,
+      "confirmed": 6,
+      "delivered": 20,
+      "contested": 2,
+      "refunded": 1,
+      "canceled": 5
+    },
+    "gross_volume_cents": 987650
+  }
+}
+```
+
+Comportamento esperado:
+
+- sempre considera os últimos `30` dias
+- `orders_by_status` sempre retorna todos os status, mesmo quando a contagem for `0`
+- `gross_volume_cents` é volume bruto por pedidos criados no período
+- token de usuário comum recebe `401 {"error":"token invalido"}`
+
 ### `GET /admin/users`
 
 Caso de uso: listar usuários no painel admin.

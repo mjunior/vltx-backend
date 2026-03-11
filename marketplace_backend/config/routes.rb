@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   post "admin/auth/login" => "admin/auth/logins#create"
   post "admin/auth/refresh" => "admin/auth/refreshes#create"
   post "admin/auth/logout" => "admin/auth/logouts#create"
+  get "admin/dashboard" => "admin/dashboard#show"
   get "admin/users" => "admin/users#index"
   get "admin/users/:id" => "admin/users#show"
   get "admin/users/:id/verification-status" => "admin/users#verification_status"
