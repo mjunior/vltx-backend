@@ -1,6 +1,8 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
+  include ActiveSupport::Testing::TimeHelpers
+
   test "normalizes email before validation" do
     user = User.new(email: "  USER@Example.COM  ", password: "password123", password_confirmation: "password123")
 
@@ -42,5 +44,34 @@ class UserTest < ActiveSupport::TestCase
     user = User.create!(email: "active-default@example.com", password: "password123", password_confirmation: "password123")
 
     assert user.active?
+  end
+
+  test "password reset token resolves within 15 minutes" do
+    user = User.create!(email: "reset-token@example.com", password: "password123", password_confirmation: "password123")
+    token = user.issue_password_reset_token!
+
+    assert_equal user.id, User.find_by_token_for(:password_reset, token)&.id
+
+    travel 16.minutes do
+      assert_nil User.find_by_token_for(:password_reset, token)
+    end
+  end
+
+  test "issuing a new password reset token invalidates the previous one" do
+    user = User.create!(email: "reset-rotate@example.com", password: "password123", password_confirmation: "password123")
+    first = user.issue_password_reset_token!
+    second = user.issue_password_reset_token!
+
+    assert_nil User.find_by_token_for(:password_reset, first)
+    assert_equal user.id, User.find_by_token_for(:password_reset, second)&.id
+  end
+
+  test "password reset token becomes invalid after password changes" do
+    user = User.create!(email: "reset-password-change@example.com", password: "password123", password_confirmation: "password123")
+    token = user.issue_password_reset_token!
+
+    user.update!(password: "newpassword123", password_confirmation: "newpassword123")
+
+    assert_nil User.find_by_token_for(:password_reset, token)
   end
 end

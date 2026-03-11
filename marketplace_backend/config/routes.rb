@@ -44,6 +44,8 @@ Rails.application.routes.draw do
   delete "products/:id" => "products#destroy"
   post "auth/signup" => "auth/signups#create"
   post "auth/login" => "auth/logins#create"
+  post "auth/password-reset" => "auth/password_resets#create"
+  post "auth/password-reset/confirm" => "auth/password_resets#confirm"
   post "auth/refresh" => "auth/refreshes#create"
   post "auth/logout" => "auth/logouts#create"
 end

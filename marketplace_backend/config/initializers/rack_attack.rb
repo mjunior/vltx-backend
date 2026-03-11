@@ -8,6 +8,7 @@ class Rack::Attack
   ADMIN_ORDER_DENY_PATH = %r{\A/admin/orders/[^/]+/deny\z}.freeze
   PRODUCT_UPDATE_PATH = %r{\A/products/[^/]+\z}.freeze
   PRODUCT_DEACTIVATE_PATH = %r{\A/products/[^/]+/deactivate\z}.freeze
+  PASSWORD_RESET_CONFIRM_PATH = "/auth/password-reset/confirm".freeze
 
   class << self
     def actor_discriminator_for(request, namespace:)
@@ -93,6 +94,14 @@ class Rack::Attack
     def product_delete?(request)
       request.delete? && request.path.match?(PRODUCT_UPDATE_PATH)
     end
+
+    def password_reset_request?(request)
+      request.post? && request.path == "/auth/password-reset"
+    end
+
+    def password_reset_confirm?(request)
+      request.post? && request.path == PASSWORD_RESET_CONFIRM_PATH
+    end
   end
 
   if defined?(Rails) && Rails.cache
@@ -118,6 +127,14 @@ class Rack::Attack
 
   throttle("auth/refresh/ip", limit: 10, period: 60.seconds) do |request|
     request.ip if request.post? && request.path == "/auth/refresh"
+  end
+
+  throttle("auth/password-reset/ip", limit: 5, period: 15.minutes) do |request|
+    request.ip if password_reset_request?(request)
+  end
+
+  throttle("auth/password-reset/confirm/ip", limit: 10, period: 15.minutes) do |request|
+    request.ip if password_reset_confirm?(request)
   end
 
   throttle("admin/auth/login/ip", limit: 3, period: 20.seconds) do |request|
@@ -214,7 +231,7 @@ class Rack::Attack
         "Content-Type" => "application/json; charset=utf-8",
         "Retry-After" => retry_after.to_s
       }.compact,
-      [THROTTLED_RESPONSE.to_json]
+      [ THROTTLED_RESPONSE.to_json ]
     ]
   end
 end

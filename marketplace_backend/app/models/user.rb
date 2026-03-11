@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   VERIFICATION_STATUSES = {
     unverified: "unverified",
-    verified: "verified",
+    verified: "verified"
   }.freeze
 
   has_secure_password
@@ -23,16 +23,26 @@ class User < ApplicationRecord
   has_one :wallet, dependent: :destroy
 
   enum :verification_status, VERIFICATION_STATUSES, default: :unverified, validate: true
+  generates_token_for :password_reset, expires_in: 15.minutes do
+    [ password_salt&.last(10), password_reset_nonce ].join(":")
+  end
 
   before_validation :normalize_email
 
   validates :email, presence: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP },
                     uniqueness: { case_sensitive: false }
-  validates :active, inclusion: { in: [true, false] }
+  validates :active, inclusion: { in: [ true, false ] }
   validates :password, length: { minimum: 8 }, if: :password_validation_required?
 
   scope :active_only, -> { where(active: true) }
+
+  def issue_password_reset_token!
+    with_lock do
+      update!(password_reset_nonce: SecureRandom.hex(16))
+      reload.generate_token_for(:password_reset)
+    end
+  end
 
   private
 

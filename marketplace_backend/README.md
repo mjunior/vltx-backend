@@ -49,3 +49,14 @@ Comandos úteis:
 ## Deploy
 
 O deploy atual usa Railway com build por `Dockerfile`. O healthcheck público esperado é `GET /up`.
+
+## E-mail transacional
+
+O backend usa Resend para e-mails transacionais. Configure estas variáveis de ambiente:
+
+```bash
+RESEND_API_KEY=re_xxxxx
+RESEND_FROM_EMAIL=no-reply@example.com
+RESEND_FROM_NAME="Marketplace"
+FRONTEND_RESET_PASSWORD_URL=https://app.example.com/reset-password
+```
