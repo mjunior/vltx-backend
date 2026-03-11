@@ -30,9 +30,14 @@ class EmailServiceTest < ActiveSupport::TestCase
   test "sends password reset email with expected payload" do
     reset_link = "https://app.example.com/reset?token=abc123"
     payload = nil
+    captured_options = nil
     Resend.api_key = nil
 
-    with_stubbed_resend_send(->(**kwargs) { payload = kwargs; { "id" => "email_123" } }) do
+    with_stubbed_resend_send(->(params, options: {}) {
+      payload = params
+      captured_options = options
+      { "id" => "email_123" }
+    }) do
       result = EmailService.password_reset(to: "buyer@example.com", reset_link: reset_link)
 
       assert result.success?
@@ -40,6 +45,7 @@ class EmailServiceTest < ActiveSupport::TestCase
     end
 
     assert_equal "re_test_key", Resend.api_key
+    assert_equal({}, captured_options)
     assert_equal "Marketplace <no-reply@example.com>", payload[:from]
     assert_equal "buyer@example.com", payload[:to]
     assert_equal "Redefina sua senha", payload[:subject]
@@ -63,7 +69,20 @@ class EmailServiceTest < ActiveSupport::TestCase
   end
 
   test "fails when resend raises an error" do
-    with_stubbed_resend_send(->(**) { raise StandardError, "provider failure" }) do
+    logger = Struct.new(:entries) do
+      def warn(message)
+        entries << message
+      end
+    end.new([])
+    original_logger = Rails.logger
+    Rails.logger = logger
+
+    captured_options = nil
+
+    with_stubbed_resend_send(->(_params, options: {}) {
+      captured_options = options
+      raise StandardError, "provider failure"
+    }) do
       result = EmailService.password_reset(
         to: "buyer@example.com",
         reset_link: "https://app.example.com/reset?token=abc123"
@@ -73,6 +92,12 @@ class EmailServiceTest < ActiveSupport::TestCase
       assert_equal :email_delivery_failed, result.error_code
       assert_nil result.provider_id
     end
+
+    assert_equal({}, captured_options)
+    assert_includes logger.entries.last, "email_service.delivery_failed"
+    assert_includes logger.entries.last, "provider failure"
+  ensure
+    Rails.logger = original_logger
   end
 
   test "password reset only accepts to and reset_link keywords" do
@@ -88,11 +113,17 @@ class EmailServiceTest < ActiveSupport::TestCase
   test "builds html and text in pt br" do
     reset_link = "https://app.example.com/reset?token=abc123"
     payload = nil
+    captured_options = nil
 
-    with_stubbed_resend_send(->(**kwargs) { payload = kwargs; { id: "email_456" } }) do
+    with_stubbed_resend_send(->(params, options: {}) {
+      payload = params
+      captured_options = options
+      { id: "email_456" }
+    }) do
       EmailService.password_reset(to: "buyer@example.com", reset_link: reset_link)
     end
 
+    assert_equal({}, captured_options)
     assert_equal "Redefina sua senha", payload[:subject]
     assert_includes payload[:html], "Recebemos uma solicitacao para redefinir a senha da sua conta."
     assert_includes payload[:html], "Se voce nao solicitou a redefinicao de senha, ignore este e-mail."

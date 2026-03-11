@@ -26,15 +26,18 @@ class EmailService
     Resend.api_key = api_key
 
     response = Resend::Emails.send(
+      {
       from: from_address,
       to: to,
       subject: subject,
       html: html,
       text: text
+      }
     )
 
     Result.new(success?: true, provider_id: extract_provider_id(response))
-  rescue StandardError
+  rescue StandardError => error
+    log_delivery_failure(error)
     Result.new(success?: false, error_code: :email_delivery_failed)
   end
 
@@ -64,6 +67,18 @@ class EmailService
     return response[:id] if response.respond_to?(:[]) && response[:id].present?
     return response["id"] if response.respond_to?(:[]) && response["id"].present?
 
+    nil
+  end
+
+  def log_delivery_failure(error)
+    Rails.logger.warn(
+      {
+        event: "email_service.delivery_failed",
+        error_class: error.class.name,
+        message: error.message
+      }.to_json
+    )
+  rescue StandardError
     nil
   end
 
