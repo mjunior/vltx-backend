@@ -32,13 +32,14 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
   end
 
   def create_wallet_for(user, balance_cents:)
-    wallet = Wallet.create!(user: user, current_balance_cents: 0)
-    return wallet if balance_cents.zero?
+    wallet = Wallet.find_or_create_by!(user: user)
+    delta_cents = balance_cents - wallet.current_balance_cents
+    return wallet if delta_cents.zero?
 
     seed = Wallets::Ledger::AppendTransaction.call(
       wallet: wallet,
-      transaction_type: :credit,
-      amount_cents: balance_cents,
+      transaction_type: delta_cents.positive? ? :credit : :debit,
+      amount_cents: delta_cents.abs,
       reference_type: "seed",
       reference_id: "seed-#{user.id}",
       operation_key: "seed-wallet-#{user.id}",

@@ -12,7 +12,22 @@ module Wallets
       end
 
       def create_wallet(email: "wallet-operation-owner@example.com", balance_cents: 0)
-        Wallet.create!(user: create_user(email: email), current_balance_cents: balance_cents)
+        wallet = Wallet.create!(user: create_user(email: email), current_balance_cents: 0)
+        delta_cents = balance_cents - wallet.current_balance_cents
+        return wallet if delta_cents.zero?
+
+        result = Wallets::Ledger::AppendTransaction.call(
+          wallet: wallet,
+          transaction_type: delta_cents.positive? ? :credit : :debit,
+          amount_cents: delta_cents.abs,
+          reference_type: "seed",
+          reference_id: "seed-balance-#{wallet.id}",
+          operation_key: "seed-balance-#{wallet.id}",
+          metadata: { "source" => "test_seed" }
+        )
+        raise "wallet seed failed" unless result.success?
+
+        wallet.reload
       end
 
       def apply(wallet:, transaction_type:, trusted_amount_cents:, operation_key:, reference_id: nil, untrusted_amount_cents: nil)
@@ -51,7 +66,7 @@ module Wallets
         assert_not result.success?
         assert_equal :invalid_payload, result.error_code
         assert_equal 0, wallet.reload.current_balance_cents
-        assert_equal 0, wallet.wallet_transactions.count
+        assert_equal 2, wallet.wallet_transactions.count
       end
 
       test "returns insufficient funds and does not persist side effects" do
@@ -64,7 +79,7 @@ module Wallets
         assert_not result.success?
         assert_equal :insufficient_funds, result.error_code
         assert_equal 50, wallet.reload.current_balance_cents
-        assert_equal 1, wallet.wallet_transactions.count
+        assert_equal 3, wallet.wallet_transactions.count
       end
 
       test "returns duplicate operation for repeated operation key" do
@@ -76,7 +91,7 @@ module Wallets
         assert first.success?
         assert second.success?
         assert_equal first.transaction.id, second.transaction.id
-        assert_equal 1, wallet.reload.wallet_transactions.count
+        assert_equal 3, wallet.reload.wallet_transactions.count
       end
 
       test "returns idempotency conflict for repeated operation key with different payload" do
@@ -88,7 +103,7 @@ module Wallets
         assert first.success?
         assert_not second.success?
         assert_equal :idempotency_conflict, second.error_code
-        assert_equal 1, wallet.reload.wallet_transactions.count
+        assert_equal 3, wallet.reload.wallet_transactions.count
       end
 
       test "returns balance mismatch and corrects materialized value" do
@@ -110,7 +125,7 @@ module Wallets
         assert_not result.success?
         assert_equal :balance_mismatch, result.error_code
         assert_equal 300, wallet.reload.current_balance_cents
-        assert_equal 1, wallet.wallet_transactions.count
+        assert_equal 3, wallet.wallet_transactions.count
       end
     end
   end

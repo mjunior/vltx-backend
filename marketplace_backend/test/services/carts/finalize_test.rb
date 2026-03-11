@@ -22,13 +22,15 @@ module Carts
     end
 
     def create_wallet_for(user, balance_cents:)
-      wallet = Wallet.create!(user: user, current_balance_cents: 0)
-      return wallet if balance_cents.zero?
+      wallet = Wallet.find_or_create_by!(user: user)
+      delta_cents = balance_cents - wallet.current_balance_cents
+      return wallet if delta_cents.zero?
 
+      transaction_type = delta_cents.positive? ? :credit : :debit
       seed = Wallets::Ledger::AppendTransaction.call(
         wallet: wallet,
-        transaction_type: :credit,
-        amount_cents: balance_cents,
+        transaction_type: transaction_type,
+        amount_cents: delta_cents.abs,
         reference_type: "seed",
         reference_id: "seed-#{user.id}",
         operation_key: "seed-wallet-#{user.id}",
@@ -62,7 +64,7 @@ module Carts
       assert_equal 3, result.summary[:total_items]
       assert_equal "290.00", result.summary[:subtotal]
       assert_equal 210_00, wallet.reload.current_balance_cents
-      assert_equal 2, wallet.wallet_transactions.count
+      assert_equal 3, wallet.wallet_transactions.count
       assert_equal 1, CheckoutGroup.count
       assert_equal 2, SellerReceivable.count
 
@@ -116,7 +118,7 @@ module Carts
       assert_equal :insufficient_funds, result.error_code
       assert_equal "active", cart.reload.status
       assert_equal 50_00, wallet.reload.current_balance_cents
-      assert_equal 1, wallet.wallet_transactions.count
+      assert_equal 2, wallet.wallet_transactions.count
     end
 
     test "returns invalid_payload and preserves cart when one item has insufficient stock" do
@@ -137,7 +139,7 @@ module Carts
       assert_equal "active", cart.reload.status
       assert_equal 2, cart.cart_items.reload.count
       assert_equal 500_00, wallet.reload.current_balance_cents
-      assert_equal 1, wallet.wallet_transactions.count
+      assert_equal 2, wallet.wallet_transactions.count
       assert_equal 0, Order.count
       assert_equal 0, CheckoutGroup.count
       assert_equal 0, SellerReceivable.count

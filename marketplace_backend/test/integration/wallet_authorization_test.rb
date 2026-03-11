@@ -44,7 +44,7 @@ class WalletAuthorizationTest < ActionDispatch::IntegrationTest
     assert_equal "token invalido", JSON.parse(response.body)["error"]
   end
 
-  test "returns own wallet balance and auto provisions when wallet does not exist" do
+  test "returns own wallet balance and provisions initial credit when wallet does not exist" do
     user = create_user(email: "wallet-authz-autoprovision@example.com")
     token = access_token_for(user)
 
@@ -54,7 +54,7 @@ class WalletAuthorizationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     data = JSON.parse(response.body).fetch("data")
-    assert_equal 0, data.fetch("current_balance_cents")
+    assert_equal 10_00, data.fetch("current_balance_cents")
     assert_equal user.id, Wallet.find(data.fetch("id")).user_id
   end
 

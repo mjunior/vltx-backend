@@ -13,7 +13,22 @@ module Wallets
       end
 
       def create_wallet(email: "wallet-ledger-owner@example.com", balance_cents: 0)
-        Wallet.create!(user: create_user(email: email), current_balance_cents: balance_cents)
+        wallet = Wallet.create!(user: create_user(email: email), current_balance_cents: 0)
+        delta_cents = balance_cents - wallet.current_balance_cents
+        return wallet if delta_cents.zero?
+
+        result = AppendTransaction.call(
+          wallet: wallet,
+          transaction_type: delta_cents.positive? ? :credit : :debit,
+          amount_cents: delta_cents.abs,
+          reference_type: "seed",
+          reference_id: "seed-balance-#{wallet.id}",
+          operation_key: "seed-balance-#{wallet.id}",
+          metadata: { "source" => "test_seed" }
+        )
+        raise "wallet seed failed" unless result.success?
+
+        wallet.reload
       end
 
       def append(wallet:, transaction_type:, amount_cents:, operation_key:, reference_id: nil)
@@ -80,7 +95,7 @@ module Wallets
 
         assert_not result.success?
         assert_equal :balance_mismatch, result.error_code
-        assert_equal 1, wallet.reload.wallet_transactions.count
+        assert_equal 3, wallet.reload.wallet_transactions.count
         assert_equal 500, wallet.reload.current_balance_cents
       end
 
@@ -93,7 +108,7 @@ module Wallets
         assert first.success?
         assert second.success?
         assert_equal first.transaction.id, second.transaction.id
-        assert_equal 1, wallet.reload.wallet_transactions.count
+        assert_equal 3, wallet.reload.wallet_transactions.count
       end
 
       test "fails with idempotency conflict when operation key repeats with different payload" do
@@ -105,7 +120,7 @@ module Wallets
         assert first.success?
         assert_not second.success?
         assert_equal :idempotency_conflict, second.error_code
-        assert_equal 1, wallet.reload.wallet_transactions.count
+        assert_equal 3, wallet.reload.wallet_transactions.count
       end
 
       test "deduplicates refund by reference and returns existing transaction" do
@@ -131,7 +146,7 @@ module Wallets
         assert first.success?
         assert second.success?
         assert_equal first.transaction.id, second.transaction.id
-        assert_equal 2, wallet.reload.wallet_transactions.count
+        assert_equal 4, wallet.reload.wallet_transactions.count
       end
 
       test "returns idempotency conflict for refund duplicate reference with different amount" do
@@ -157,7 +172,7 @@ module Wallets
         assert first.success?
         assert_not second.success?
         assert_equal :idempotency_conflict, second.error_code
-        assert_equal 2, wallet.reload.wallet_transactions.count
+        assert_equal 4, wallet.reload.wallet_transactions.count
       end
 
       test "keeps at most one effective insert for concurrent identical operation keys" do

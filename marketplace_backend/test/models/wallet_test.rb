@@ -35,4 +35,23 @@ class WalletTest < ActiveSupport::TestCase
 
     assert wallet.valid?
   end
+
+  test "grants initial credit when wallet is created" do
+    user = create_user(email: "wallet-initial-credit@example.com")
+
+    wallet = Wallet.create!(user: user, current_balance_cents: 0)
+
+    assert_equal 10_00, wallet.reload.current_balance_cents
+    assert_equal 1, wallet.wallet_transactions.where(reference_type: Wallet::INITIAL_CREDIT_REFERENCE_TYPE).count
+  end
+
+  test "does not duplicate initial credit after wallet updates" do
+    user = create_user(email: "wallet-initial-credit-once@example.com")
+    wallet = Wallet.create!(user: user, current_balance_cents: 0)
+
+    wallet.touch
+
+    assert_equal 1, wallet.reload.wallet_transactions.where(reference_type: Wallet::INITIAL_CREDIT_REFERENCE_TYPE).count
+    assert_equal 10_00, wallet.current_balance_cents
+  end
 end

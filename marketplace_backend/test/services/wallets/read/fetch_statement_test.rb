@@ -41,7 +41,7 @@ module Wallets
         assert_equal "seed-6", response.transactions.last.reference_id
       end
 
-      test "auto provisions wallet and returns empty statement for new user" do
+      test "auto provisions wallet and returns initial credit for new user" do
         user = create_user(email: "wallet-read-empty@example.com")
 
         response = FetchStatement.call(user: user)
@@ -49,7 +49,9 @@ module Wallets
         assert response.success?
         assert response.wallet.persisted?
         assert_equal user.id, response.wallet.user_id
-        assert_empty response.transactions
+        assert_equal 1, response.transactions.length
+        assert_equal Wallet::INITIAL_CREDIT_REFERENCE_TYPE, response.transactions.first.reference_type
+        assert_equal 10_00, response.transactions.first.amount_cents
       end
 
       test "keeps aggregated checkout purchase as one statement line with drill-down metadata" do
