@@ -19,8 +19,8 @@
 
 ### Static Security Validation
 
-- [ ] **SEC-03**: Existe um fluxo único e obrigatório de validação estática que executa `bundler-audit` e `brakeman` em modo fail-closed para uso local e CI.
-- [ ] **SEC-04**: O projeto possui cobertura de teste para throttling e guardrails críticos de segurança, evitando regressão silenciosa após futuras mudanças de rota ou middleware.
+- [x] **SEC-03**: Existe um fluxo único e obrigatório de validação estática que executa `bundler-audit` e `brakeman` em modo fail-closed para uso local e CI.
+- [x] **SEC-04**: O projeto possui cobertura de teste para throttling e guardrails críticos de segurança, evitando regressão silenciosa após futuras mudanças de rota ou middleware.
 
 ## v2 Requirements
 
@@ -52,8 +52,8 @@
 | ABUSE-03 | Phase 28 | Complete |
 | SEC-01 | Phase 29 | Complete |
 | SEC-02 | Phase 29 | Complete |
-| SEC-03 | Phase 30 | Pending |
-| SEC-04 | Phase 30 | Pending |
+| SEC-03 | Phase 30 | Complete |
+| SEC-04 | Phase 30 | Complete |
 
 **Coverage:**
 - v1.6 requirements: 7 total
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after completing phase 29 Production Security Posture*
+*Last updated: 2026-03-11 after completing phase 30 Static Security Gates and Regression Net*
