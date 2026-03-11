@@ -84,4 +84,4 @@ Success criteria:
 | 24. Global Moderation Surface | v1.5 | 3 | Completed | 2026-03-10 |
 | 25. Administrative User Operations | v1.5 | 1 | Completed | 2026-03-10 |
 | 26. Admin Metrics Dashboard | v1.5 | 1 | Completed | 2026-03-11 |
-| 27. Contestation Resolution Workflow | v1.5 | 2 | Pending | — |
+| 27. Contestation Resolution Workflow | v1.5 | 2 | Completed | 2026-03-11 |

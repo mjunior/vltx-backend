@@ -12,7 +12,7 @@ class HealthcheckTest < ActionDispatch::IntegrationTest
       route.defaults[:controller].present? && !route.path.spec.to_s.start_with?("/rails/")
     end
 
-    assert_equal 44, app_routes.count
+    assert_equal 46, app_routes.count
     assert_routing "/up", controller: "rails/health", action: "show"
     assert_routing({ method: "get", path: "/admin/dashboard" }, controller: "admin/dashboard", action: "show")
     assert_routing({ method: "get", path: "/admin/users" }, controller: "admin/users", action: "index")
@@ -25,6 +25,8 @@ class HealthcheckTest < ActionDispatch::IntegrationTest
     assert_routing({ method: "patch", path: "/admin/products/123/soft_delete" }, controller: "admin/products", action: "soft_delete", id: "123")
     assert_routing({ method: "get", path: "/admin/orders" }, controller: "admin/orders", action: "index")
     assert_routing({ method: "get", path: "/admin/orders/123" }, controller: "admin/orders", action: "show", id: "123")
+    assert_routing({ method: "post", path: "/admin/orders/123/approve" }, controller: "admin/orders", action: "approve", id: "123")
+    assert_routing({ method: "post", path: "/admin/orders/123/deny" }, controller: "admin/orders", action: "deny", id: "123")
     assert_routing({ method: "get", path: "/public/products" }, controller: "public/products", action: "index")
     assert_routing({ method: "get", path: "/public/products/123" }, controller: "public/products", action: "show", id: "123")
     assert_routing({ method: "get", path: "/wallet" }, controller: "wallets", action: "show")

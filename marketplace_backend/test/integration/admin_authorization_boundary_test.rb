@@ -103,6 +103,25 @@ class AdminAuthorizationBoundaryTest < ActionDispatch::IntegrationTest
     assert_equal "token invalido", JSON.parse(response.body)["error"]
   end
 
+  test "user access token is rejected by admin order resolution endpoints" do
+    user = create_user(email: "admin-order-resolution-user@example.com")
+    access_token = user_access_token(user)
+
+    post "/admin/orders/any-order-id/approve", headers: {
+      "Authorization" => "Bearer #{access_token}"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+
+    post "/admin/orders/any-order-id/deny", headers: {
+      "Authorization" => "Bearer #{access_token}"
+    }, as: :json
+
+    assert_response :unauthorized
+    assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
   test "admin access token is rejected by regular user endpoints" do
     admin = create_admin
     access_token = admin_access_token(admin)

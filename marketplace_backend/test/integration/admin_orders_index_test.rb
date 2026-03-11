@@ -84,6 +84,33 @@ class AdminOrdersIndexTest < ActionDispatch::IntegrationTest
     assert_includes ids, contested_order.id
   end
 
+  test "admin filters contested orders by status" do
+    contested_order = create_order(status: :contested, buyer_email: "buyer-contested-filter@example.com", seller_email: "seller-contested-filter@example.com")
+    create_order(status: :paid, buyer_email: "buyer-paid-filter@example.com", seller_email: "seller-paid-filter@example.com")
+    admin = create_admin(email: "filter-admin@example.com")
+    admin_token = admin_access_token(admin)
+
+    get "/admin/orders?status=contested", headers: {
+      "Authorization" => "Bearer #{admin_token}"
+    }, as: :json
+
+    assert_response :success
+    orders = JSON.parse(response.body).dig("data", "orders")
+    assert_equal [contested_order.id], orders.map { |row| row.fetch("id") }
+  end
+
+  test "returns payload invalido for unsupported admin order status filter" do
+    admin = create_admin(email: "invalid-filter-admin@example.com")
+    admin_token = admin_access_token(admin)
+
+    get "/admin/orders?status=invalid-status", headers: {
+      "Authorization" => "Bearer #{admin_token}"
+    }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
   test "admin sees global order detail" do
     order = create_order(status: :delivered, buyer_email: "buyer-show@example.com", seller_email: "seller-show@example.com")
     admin = create_admin(email: "show-admin@example.com")

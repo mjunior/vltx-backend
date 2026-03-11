@@ -619,6 +619,8 @@ Observações:
 - retorna pedidos de todos os usuários
 - inclui pedidos em qualquer status, inclusive `canceled`, `refunded` e `contested`
 - nesta fase o endpoint é somente leitura
+- também aceita filtro por status, por exemplo:
+  - `GET /admin/orders?status=contested`
 
 ### `GET /admin/orders/:id`
 
@@ -650,3 +652,77 @@ Erros dos endpoints de pedido admin:
 
 - `401 {"error":"token invalido"}`
 - `404 {"error":"nao encontrado"}`
+- `422 {"error":"payload invalido"}` para filtro de status inválido
+
+### `POST /admin/orders/:id/approve`
+
+Caso de uso: admin aprova uma contestação.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+Content-Type: application/json
+```
+
+Payload:
+
+```json
+{}
+```
+
+Resposta de sucesso:
+
+```json
+{
+  "data": {
+    "id": "<order_id>",
+    "status": "refunded",
+    "actor_role": "admin"
+  }
+}
+```
+
+Comportamento esperado:
+
+- funciona apenas para pedidos em `contested`
+- gera refund do comprador
+- reverte o crédito do seller
+- se a aprovação já tiver sido feita antes, a operação é idempotente
+- se o seller não tiver saldo para a reversão, retorna `422 {"error":"saldo insuficiente"}`
+
+### `POST /admin/orders/:id/deny`
+
+Caso de uso: admin nega uma contestação.
+
+Headers:
+
+```http
+Authorization: Bearer <admin_access_token>
+Content-Type: application/json
+```
+
+Payload:
+
+```json
+{}
+```
+
+Resposta de sucesso:
+
+```json
+{
+  "data": {
+    "id": "<order_id>",
+    "status": "delivered",
+    "actor_role": "admin"
+  }
+}
+```
+
+Comportamento esperado:
+
+- funciona apenas para pedidos em `contested`
+- devolve o pedido para `delivered`
+- não gera refund
+- se o deny já tiver sido aplicado, a operação é idempotente

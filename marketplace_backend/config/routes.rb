@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   patch "admin/products/:id/soft_delete" => "admin/products#soft_delete"
   get "admin/orders" => "admin/orders#index"
   get "admin/orders/:id" => "admin/orders#show"
+  post "admin/orders/:id/approve" => "admin/orders#approve"
+  post "admin/orders/:id/deny" => "admin/orders#deny"
   get "public/products" => "public/products#index"
   get "public/products/:id" => "public/products#show"
   get "wallet" => "wallets#show"

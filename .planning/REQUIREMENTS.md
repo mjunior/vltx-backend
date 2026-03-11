@@ -29,8 +29,8 @@
 
 ### Contestation Resolution
 
-- [ ] **ADM-09**: Admin pode listar todas as contestações elegíveis para decisão operacional.
-- [ ] **ADM-10**: Admin pode negar ou aprovar uma contestação; quando aprovada, o comprador recebe refund seguro e idempotente.
+- [x] **ADM-09**: Admin pode listar todas as contestações elegíveis para decisão operacional.
+- [x] **ADM-10**: Admin pode negar ou aprovar uma contestação; quando aprovada, o comprador recebe refund seguro e idempotente.
 
 ## v2 Requirements
 
@@ -72,8 +72,8 @@
 | ADM-06 | Phase 24 | Complete |
 | ADM-07 | Phase 25 | Complete |
 | ADM-08 | Phase 26 | Complete |
-| ADM-09 | Phase 27 | Pending |
-| ADM-10 | Phase 27 | Pending |
+| ADM-09 | Phase 27 | Complete |
+| ADM-10 | Phase 27 | Complete |
 
 **Coverage:**
 - v1.5 requirements: 11 total
@@ -82,4 +82,4 @@
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-11 after Phase 26 Admin Metrics Dashboard*
+*Last updated: 2026-03-11 after Phase 27 Contestation Resolution Workflow*
