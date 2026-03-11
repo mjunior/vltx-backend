@@ -34,42 +34,45 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - ✓ Workflow seguro de pedido com transições auditáveis e ações explícitas por ator — v1.4
 - ✓ Ledger buyer/seller rastreável com `checkout_group`, refund automático e painel financeiro do seller — v1.4
 - ✓ Contestação pós-entrega e avaliações separadas por produto/vendedor vinculadas ao `order_item` — v1.4
+- ✓ Entidade `Admin` com autenticação própria em `/admin`, JWT secret dedicado e fronteira de autorização separada — v1.5
+- ✓ Usuário padrão não consegue escalar privilégios para admin por rotas, payloads ou mutações de `User` — v1.5
+- ✓ Admin consegue moderar usuários, anúncios e pedidos globais com escopo operacional separado — v1.5
+- ✓ Admin consegue atualizar dados de usuário, incluindo saldo, foto, e-mail e status de verificação por fluxo controlado — v1.5
+- ✓ Dashboard admin entrega métricas agregadas e resolução de contestações com refund seguro ao comprador — v1.5
 
 ### Active
 
-- [ ] Criar entidade `Admin` com autenticação própria em `/admin`, fronteira de autorização separada e JWT secret dedicado para sessões administrativas.
-- [ ] Garantir que usuário padrão nunca consiga escalar privilégios para admin por rotas, payloads ou mutações da entidade `User`.
-- [ ] Permitir que admin desative usuários, remova anúncios inapropriados e visualize todos os pedidos da plataforma.
-- [ ] Adicionar status de verificação no usuário (`unverified`/`verified`) como base para futuro OTP por e-mail.
-- [ ] Permitir que admin atualize quaisquer dados do usuário, incluindo foto, saldo e e-mail, com trilha operacional segura.
-- [ ] Entregar dashboard admin com total de usuários, pedidos por status e volume financeiro por período.
-- [ ] Permitir que admin liste contestações e decida por negar ou aprovar, com refund seguro ao comprador quando aprovado.
+- [ ] Aplicar rate limiting em Rack para fluxos de autenticação user/admin, emissão de token e endpoints de alto risco contra brute force e bursts automatizados.
+- [ ] Responder abuso com contrato HTTP 429 consistente, sinalização observável e chaves de throttle alinhadas a IP, sessão e ator autenticado.
+- [ ] Endurecer a configuração de produção com política explícita para SSL, host authorization, proxy confiável e CORS por ambiente.
+- [ ] Tornar as validações estáticas de segurança obrigatórias e reproduzíveis em fluxo único local/CI.
+- [ ] Cobrir guardrails de abuso e segurança estática com testes de regressão para evitar regressão silenciosa.
 
 ### Out of Scope
 
-- Login social (OAuth) — segue fora do foco do milestone administrativo.
-- OTP/e-mail de verificação end-to-end — este ciclo entrega apenas o status `unverified`/`verified` como fundação.
-- MFA/2FA admin — importante, mas adiado para não bloquear a primeira superfície operacional de admin.
-- Payout seller e meios de pagamento externos — permanecem fora deste milestone para não misturar risco operacional com expansão financeira.
+- CAPTCHA e desafios anti-bot no frontend — exigem experiência de produto e orquestração com o app cliente, fora deste ciclo backend-first.
+- WAF/CDN rules gerenciadas externamente — ficam para camada de infraestrutura, não para o milestone de aplicação.
+- MFA/2FA admin — continua importante, mas não entra junto com hardening inicial de abuso para não misturar frentes.
+- Detecção avançada de fraude por reputação/IP/device — adiada até existir telemetria suficiente e políticas operacionais claras.
 
-## Current Milestone: v1.5 Admin Panel
+## Current Milestone: v1.6 Security and Abuse Hardening
 
-**Goal:** Criar uma superfície administrativa segregada para operação interna sem abrir brechas de escalada de privilégio a partir do domínio de usuário padrão.
+**Goal:** Endurecer a API contra abuso automatizado e regressões de segurança com throttling em Rack, guardrails de produção e gates estáticos obrigatórios.
 
 **Target features:**
-- Entidade `Admin` com auth própria, namespace `/admin` e JWT secret administrativo dedicado.
-- Moderação operacional de usuários, anúncios e pedidos globais.
-- Atualização administrativa de dados de usuário, incluindo saldo e status de verificação.
-- Dashboard admin com métricas agregadas da plataforma.
-- Resolução administrativa de contestações com decisão approve/deny e refund buyer-side quando aplicável.
+- Rate limiting em Rack para auth user/admin, refresh e endpoints sensíveis.
+- Resposta 429 consistente com instrumentação mínima para abuso.
+- Configuração segura de produção para SSL, hosts confiáveis e CORS por ambiente.
+- Pipeline único de validação estática de segurança com `bundler-audit` e `brakeman`.
+- Testes de regressão para throttling e guardrails críticos.
 
 ## Current State
 
-- **Shipped versions:** v1.0, v1.1, v1.2, v1.3, v1.4
-- **Current milestone:** v1.5 Admin Panel
-- **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, gem `jwt`
-- **Functional scope now shipped:** auth JWT, perfil, catálogo, carrinho, checkout wallet-only, pedidos, wallet ledger, painel financeiro seller, contestação e avaliações pós-entrega
-- **Current expansion:** autenticação administrativa segregada, moderação global, dashboard e mediação operacional de contestação
+- **Shipped versions:** v1.0, v1.1, v1.2, v1.3, v1.4, v1.5
+- **Current milestone:** v1.6 Security and Abuse Hardening
+- **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, Redis, gem `jwt`
+- **Functional scope now shipped:** auth JWT, perfil, catálogo, carrinho, checkout wallet-only, pedidos, wallet ledger, painel financeiro seller, contestação, avaliações e superfície administrativa segregada
+- **Current expansion:** hardening de abuso em Rack, postura segura de produção e validações estáticas de segurança
 
 ## Constraints
 
@@ -81,6 +84,8 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - Transições críticas de pedido devem ser autorizadas por ator e validadas server-side; cliente nunca escolhe estado arbitrário.
 - Admin não pode ser derivado por flag mutável em `users`; a fronteira de identidade precisa ser separada do domínio de usuário padrão.
 - Rotas administrativas devem viver em escopo `/admin`, mesmo quando reutilizarem services internos já existentes.
+- Rate limits precisam respeitar tráfego legítimo entre buyer, seller, admin e healthchecks sem degradar disponibilidade básica.
+- Guardrails de produção não podem quebrar o deploy no Railway nem assumir infraestrutura fora do app.
 
 ## Key Decisions
 
@@ -102,21 +107,23 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 | Crédito seller só em `delivered` | Reduzir risco de refund após liberação financeira | ✓ Good (v1.4) |
 | Avaliações persistidas separadamente por produto e por vendedor | Simplificar cálculo futuro de médias agregadas sem ambiguidade | ✓ Good (v1.4) |
 | Query de pedido deve nascer tenant-scoped, não apenas validar ownership após busca | Reduzir superfície de cross-access e endurecer isolamento | ✓ Good (v1.4) |
-| Admin será uma entidade própria com autenticação segregada em `/admin` | Reduz risco de privilege escalation e separa políticas operacionais do usuário comum | — Pending (v1.5) |
-| JWT admin terá secret dedicado | Limita blast radius entre sessões admin e user e permite políticas independentes de rotação/revogação | — Pending (v1.5) |
-| Status de verificação do usuário nasce como fundação sem OTP acoplado neste milestone | Permite preparar banner/fluxo futuro sem travar o painel admin na entrega de e-mail | — Pending (v1.5) |
+| Admin será uma entidade própria com autenticação segregada em `/admin` | Reduz risco de privilege escalation e separa políticas operacionais do usuário comum | ✓ Good (v1.5) |
+| JWT admin terá secret dedicado | Limita blast radius entre sessões admin e user e permite políticas independentes de rotação/revogação | ✓ Good (v1.5) |
+| Status de verificação do usuário nasce como fundação sem OTP acoplado neste milestone | Permite preparar banner/fluxo futuro sem travar o painel admin na entrega de e-mail | ✓ Good (v1.5) |
+| Rate limiting será aplicado no Rack antes do controller | Bloqueia bursts cedo, reduz custo por request e centraliza política anti-abuso | — Pending (v1.6) |
+| Security tooling continua fail-closed no fluxo padrão de CI | Evita regressão silenciosa ao depender de execução manual esporádica | — Pending (v1.6) |
 
 <details>
 <summary>Historical Milestone Context</summary>
 
-### v1.4 Orders, Status Flow, and Ratings
+### v1.5 Admin Panel
 
-- Pedidos persistidos com snapshot, split por seller e baixa/restauração de estoque
-- Workflow seguro com `advance`, `cancel`, `deliver` e `contest`
-- `checkout_group`, `seller_receivables` e painel financeiro seller
-- Ratings separados por produto e por vendedor
+- Superfície administrativa segregada com entidade `Admin`, auth própria e JWT dedicado
+- Moderação global de usuários, anúncios e pedidos
+- Atualização administrativa de dados de usuário e status de verificação
+- Dashboard admin e resolução operacional de contestações
 
 </details>
 
 ---
-*Last updated: 2026-03-10 after starting v1.5 Admin Panel milestone*
+*Last updated: 2026-03-11 after starting v1.6 Security and Abuse Hardening milestone*
