@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Security and Abuse Hardening
-status: phase 30 completed; ready to complete milestone
-stopped_at: Phase 30 completed; next step is audit/complete milestone v1.6
-last_updated: "2026-03-11T08:26:00Z"
-last_activity: 2026-03-11 — Phase 30 completed with enforced static security gate, explicit hardening regression, and formal verification
+status: milestone v1.6 archived; ready to start next milestone
+stopped_at: Milestone v1.6 archived; next step is define the next milestone
+last_updated: "2026-03-11T08:58:00Z"
+last_activity: 2026-03-11 — archived milestone v1.6 after audit with accepted light tech debt
 progress:
   total_phases: 3
   completed_phases: 3
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Milestone v1.6 completion and archival
+**Current focus:** Prepare the next milestone definition
 
 ## Current Position
 
-Phase: 30 completed
-Plan: 30-01 and 30-02 complete
-Status: Ready to audit/complete milestone v1.6
-Last activity: 2026-03-11 — completed security gates and regression net with full verification
+Phase: Milestone archived
+Plan: v1.6 complete
+Status: Ready to start next milestone
+Last activity: 2026-03-11 — milestone v1.6 archived with roadmap and requirements moved to archives
 
 Progress: [##########] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-11T08:26:00Z
-Stopped at: Phase 30 completed; next step is audit/complete milestone v1.6
+Last session: 2026-03-11T08:58:00Z
+Stopped at: Milestone v1.6 archived; next step is define the next milestone
 Resume file: .planning/ROADMAP.md

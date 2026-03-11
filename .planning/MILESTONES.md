@@ -1,5 +1,31 @@
 # Milestones
 
+## v1.6 Security and Abuse Hardening (Shipped: 2026-03-11)
+
+**Scope delivered:**
+- 3 phases
+- 6 plans
+- Timeline: 2026-03-11 -> 2026-03-11
+
+**Key accomplishments:**
+1. Boundary de abuso em Rack para auth, cart, checkout e mutações admin sensíveis com contrato `429` uniforme.
+2. Postura explícita de produção para SSL, host authorization e CORS orientados por ambiente sem quebrar `/up`.
+3. Gate estático fail-closed com `bundler-audit` e `brakeman` compartilhado entre local e CI.
+4. Comando curto de regressão de hardening cobrindo throttles, healthcheck, CORS e production posture.
+5. Fechamento formal do milestone com `7/7` requisitos satisfeitos e Nyquist completo nas fases 28-30.
+
+**Known tech debt accepted:**
+- Smoke externo do domínio Railway após o hardening ainda precisa ser executado.
+- Workflow remoto do Git host ainda não foi observado rodando após push/PR.
+- Host local continua exigindo full suite serial por instabilidade do `pg` em paralelo.
+
+**Archives:**
+- `.planning/milestones/v1.6-ROADMAP.md`
+- `.planning/milestones/v1.6-REQUIREMENTS.md`
+- `.planning/v1.6-v1.6-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.5 Admin Panel (Shipped: 2026-03-11)
 
 **Scope delivered:**

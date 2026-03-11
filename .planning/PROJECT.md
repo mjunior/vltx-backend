@@ -39,14 +39,18 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - ✓ Admin consegue moderar usuários, anúncios e pedidos globais com escopo operacional separado — v1.5
 - ✓ Admin consegue atualizar dados de usuário, incluindo saldo, foto, e-mail e status de verificação por fluxo controlado — v1.5
 - ✓ Dashboard admin entrega métricas agregadas e resolução de contestações com refund seguro ao comprador — v1.5
+- ✓ Rate limiting em Rack para auth user/admin, refresh e endpoints sensíveis com boundary antes do controller — v1.6
+- ✓ Contrato HTTP `429` consistente com proteção healthcheck-safe para abuso — v1.6
+- ✓ Postura explícita de produção para SSL, host authorization e CORS por ambiente — v1.6
+- ✓ Validação estática de segurança obrigatória em fluxo único local/CI — v1.6
+- ✓ Regressão focada para throttling e guardrails críticos de segurança — v1.6
 
 ### Active
 
-- [ ] Aplicar rate limiting em Rack para fluxos de autenticação user/admin, emissão de token e endpoints de alto risco contra brute force e bursts automatizados.
-- [ ] Responder abuso com contrato HTTP 429 consistente, sinalização observável e chaves de throttle alinhadas a IP, sessão e ator autenticado.
-- [ ] Endurecer a configuração de produção com política explícita para SSL, host authorization, proxy confiável e CORS por ambiente.
-- [ ] Tornar as validações estáticas de segurança obrigatórias e reproduzíveis em fluxo único local/CI.
-- [ ] Cobrir guardrails de abuso e segurança estática com testes de regressão para evitar regressão silenciosa.
+- [ ] Registrar throttle events e contadores em backend observável para alertas automáticos.
+- [ ] Migrar rate limiting para storage distribuído resiliente entre múltiplas instâncias.
+- [ ] Permitir gestão operacional de allowlists/blocklists sem deploy.
+- [ ] Endurecer login administrativo com MFA/2FA.
 
 ### Out of Scope
 
@@ -55,24 +59,20 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 - MFA/2FA admin — continua importante, mas não entra junto com hardening inicial de abuso para não misturar frentes.
 - Detecção avançada de fraude por reputação/IP/device — adiada até existir telemetria suficiente e políticas operacionais claras.
 
-## Current Milestone: v1.6 Security and Abuse Hardening
-
-**Goal:** Endurecer a API contra abuso automatizado e regressões de segurança com throttling em Rack, guardrails de produção e gates estáticos obrigatórios.
-
-**Target features:**
-- Rate limiting em Rack para auth user/admin, refresh e endpoints sensíveis.
-- Resposta 429 consistente com instrumentação mínima para abuso.
-- Configuração segura de produção para SSL, hosts confiáveis e CORS por ambiente.
-- Pipeline único de validação estática de segurança com `bundler-audit` e `brakeman`.
-- Testes de regressão para throttling e guardrails críticos.
-
 ## Current State
 
-- **Shipped versions:** v1.0, v1.1, v1.2, v1.3, v1.4, v1.5
-- **Current milestone:** v1.6 Security and Abuse Hardening
+- **Shipped versions:** v1.0, v1.1, v1.2, v1.3, v1.4, v1.5, v1.6
+- **Latest milestone shipped:** v1.6 Security and Abuse Hardening
 - **Stack:** Rails API-only 8.0.4, Ruby 3.3.0, PostgreSQL, Redis, gem `jwt`
-- **Functional scope now shipped:** auth JWT, perfil, catálogo, carrinho, checkout wallet-only, pedidos, wallet ledger, painel financeiro seller, contestação, avaliações e superfície administrativa segregada
-- **Current expansion:** hardening de abuso em Rack, postura segura de produção e validações estáticas de segurança
+- **Functional scope now shipped:** auth JWT, perfil, catálogo, carrinho, checkout wallet-only, pedidos, wallet ledger, seller finance, contestação, avaliações, superfície admin segregada e hardening de abuso/produção/CI de segurança
+- **Operational follow-ups:** smoke externo do Railway após hardening, observação do workflow remoto de CI e redução da dependência de full suite serial no host local
+
+## Next Milestone Goals
+
+- Telemetria operacional para throttles e abuso.
+- Storage distribuído para rate limiting multi-instância.
+- Endurecimento de autenticação administrativa com MFA/2FA.
+- Ferramentas operacionais para allowlist/blocklist sem deploy.
 
 ## Constraints
 
@@ -110,11 +110,20 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 | Admin será uma entidade própria com autenticação segregada em `/admin` | Reduz risco de privilege escalation e separa políticas operacionais do usuário comum | ✓ Good (v1.5) |
 | JWT admin terá secret dedicado | Limita blast radius entre sessões admin e user e permite políticas independentes de rotação/revogação | ✓ Good (v1.5) |
 | Status de verificação do usuário nasce como fundação sem OTP acoplado neste milestone | Permite preparar banner/fluxo futuro sem travar o painel admin na entrega de e-mail | ✓ Good (v1.5) |
-| Rate limiting será aplicado no Rack antes do controller | Bloqueia bursts cedo, reduz custo por request e centraliza política anti-abuso | — Pending (v1.6) |
-| Security tooling continua fail-closed no fluxo padrão de CI | Evita regressão silenciosa ao depender de execução manual esporádica | — Pending (v1.6) |
+| Rate limiting será aplicado no Rack antes do controller | Bloqueia bursts cedo, reduz custo por request e centraliza política anti-abuso | ✓ Good (v1.6) |
+| Security tooling continua fail-closed no fluxo padrão de CI | Evita regressão silenciosa ao depender de execução manual esporádica | ✓ Good (v1.6) |
+| `/up` permanece fora do boundary de abuso e de partes críticas do hardening de produção | Preserva probes e healthchecks durante deploy e operação | ✓ Good (v1.6) |
+| Regressões críticas de segurança devem existir em comando curto separado da suíte completa | Reduz chance de drift e facilita enforcement contínuo | ✓ Good (v1.6) |
 
 <details>
 <summary>Historical Milestone Context</summary>
+
+### v1.6 Security and Abuse Hardening
+
+- Boundary de throttling em Rack para auth, cart, checkout e mutações administrativas sensíveis
+- Postura explícita de produção para SSL, hosts e CORS por ambiente
+- Gate estático fail-closed com `bundler-audit` e `brakeman`
+- Regressão explícita de hardening com `bin/security-regression`
 
 ### v1.5 Admin Panel
 
@@ -126,4 +135,4 @@ Isolamento multi-tenant estrito com contratos de autenticação e catálogo prev
 </details>
 
 ---
-*Last updated: 2026-03-11 after starting v1.6 Security and Abuse Hardening milestone*
+*Last updated: 2026-03-11 after completing v1.6 Security and Abuse Hardening*
