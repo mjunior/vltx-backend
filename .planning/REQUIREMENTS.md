@@ -8,9 +8,9 @@
 
 ### Abuse Prevention
 
-- [ ] **ABUSE-01**: Fluxos de autenticação user/admin e emissão de token são limitados por IP e contexto de identidade para reduzir brute force e replay automatizado.
-- [ ] **ABUSE-02**: Endpoints de alto risco operacional, como mutações de carrinho, checkout e ações administrativas sensíveis, aplicam throttling previsível por ator autenticado ou fallback por IP.
-- [ ] **ABUSE-03**: Requisições bloqueadas por abuso retornam contrato HTTP 429 consistente, sem vazar informação sensível e com telemetria suficiente para investigação operacional.
+- [x] **ABUSE-01**: Fluxos de autenticação user/admin e emissão de token são limitados por IP e contexto de identidade para reduzir brute force e replay automatizado.
+- [x] **ABUSE-02**: Endpoints de alto risco operacional, como mutações de carrinho, checkout e ações administrativas sensíveis, aplicam throttling previsível por ator autenticado ou fallback por IP.
+- [x] **ABUSE-03**: Requisições bloqueadas por abuso retornam contrato HTTP 429 consistente, sem vazar informação sensível e com telemetria suficiente para investigação operacional.
 
 ### Security Posture
 
@@ -47,9 +47,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ABUSE-01 | Phase 28 | Pending |
-| ABUSE-02 | Phase 28 | Pending |
-| ABUSE-03 | Phase 28 | Pending |
+| ABUSE-01 | Phase 28 | Complete |
+| ABUSE-02 | Phase 28 | Complete |
+| ABUSE-03 | Phase 28 | Complete |
 | SEC-01 | Phase 29 | Pending |
 | SEC-02 | Phase 29 | Pending |
 | SEC-03 | Phase 30 | Pending |
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after starting v1.6 Security and Abuse Hardening milestone*
+*Last updated: 2026-03-11 after completing phase 28 Rack Abuse Boundary*
