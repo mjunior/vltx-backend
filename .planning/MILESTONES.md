@@ -1,5 +1,30 @@
 # Milestones
 
+## v1.5 Admin Panel (Shipped: 2026-03-11)
+
+**Scope delivered:**
+- 5 phases
+- 12 plans
+- Timeline: 2026-03-10 -> 2026-03-11
+
+**Key accomplishments:**
+1. Superfície administrativa segregada com entidade `Admin`, autenticação própria em `/admin` e JWT secret dedicado.
+2. Barreira explícita impedindo privilege escalation do domínio `User` para rotas e operações administrativas.
+3. Moderação global de usuários, anúncios e pedidos com leitura operacional transversal da plataforma.
+4. Atualização administrativa de dados de usuário, incluindo saldo e status de verificação, por fluxo controlado.
+5. Dashboard admin com métricas agregadas e resolução operacional de contestações com refund seguro ao comprador.
+
+**Known tech debt accepted:**
+- MFA/2FA admin segue adiado.
+- OTP/e-mail de verificação end-to-end não entrou neste milestone.
+- Artefatos de observabilidade/auditoria operacional ainda podem ser expandidos em milestones futuros.
+
+**Archives:**
+- `.planning/milestones/v1.5-ROADMAP.md`
+- `.planning/milestones/v1.5-REQUIREMENTS.md`
+
+---
+
 ## v1.4 Orders, Status Flow, and Ratings (Shipped: 2026-03-10)
 
 **Scope delivered:**
