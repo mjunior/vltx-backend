@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminAuthLoginTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.12".freeze
+
   def create_admin(email: "admin-login@example.com", password: "password123", active: true)
     Admin.create!(email: email, password: password, password_confirmation: password, active: active)
   end
@@ -57,5 +59,27 @@ class AdminAuthLoginTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "admin login throttles earlier and returns generic 429 contract" do
+    3.times do
+      post "/admin/auth/login", params: {
+        email: "missing-admin@example.com",
+        password: "password123"
+      }, headers: {
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/admin/auth/login", params: {
+      email: "missing-admin@example.com",
+      password: "password123"
+    }, headers: {
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
+    assert_equal "20", response.headers["Retry-After"]
   end
 end

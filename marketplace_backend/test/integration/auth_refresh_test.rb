@@ -2,6 +2,7 @@ require "test_helper"
 
 class AuthRefreshTest < ActionDispatch::IntegrationTest
   include ActiveSupport::Testing::TimeHelpers
+  THROTTLE_IP = "198.51.100.11".freeze
 
   def create_user(email: "refresh-flow@example.com", password: "password123")
     Users::Create.call(
@@ -82,5 +83,20 @@ class AuthRefreshTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
     assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "refresh throttles bursts before controller handling" do
+    10.times do
+      post "/auth/refresh", params: { refresh_token: "bad-token" }, headers: {
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/auth/refresh", params: { refresh_token: "bad-token" }, headers: {
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

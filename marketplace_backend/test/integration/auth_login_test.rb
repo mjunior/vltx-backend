@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AuthLoginTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.10".freeze
+
   def create_user(email: "login@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -77,5 +79,29 @@ class AuthLoginTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     body = JSON.parse(response.body)
     assert_equal "payload invalido", body["error"]
+  end
+
+  test "login throttles repeated attempts with generic 429 contract" do
+    5.times do
+      post "/auth/login", params: {
+        email: "missing@example.com",
+        password: "password123"
+      }, headers: {
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/auth/login", params: {
+      email: "missing@example.com",
+      password: "password123"
+    }, headers: {
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    body = JSON.parse(response.body)
+    assert_equal "muitas requisicoes", body["error"]
+    assert_equal "application/json; charset=utf-8", response.media_type + "; charset=#{response.charset}"
+    assert_equal "20", response.headers["Retry-After"]
   end
 end

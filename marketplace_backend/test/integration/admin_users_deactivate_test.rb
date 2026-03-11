@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminUsersDeactivateTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.27".freeze
+
   def create_user(email: "admin-deactivate-user@example.com", password: "password123")
     Users::Create.call(email: email, password: password, password_confirmation: password).user
   end
@@ -71,5 +73,28 @@ class AdminUsersDeactivateTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
+  test "deactivate throttles bursts by authenticated admin" do
+    user = create_user(email: "deactivate-throttle-user@example.com")
+    admin = create_admin(email: "deactivate-throttle-admin@example.com")
+    admin_token = admin_access_token(admin)
+
+    5.times do
+      patch "/admin/users/#{user.id}/deactivate", headers: {
+        "Authorization" => "Bearer #{admin_token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    patch "/admin/users/#{user.id}/deactivate", headers: {
+      "Authorization" => "Bearer #{admin_token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

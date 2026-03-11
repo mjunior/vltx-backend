@@ -21,19 +21,19 @@ module Products
       product
     end
 
-    test "returns only authenticated user non deleted products" do
+    test "returns only authenticated user products including soft deleted ones" do
       owner = create_user
       other = create_user(email: "private-listing-other@example.com")
 
       visible_owner = create_product_for(owner, title: "Owner Product")
-      create_product_for(owner, title: "Owner Deleted", deleted_at: Time.current)
+      deleted_owner = create_product_for(owner, title: "Owner Deleted", deleted_at: Time.current)
       create_product_for(other, title: "Other Product")
 
       result = PrivateListing.call(user: owner)
 
       assert result.success?
-      assert_equal 1, result.total
-      assert_equal [visible_owner.id], result.products.map(&:id)
+      assert_equal 2, result.total
+      assert_equal [deleted_owner.id, visible_owner.id], result.products.map(&:id)
     end
 
     test "includes active and inactive products and sorts newest first deterministically" do

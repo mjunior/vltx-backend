@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CartItemsDestroyTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.23".freeze
+
   def create_user(email: "cart-items-destroy@example.com", password: "password123")
     Users::Create.call(email: email, password: password, password_confirmation: password).user
   end
@@ -51,5 +53,31 @@ class CartItemsDestroyTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
+  test "destroy throttles bursts by authenticated actor" do
+    buyer = create_user(email: "cart-items-destroy-throttle@example.com")
+    seller = create_user(email: "cart-items-destroy-throttle-seller@example.com")
+    product = create_product_for(seller)
+    cart = Cart.create!(user: buyer, status: :active)
+    item = CartItem.create!(cart: cart, product: product, quantity: 2)
+    token = access_token_for(buyer)
+
+    20.times do
+      delete "/cart/items/#{item.id}", headers: {
+        "Authorization" => "Bearer #{token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP,
+      }, as: :json
+    end
+
+    delete "/cart/items/#{item.id}", headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP,
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

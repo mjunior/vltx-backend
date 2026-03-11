@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminProductsSoftDeleteTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.25".freeze
+
   def create_user(email: "admin-product-user@example.com", password: "password123")
     Users::Create.call(email: email, password: password, password_confirmation: password).user
   end
@@ -87,5 +89,29 @@ class AdminProductsSoftDeleteTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "soft delete throttles bursts by authenticated admin" do
+    seller = create_user(email: "soft-delete-throttle-seller@example.com")
+    product = create_product_for(seller, title: "Produto Throttle")
+    admin = create_admin(email: "soft-delete-throttle-admin@example.com")
+    admin_token = admin_access_token(admin)
+
+    5.times do
+      patch "/admin/products/#{product.id}/soft_delete", headers: {
+        "Authorization" => "Bearer #{admin_token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    patch "/admin/products/#{product.id}/soft_delete", headers: {
+      "Authorization" => "Bearer #{admin_token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

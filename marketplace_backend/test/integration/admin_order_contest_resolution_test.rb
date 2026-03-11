@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminOrderContestResolutionTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.26".freeze
+
   def create_user(email:, password: "password123")
     Users::Create.call(email: email, password: password, password_confirmation: password).user
   end
@@ -148,5 +150,47 @@ class AdminOrderContestResolutionTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
     assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "approve throttles bursts by authenticated admin" do
+    order = create_contested_order
+    admin = create_admin(email: "admin-contest-throttle-approve@example.com")
+    admin_token = admin_access_token(admin)
+
+    5.times do
+      post "/admin/orders/#{order.id}/approve", headers: {
+        "Authorization" => "Bearer #{admin_token}",
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/admin/orders/#{order.id}/approve", headers: {
+      "Authorization" => "Bearer #{admin_token}",
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
+  end
+
+  test "deny throttles bursts by authenticated admin" do
+    order = create_contested_order
+    admin = create_admin(email: "admin-contest-throttle-deny@example.com")
+    admin_token = admin_access_token(admin)
+
+    5.times do
+      post "/admin/orders/#{order.id}/deny", headers: {
+        "Authorization" => "Bearer #{admin_token}",
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/admin/orders/#{order.id}/deny", headers: {
+      "Authorization" => "Bearer #{admin_token}",
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

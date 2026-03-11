@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CartCheckoutTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.20".freeze
+
   def create_user(email: "cart-checkout@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -139,5 +141,43 @@ class CartCheckoutTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
+  test "checkout throttles bursts by authenticated actor" do
+    buyer = create_user(email: "cart-checkout-throttle@example.com")
+    seller = create_user(email: "cart-checkout-throttle-seller@example.com")
+    product = create_product_for(seller, price: "10.00")
+    token = access_token_for(buyer)
+
+    5.times do
+      cart = Cart.find_or_create_by!(user: buyer, status: :active)
+      CartItem.find_or_create_by!(cart: cart, product: product) { |item| item.quantity = 1 }
+
+      post "/cart/checkout", params: {
+        checkout: {
+          payment_method: "wallet",
+        },
+      }, headers: {
+        "Authorization" => "Bearer #{token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP,
+      }, as: :json
+    end
+
+    cart = Cart.find_or_create_by!(user: buyer, status: :active)
+    CartItem.find_or_create_by!(cart: cart, product: product) { |item| item.quantity = 1 }
+
+    post "/cart/checkout", params: {
+      checkout: {
+        payment_method: "wallet",
+      },
+    }, headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP,
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

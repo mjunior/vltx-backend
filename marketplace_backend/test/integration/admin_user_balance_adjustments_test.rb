@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminUserBalanceAdjustmentsTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.24".freeze
+
   def create_user(email: "admin-balance-user@example.com", password: "password123", active: true)
     user = Users::Create.call(email: email, password: password, password_confirmation: password).user
     user.update!(active: active)
@@ -119,5 +121,36 @@ class AdminUserBalanceAdjustmentsTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "balance adjustments throttle bursts by authenticated admin" do
+    user = create_user(email: "admin-balance-throttle-user@example.com")
+    admin = create_admin(email: "admin-balance-throttle-admin@example.com")
+    admin_token = admin_access_token(admin)
+
+    5.times do |index|
+      post "/admin/users/#{user.id}/balance-adjustments", params: {
+        transaction_type: "credit",
+        amount_cents: 100 + index,
+        reason: "Ajuste #{index}"
+      }, headers: {
+        "Authorization" => "Bearer #{admin_token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/admin/users/#{user.id}/balance-adjustments", params: {
+      transaction_type: "credit",
+      amount_cents: 999,
+      reason: "Burst final"
+    }, headers: {
+      "Authorization" => "Bearer #{admin_token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

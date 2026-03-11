@@ -1,6 +1,8 @@
 require "test_helper"
 
 class AdminAuthRefreshTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.13".freeze
+
   def create_admin(email: "admin-refresh@example.com", password: "password123", active: true)
     Admin.create!(email: email, password: password, password_confirmation: password, active: active)
   end
@@ -58,5 +60,20 @@ class AdminAuthRefreshTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
     assert_equal "token invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "admin refresh throttles bursts before token rotation" do
+    5.times do
+      post "/admin/auth/refresh", params: { refresh_token: "bad-token" }, headers: {
+        "REMOTE_ADDR" => THROTTLE_IP
+      }, as: :json
+    end
+
+    post "/admin/auth/refresh", params: { refresh_token: "bad-token" }, headers: {
+      "REMOTE_ADDR" => THROTTLE_IP
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end

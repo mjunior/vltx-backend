@@ -7,6 +7,23 @@ class HealthcheckTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "GET /up is not throttled after auth bursts" do
+    6.times do
+      post "/auth/login", params: {
+        email: "healthcheck-throttle@example.com",
+        password: "password123"
+      }, headers: {
+        "REMOTE_ADDR" => "198.51.100.14"
+      }, as: :json
+    end
+
+    get "/up", headers: {
+      "REMOTE_ADDR" => "198.51.100.14"
+    }
+
+    assert_response :success
+  end
+
   test "application exposes healthcheck and auth routes" do
     app_routes = Rails.application.routes.routes.select do |route|
       route.defaults[:controller].present? && !route.path.spec.to_s.start_with?("/rails/")

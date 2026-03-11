@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CartItemsCreateTest < ActionDispatch::IntegrationTest
+  THROTTLE_IP = "198.51.100.21".freeze
+
   def create_user(email: "cart-items-create@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -109,5 +111,39 @@ class CartItemsCreateTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "create throttles bursts by authenticated actor" do
+    buyer = create_user(email: "cart-items-create-throttle@example.com")
+    seller = create_user(email: "cart-items-create-throttle-seller@example.com")
+    product = create_product_for(seller)
+    token = access_token_for(buyer)
+
+    20.times do
+      post "/cart/items", params: {
+        cart_item: {
+          product_id: product.id,
+          quantity: 1,
+        },
+      }, headers: {
+        "Authorization" => "Bearer #{token}",
+        "CONTENT_TYPE" => "application/json",
+        "REMOTE_ADDR" => THROTTLE_IP,
+      }, as: :json
+    end
+
+    post "/cart/items", params: {
+      cart_item: {
+        product_id: product.id,
+        quantity: 1,
+      },
+    }, headers: {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => THROTTLE_IP,
+    }, as: :json
+
+    assert_response :too_many_requests
+    assert_equal "muitas requisicoes", JSON.parse(response.body)["error"]
   end
 end
