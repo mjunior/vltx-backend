@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 require_relative "../config/boot"
-require "active_support/continuous_integration"
+require_relative "../config/ci"
 
-CI = ActiveSupport::ContinuousIntegration
-require_relative "../config/ci.rb"
+CI_STEPS.each do |label, command|
+  puts "== #{label} =="
+  success = system(command)
+  exit($CHILD_STATUS ? $CHILD_STATUS.exitstatus : 1) unless success
+end

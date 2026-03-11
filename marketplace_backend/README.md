@@ -1,24 +1,35 @@
-# README
+# Marketplace Backend
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails 8 API para o marketplace. O fluxo local e o fluxo automatizado do repositório usam os mesmos entrypoints em `marketplace_backend/bin`.
 
-Things you may want to cover:
+## Requisitos
 
-* Ruby version
+- Ruby `3.3.0`
+- PostgreSQL local
+- Bundler compatível com o lockfile
 
-* System dependencies
+## Setup local
 
-* Configuration
+```bash
+cd marketplace_backend
+bin/setup
+```
 
-* Database creation
+## Comandos principais
 
-* Database initialization
+```bash
+cd marketplace_backend
+bin/rails test
+bin/security
+bin/security-regression
+bin/ci
+bin/rubocop
+```
 
-* How to run the test suite
+`bin/security` é o gate estático fail-closed do projeto. Ele executa `bundler-audit` e `brakeman` com a mesma política usada em CI.
+`bin/security-regression` executa a malha focada de hardening para throttling, CORS, posture de produção e healthcheck-safe behavior.
+`bin/ci` executa setup, gate estático e suíte principal do projeto. `bin/rubocop` continua disponível separadamente para style/lint local.
 
-* Services (job queues, cache servers, search engines, etc.)
+## Deploy
 
-* Deployment instructions
-
-* ...
+O deploy atual usa Railway com build por `Dockerfile`. O healthcheck público esperado é `GET /up`.

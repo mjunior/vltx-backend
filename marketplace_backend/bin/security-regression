@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+
+APP_ROOT = File.expand_path("..", __dir__)
+TEST_DATABASE_URL = "postgresql://localhost/marketplace_backend_test"
+TEST_FILES = %w[
+  test/integration/auth_login_test.rb
+  test/integration/auth_refresh_test.rb
+  test/integration/admin_auth_login_test.rb
+  test/integration/admin_auth_refresh_test.rb
+  test/integration/cart_checkout_test.rb
+  test/integration/cart_items_create_test.rb
+  test/integration/cart_items_update_test.rb
+  test/integration/cart_items_destroy_test.rb
+  test/integration/admin_user_balance_adjustments_test.rb
+  test/integration/admin_products_soft_delete_test.rb
+  test/integration/admin_order_contest_resolution_test.rb
+  test/integration/admin_users_deactivate_test.rb
+  test/config/production_security_posture_test.rb
+  test/integration/cors_security_test.rb
+  test/integration/healthcheck_test.rb
+].freeze
+
+env = {
+  "RAILS_ENV" => ENV.fetch("RAILS_ENV", "test"),
+  "DATABASE_URL" => ENV.fetch("DATABASE_URL", TEST_DATABASE_URL),
+  "PARALLEL_WORKERS" => "1"
+}
+
+Dir.chdir(APP_ROOT) do
+  command = ["bin/rails", "test", *TEST_FILES]
+  success = system(env, *command)
+  exit($CHILD_STATUS ? $CHILD_STATUS.exitstatus : 1) unless success
+end

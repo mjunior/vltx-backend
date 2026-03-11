@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+
+ROOT = File.expand_path("..", __dir__)
+
+commands = [
+  ["Security: Gem audit", ["bin/bundler-audit"]],
+  ["Security: Brakeman", ["bin/brakeman", "--quiet", "--no-pager", "--exit-on-warn", "--exit-on-error"]],
+]
+
+commands.each do |label, command|
+  puts "== #{label} =="
+  success = Dir.chdir(ROOT) { system(*command) }
+  exit($CHILD_STATUS ? $CHILD_STATUS.exitstatus : 1) unless success
+end
