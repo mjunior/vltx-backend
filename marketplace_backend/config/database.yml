@@ -87,18 +87,16 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: marketplace_backend_production
-    username: marketplace_backend
-    password: <%= ENV["MARKETPLACE_BACKEND_DATABASE_PASSWORD"] %>
+    url: <%= ENV.fetch("DATABASE_URL") %>
   cache:
     <<: *primary_production
-    database: marketplace_backend_production_cache
+    url: <%= ENV.fetch("CACHE_DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: marketplace_backend_production_queue
+    url: <%= ENV.fetch("QUEUE_DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: marketplace_backend_production_cable
+    url: <%= ENV.fetch("CABLE_DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
     migrations_paths: db/cable_migrate
