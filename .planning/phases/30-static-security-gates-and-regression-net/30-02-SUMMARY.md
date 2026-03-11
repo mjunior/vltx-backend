@@ -75,7 +75,7 @@ Each task was committed atomically:
 - **Fix:** Added test-safe `DATABASE_URL` defaults to `CI_STEPS`.
 - **Files modified:** `marketplace_backend/config/ci.rb`
 - **Verification:** `bin/ci` exits `0` with setup, static gate, tests, and seeds.
-- **Committed in:** `3eab21b`
+- **Committed in:** `f826c71`
 
 ---
 *Phase: 30-static-security-gates-and-regression-net*
