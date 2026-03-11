@@ -14,8 +14,8 @@
 
 ### Security Posture
 
-- [ ] **SEC-01**: Produção aplica política explícita para SSL, trusted proxy, host authorization e CORS sem depender de defaults inseguros ou configuração hardcoded de desenvolvimento.
-- [ ] **SEC-02**: Healthcheck, domínio Railway e tráfego legítimo conhecido continuam operacionais após o hardening de middleware e configuração de produção.
+- [x] **SEC-01**: Produção aplica política explícita para SSL, trusted proxy, host authorization e CORS sem depender de defaults inseguros ou configuração hardcoded de desenvolvimento.
+- [x] **SEC-02**: Healthcheck, domínio Railway e tráfego legítimo conhecido continuam operacionais após o hardening de middleware e configuração de produção.
 
 ### Static Security Validation
 
@@ -50,8 +50,8 @@
 | ABUSE-01 | Phase 28 | Complete |
 | ABUSE-02 | Phase 28 | Complete |
 | ABUSE-03 | Phase 28 | Complete |
-| SEC-01 | Phase 29 | Pending |
-| SEC-02 | Phase 29 | Pending |
+| SEC-01 | Phase 29 | Complete |
+| SEC-02 | Phase 29 | Complete |
 | SEC-03 | Phase 30 | Pending |
 | SEC-04 | Phase 30 | Pending |
 
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after completing phase 28 Rack Abuse Boundary*
+*Last updated: 2026-03-11 after completing phase 29 Production Security Posture*

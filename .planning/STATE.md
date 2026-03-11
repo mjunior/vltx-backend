@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Security and Abuse Hardening
-status: roadmap defined; ready to plan phase 28
-stopped_at: Phase 28 completed; next step is plan/execute phase 29
-last_updated: "2026-03-11T03:55:11Z"
-last_activity: 2026-03-11 — Phase 28 completed with Rack throttling for auth, cart, and admin-sensitive routes
+status: phase 29 completed; ready to plan/execute phase 30
+stopped_at: Phase 29 completed; next step is plan/execute phase 30
+last_updated: "2026-03-11T04:06:44Z"
+last_activity: 2026-03-11 — Phase 29 completed with production SSL, host authorization, and env-backed CORS posture
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 33
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
+  percent: 66
 ---
 
 # Project State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Isolamento multi-tenant estrito com contratos previsíveis.
-**Current focus:** Phase 29 planning for production security posture
+**Current focus:** Phase 30 planning for static security gates and regression net
 
 ## Current Position
 
-Phase: 28 completed
-Plan: 28-01 and 28-02 complete
-Status: Ready to plan phase 29
-Last activity: 2026-03-11 — completed Rack abuse boundary with verified 429 coverage
+Phase: 29 completed
+Plan: 29-01 and 29-02 complete
+Status: Ready to plan phase 30
+Last activity: 2026-03-11 — completed production security posture with full serial regression green
 
-Progress: [###-------] 33%
+Progress: [######----] 66%
 
 ## Session Continuity
 
-Last session: 2026-03-11T03:55:11Z
-Stopped at: Phase 28 completed; next step is plan/execute phase 29
+Last session: 2026-03-11T04:06:44Z
+Stopped at: Phase 29 completed; next step is plan/execute phase 30
 Resume file: .planning/ROADMAP.md
