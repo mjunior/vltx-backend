@@ -2,6 +2,8 @@ require "test_helper"
 require "securerandom"
 
 class ProductCreateTest < ActionDispatch::IntegrationTest
+  THROTTLED_ERROR = "muitas requisicoes".freeze
+
   def create_user(email: "seller-create@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -17,6 +19,14 @@ class ProductCreateTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     JSON.parse(response.body).dig("data", "access_token")
+  end
+
+  def product_headers_for(access_token, remote_addr: "198.51.100.51")
+    {
+      "Authorization" => "Bearer #{access_token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => remote_addr
+    }
   end
 
   test "creates product with authenticated seller and omits owner fields" do
@@ -197,5 +207,36 @@ class ProductCreateTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal "payload invalido", JSON.parse(response.body)["error"]
+  end
+
+  test "throttles repeated product creation by authenticated actor" do
+    user = create_user(email: "product-throttle-create@example.com")
+    access_token = access_token_for(user)
+
+    5.times do |index|
+      post "/products", params: {
+        product: {
+          title: "Produto #{index}",
+          description: "Descricao valida para criacao de produto em throttle",
+          price: "10.00",
+          stock_quantity: 1
+        }
+      }, headers: product_headers_for(access_token), as: :json
+
+      assert_response :created
+    end
+
+    post "/products", params: {
+      product: {
+        title: "Produto bloqueado",
+        description: "Descricao valida para criacao de produto em throttle",
+        price: "10.00",
+        stock_quantity: 1
+      }
+    }, headers: product_headers_for(access_token), as: :json
+
+    assert_response :too_many_requests
+    assert_equal THROTTLED_ERROR, JSON.parse(response.body)["error"]
+    assert_equal "600", response.headers["Retry-After"]
   end
 end

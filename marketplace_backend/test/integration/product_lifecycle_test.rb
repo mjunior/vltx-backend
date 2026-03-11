@@ -2,6 +2,8 @@ require "test_helper"
 require "securerandom"
 
 class ProductLifecycleTest < ActionDispatch::IntegrationTest
+  THROTTLED_ERROR = "muitas requisicoes".freeze
+
   def create_user(email: "seller-lifecycle@example.com", password: "password123")
     Users::Create.call(
       email: email,
@@ -17,6 +19,14 @@ class ProductLifecycleTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     JSON.parse(response.body).dig("data", "access_token")
+  end
+
+  def product_headers_for(token, remote_addr: "198.51.100.52")
+    {
+      "Authorization" => "Bearer #{token}",
+      "CONTENT_TYPE" => "application/json",
+      "REMOTE_ADDR" => remote_addr
+    }
   end
 
   def create_product_for(user, title: "Produto Base")
@@ -186,5 +196,69 @@ class ProductLifecycleTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
     assert_equal "nao encontrado", JSON.parse(response.body)["error"]
+  end
+
+  test "throttles repeated product updates by authenticated actor" do
+    user = create_user(email: "product-throttle-update@example.com")
+    product = create_product_for(user)
+    token = access_token_for(user)
+
+    15.times do |index|
+      patch "/products/#{product.id}", params: {
+        product: { title: "Produto Atualizado #{index}" }
+      }, headers: product_headers_for(token), as: :json
+
+      assert_response :success
+    end
+
+    patch "/products/#{product.id}", params: {
+      product: { title: "Produto bloqueado" }
+    }, headers: product_headers_for(token), as: :json
+
+    assert_response :too_many_requests
+    assert_equal THROTTLED_ERROR, JSON.parse(response.body)["error"]
+    assert_equal "600", response.headers["Retry-After"]
+  end
+
+  test "throttles repeated product deactivation by authenticated actor" do
+    user = create_user(email: "product-throttle-deactivate@example.com")
+    token = access_token_for(user)
+
+    10.times do |index|
+      product = create_product_for(user, title: "Deactivate #{index}")
+
+      patch "/products/#{product.id}/deactivate", headers: product_headers_for(token), as: :json
+
+      assert_response :success
+    end
+
+    blocked_product = create_product_for(user, title: "Deactivate blocked")
+
+    patch "/products/#{blocked_product.id}/deactivate", headers: product_headers_for(token), as: :json
+
+    assert_response :too_many_requests
+    assert_equal THROTTLED_ERROR, JSON.parse(response.body)["error"]
+    assert_equal "600", response.headers["Retry-After"]
+  end
+
+  test "throttles repeated product delete by authenticated actor" do
+    user = create_user(email: "product-throttle-delete@example.com")
+    token = access_token_for(user)
+
+    10.times do |index|
+      product = create_product_for(user, title: "Delete #{index}")
+
+      delete "/products/#{product.id}", headers: product_headers_for(token), as: :json
+
+      assert_response :no_content
+    end
+
+    blocked_product = create_product_for(user, title: "Delete blocked")
+
+    delete "/products/#{blocked_product.id}", headers: product_headers_for(token), as: :json
+
+    assert_response :too_many_requests
+    assert_equal THROTTLED_ERROR, JSON.parse(response.body)["error"]
+    assert_equal "600", response.headers["Retry-After"]
   end
 end

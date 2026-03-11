@@ -16,6 +16,8 @@ TEST_FILES = %w[
   test/integration/admin_products_soft_delete_test.rb
   test/integration/admin_order_contest_resolution_test.rb
   test/integration/admin_users_deactivate_test.rb
+  test/integration/product_create_test.rb
+  test/integration/product_lifecycle_test.rb
   test/config/production_security_posture_test.rb
   test/integration/cors_security_test.rb
   test/integration/healthcheck_test.rb

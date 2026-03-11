@@ -6,6 +6,8 @@ class Rack::Attack
   ADMIN_SOFT_DELETE_PATH = %r{\A/admin/products/[^/]+/soft_delete\z}.freeze
   ADMIN_ORDER_APPROVE_PATH = %r{\A/admin/orders/[^/]+/approve\z}.freeze
   ADMIN_ORDER_DENY_PATH = %r{\A/admin/orders/[^/]+/deny\z}.freeze
+  PRODUCT_UPDATE_PATH = %r{\A/products/[^/]+\z}.freeze
+  PRODUCT_DEACTIVATE_PATH = %r{\A/products/[^/]+/deactivate\z}.freeze
 
   class << self
     def actor_discriminator_for(request, namespace:)
@@ -75,6 +77,22 @@ class Rack::Attack
     def admin_order_deny?(request)
       request.post? && request.path.match?(ADMIN_ORDER_DENY_PATH)
     end
+
+    def product_create?(request)
+      request.post? && request.path == "/products"
+    end
+
+    def product_update?(request)
+      request.patch? && request.path.match?(PRODUCT_UPDATE_PATH)
+    end
+
+    def product_deactivate?(request)
+      request.patch? && request.path.match?(PRODUCT_DEACTIVATE_PATH)
+    end
+
+    def product_delete?(request)
+      request.delete? && request.path.match?(PRODUCT_UPDATE_PATH)
+    end
   end
 
   if defined?(Rails) && Rails.cache
@@ -120,6 +138,30 @@ class Rack::Attack
     next unless cart_item_mutation?(request)
 
     "cart-items:#{request.request_method.downcase}:#{actor_discriminator_for(request, namespace: :user)}"
+  end
+
+  throttle("products/create/actor", limit: 5, period: 10.minutes) do |request|
+    next unless product_create?(request)
+
+    "products-create:#{actor_discriminator_for(request, namespace: :user)}"
+  end
+
+  throttle("products/update/actor", limit: 15, period: 10.minutes) do |request|
+    next unless product_update?(request)
+
+    "products-update:#{actor_discriminator_for(request, namespace: :user)}"
+  end
+
+  throttle("products/deactivate/actor", limit: 10, period: 10.minutes) do |request|
+    next unless product_deactivate?(request)
+
+    "products-deactivate:#{actor_discriminator_for(request, namespace: :user)}"
+  end
+
+  throttle("products/delete/actor", limit: 10, period: 10.minutes) do |request|
+    next unless product_delete?(request)
+
+    "products-delete:#{actor_discriminator_for(request, namespace: :user)}"
   end
 
   throttle("admin/balance-adjustments/actor", limit: 5, period: 60.seconds) do |request|
