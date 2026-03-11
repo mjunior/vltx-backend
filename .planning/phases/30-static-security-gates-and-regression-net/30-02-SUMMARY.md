@@ -49,10 +49,10 @@ completed: 2026-03-11
 
 Each task was committed atomically:
 
-1. **Task 1: Agrupar regressão de segurança e hardening em um comando explícito** - `TBD`
-2. **Task 2: Fechar a evidência formal do milestone com suíte final e traceability atualizada** - `TBD`
+1. **Task 1: Agrupar regressão de segurança e hardening em um comando explícito** - `f826c71`
+2. **Task 2: Fechar a evidência formal do milestone com suíte final e traceability atualizada** - `3eab21b`
 
-**Plan metadata:** `TBD`
+**Plan metadata:** `3eab21b`
 
 ## Files Created/Modified
 - `marketplace_backend/bin/security-regression` - Explicit hardening regression command.
@@ -75,7 +75,7 @@ Each task was committed atomically:
 - **Fix:** Added test-safe `DATABASE_URL` defaults to `CI_STEPS`.
 - **Files modified:** `marketplace_backend/config/ci.rb`
 - **Verification:** `bin/ci` exits `0` with setup, static gate, tests, and seeds.
-- **Committed in:** `TBD`
+- **Committed in:** `3eab21b`
 
 ---
 *Phase: 30-static-security-gates-and-regression-net*

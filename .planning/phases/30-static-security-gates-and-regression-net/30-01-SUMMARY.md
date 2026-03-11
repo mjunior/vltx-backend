@@ -50,10 +50,10 @@ completed: 2026-03-11
 
 Each task was committed atomically:
 
-1. **Task 1: Criar gate único fail-closed para validação estática de segurança** - `TBD`
-2. **Task 2: Integrar o gate único ao workflow automatizado do repositório** - `TBD`
+1. **Task 1: Criar gate único fail-closed para validação estática de segurança** - `f826c71`
+2. **Task 2: Integrar o gate único ao workflow automatizado do repositório** - `f826c71`
 
-**Plan metadata:** `TBD`
+**Plan metadata:** `f826c71`
 
 ## Files Created/Modified
 - `marketplace_backend/bin/security` - Single fail-closed static security gate.
@@ -77,7 +77,7 @@ Each task was committed atomically:
 - **Fix:** Replaced the dependency with a repo-local Ruby runner and explicit `CI_STEPS`.
 - **Files modified:** `marketplace_backend/bin/ci`, `marketplace_backend/config/ci.rb`
 - **Verification:** `bin/ci` now reaches setup, security gate, tests, and seeds successfully.
-- **Committed in:** `TBD`
+- **Committed in:** `f826c71`
 
 **2. [Rule 1 - Required] Lockfile contained a real vulnerable version flagged by the enforced audit**
 - **Found during:** Static gate verification
@@ -85,7 +85,7 @@ Each task was committed atomically:
 - **Fix:** Updated `aws-sdk-s3` and related AWS dependencies to patched versions.
 - **Files modified:** `marketplace_backend/Gemfile.lock`
 - **Verification:** `bin/security` passes with no vulnerabilities found.
-- **Committed in:** `TBD`
+- **Committed in:** `f826c71`
 
 ---
 *Phase: 30-static-security-gates-and-regression-net*
