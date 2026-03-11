@@ -1,85 +1,65 @@
 # Requirements: Marketplace Backend
 
-**Defined:** 2026-03-10
-**Milestone:** v1.5 Admin Panel
+**Defined:** 2026-03-11
+**Milestone:** v1.6 Security and Abuse Hardening
 **Core Value:** Isolamento multi-tenant estrito com contratos de autenticação e catálogo previsíveis.
 
-## v1.5 Requirements
+## v1.6 Requirements
 
-### Admin Authentication
+### Abuse Prevention
 
-- [x] **ADM-01**: Operador interno pode autenticar em rotas `/admin` usando uma entidade `Admin` separada de `User`.
-- [x] **ADM-02**: Sessões administrativas usam JWT assinado e validado com secret dedicado, sem reutilizar o secret de usuário padrão.
-- [x] **ADM-03**: Usuário padrão não consegue obter permissões administrativas por mutação de payload, perfil ou atributos da entidade `User`.
+- [ ] **ABUSE-01**: Fluxos de autenticação user/admin e emissão de token são limitados por IP e contexto de identidade para reduzir brute force e replay automatizado.
+- [ ] **ABUSE-02**: Endpoints de alto risco operacional, como mutações de carrinho, checkout e ações administrativas sensíveis, aplicam throttling previsível por ator autenticado ou fallback por IP.
+- [ ] **ABUSE-03**: Requisições bloqueadas por abuso retornam contrato HTTP 429 consistente, sem vazar informação sensível e com telemetria suficiente para investigação operacional.
 
-### User Verification and Moderation
+### Security Posture
 
-- [x] **USR-01**: Sistema mantém status de verificação do usuário como `unverified` ou `verified` para uso administrativo e futura integração com OTP por e-mail.
-- [x] **ADM-04**: Admin pode desativar qualquer usuário da plataforma sem depender de ownership buyer/seller.
-- [x] **ADM-05**: Admin pode remover ou desativar anúncios inapropriados em escopo global.
+- [ ] **SEC-01**: Produção aplica política explícita para SSL, trusted proxy, host authorization e CORS sem depender de defaults inseguros ou configuração hardcoded de desenvolvimento.
+- [ ] **SEC-02**: Healthcheck, domínio Railway e tráfego legítimo conhecido continuam operacionais após o hardening de middleware e configuração de produção.
 
-### Admin Operations
+### Static Security Validation
 
-- [x] **ADM-06**: Admin pode listar e inspecionar todos os pedidos da plataforma com escopo global.
-- [x] **ADM-07**: Admin pode atualizar quaisquer dados de um usuário, incluindo foto, saldo e e-mail, por fluxo administrativo controlado.
-
-### Admin Analytics
-
-- [x] **ADM-08**: Admin pode visualizar dashboard com total de usuários, contagem de pedidos por status e volume financeiro do período informado.
-
-### Contestation Resolution
-
-- [x] **ADM-09**: Admin pode listar todas as contestações elegíveis para decisão operacional.
-- [x] **ADM-10**: Admin pode negar ou aprovar uma contestação; quando aprovada, o comprador recebe refund seguro e idempotente.
+- [ ] **SEC-03**: Existe um fluxo único e obrigatório de validação estática que executa `bundler-audit` e `brakeman` em modo fail-closed para uso local e CI.
+- [ ] **SEC-04**: O projeto possui cobertura de teste para throttling e guardrails críticos de segurança, evitando regressão silenciosa após futuras mudanças de rota ou middleware.
 
 ## v2 Requirements
+
+### Security Operations
+
+- **SEC-05**: API registra contadores e eventos de throttle em backend observável para alertas automáticos.
+- **SEC-06**: Rate limiting distribuído usa storage compartilhado resiliente entre múltiplas instâncias.
+- **SEC-07**: Admin pode gerenciar allowlists/blocklists operacionais sem deploy.
 
 ### Authentication
 
 - **AUTH-05**: Admin pode usar MFA/2FA para endurecer login administrativo.
-- **AUTH-06**: Usuário confirma e-mail por OTP e muda automaticamente para status `verified`.
-
-### Payments
-
-- **PAY-02**: Usuário ganha crédito promocional de R$ 10,00 somente após confirmação de e-mail.
-- **PAY-06**: Seller pode solicitar saque ou liquidação externa do saldo a receber.
-- **PAY-07**: Sistema suporta meios de pagamento externos como cartão e Pix.
-
-### Orders and Ratings
-
-- **ORD-08**: Workflow suporta mediação operacional completa da contestação com novos estados internos.
-- **RATE-03**: Seller pode responder publicamente a avaliações recebidas e consultar médias agregadas.
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| OTP/e-mail verification end-to-end | Este milestone entrega apenas a fundação de status para não misturar transporte de e-mail com painel admin |
-| MFA para admin | Relevante, mas adiado para não atrasar a primeira superfície administrativa |
-| Impersonação de usuário por admin | Aumenta risco operacional e não é necessária para moderação inicial |
-| CRUD manual irrestrito de ledger | Ajuste de saldo admin deve continuar passando por regras financeiras controladas |
+| CAPTCHA ou desafio anti-bot no frontend | Depende de UX e integração com cliente, fora do endurecimento backend-first |
+| WAF/CDN rules gerenciadas fora do app | Pertence à camada de infraestrutura e não ao milestone de aplicação |
+| MFA para admin | Importante, mas separado para não misturar identidade forte com rate limiting inicial |
+| Motor avançado de reputação por device/IP | Exige telemetria e políticas adicionais além do hardening básico deste ciclo |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ADM-01 | Phase 23 | Complete |
-| ADM-02 | Phase 23 | Complete |
-| ADM-03 | Phase 23 | Complete |
-| USR-01 | Phase 23 | Complete |
-| ADM-04 | Phase 24 | Complete |
-| ADM-05 | Phase 24 | Complete |
-| ADM-06 | Phase 24 | Complete |
-| ADM-07 | Phase 25 | Complete |
-| ADM-08 | Phase 26 | Complete |
-| ADM-09 | Phase 27 | Complete |
-| ADM-10 | Phase 27 | Complete |
+| ABUSE-01 | Phase 28 | Pending |
+| ABUSE-02 | Phase 28 | Pending |
+| ABUSE-03 | Phase 28 | Pending |
+| SEC-01 | Phase 29 | Pending |
+| SEC-02 | Phase 29 | Pending |
+| SEC-03 | Phase 30 | Pending |
+| SEC-04 | Phase 30 | Pending |
 
 **Coverage:**
-- v1.5 requirements: 11 total
-- Mapped to phases: 11
+- v1.6 requirements: 7 total
+- Mapped to phases: 7
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-10*
-*Last updated: 2026-03-11 after Phase 27 Contestation Resolution Workflow*
+*Requirements defined: 2026-03-11*
+*Last updated: 2026-03-11 after starting v1.6 Security and Abuse Hardening milestone*
