@@ -25,7 +25,7 @@
 
 This repository is a deliberate VIBECODE experiment. The entire codebase, prompt trail, planning artifacts, and delivery flow were authored by AI with assistance from the [get-shit-done](https://github.com/glittercowboy/get-shit-done) workflow/skill. No line was manually edited.
 
-All phases are available for inspection under `.planning/`, including plans, validation files, and execution artifacts that expose how the prompts evolved and how each delivery step was structured.
+All phases are available for inspection under [` .planning/phases`](https://github.com/mjunior/vltx-backend/tree/master/.planning/phases), including plans, validation files, and execution artifacts that expose how the prompts evolved and how each delivery step was structured.
 
 The core question is not whether AI can ship software. It is whether security failures in AI-built systems emerge primarily from:
 
@@ -47,7 +47,7 @@ Este repositório existe para validar uma hipótese simples: quando falhas de se
 
 Todo o codigo, prompts, estrutura de planejamento e artefatos deste repositorio foram escritos por IA com apoio do workflow/skill [get-shit-done](https://github.com/glittercowboy/get-shit-done). Nenhuma linha foi alterada manualmente. O objetivo nao e fingir perfeicao; o objetivo e deixar o experimento audivel, reproduzivel e honesto.
 
-Todas as phases, plans, validacoes e rastros de execucao ficam disponiveis em `.planning/` para analise do processo e dos prompts que conduziram cada entrega.
+Todas as phases, plans, validacoes e rastros de execucao ficam disponiveis em [` .planning/phases`](https://github.com/mjunior/vltx-backend/tree/master/.planning/phases) para analise do processo e dos prompts que conduziram cada entrega.
 
 ## What This Project Is
 
