@@ -22,15 +22,11 @@
 
 ## Overview
 
-**PT-BR**
-
-Este repositório existe para validar uma hipótese simples: quando falhas de seguranca aparecem em um sistema gerado por IA, a causa principal esta na falta de experiencia de quem opera o fluxo e deixa de pedir requisitos importantes, ou na propria IA, que negligencia cuidados essenciais mesmo quando o contexto aponta nessa direcao.
-
-Todo o codigo, prompts, estrutura de planejamento e artefatos deste repositorio foram escritos por IA. Nenhuma linha foi alterada manualmente. O objetivo nao e fingir perfeicao; o objetivo e deixar o experimento audivel, reproduzivel e honesto.
-
 **EN**
 
-This repository is a deliberate VIBECODE experiment. The entire codebase, prompt trail, planning artifacts, and delivery flow were authored by AI. No line was manually edited.
+This repository is a deliberate VIBECODE experiment. The entire codebase, prompt trail, planning artifacts, and delivery flow were authored by AI with assistance from the [get-shit-done](https://github.com/glittercowboy/get-shit-done) workflow/skill. No line was manually edited.
+
+All phases are available for inspection under `.planning/`, including plans, validation files, and execution artifacts that expose how the prompts evolved and how each delivery step was structured.
 
 The core question is not whether AI can ship software. It is whether security failures in AI-built systems emerge primarily from:
 
@@ -39,6 +35,14 @@ The core question is not whether AI can ship software. It is whether security fa
 3. or AI negligence even when secure behavior should be inferred.
 
 This project turns that question into something inspectable: a real Rails API, a visible repository history, explicit security gates, and a codebase that can be reviewed without the usual "someone cleaned it up later" ambiguity.
+
+**PT-BR**
+
+Este repositório existe para validar uma hipótese simples: quando falhas de seguranca aparecem em um sistema gerado por IA, a causa principal esta na falta de experiencia de quem opera o fluxo e deixa de pedir requisitos importantes, ou na propria IA, que negligencia cuidados essenciais mesmo quando o contexto aponta nessa direcao.
+
+Todo o codigo, prompts, estrutura de planejamento e artefatos deste repositorio foram escritos por IA com apoio do workflow/skill [get-shit-done](https://github.com/glittercowboy/get-shit-done). Nenhuma linha foi alterada manualmente. O objetivo nao e fingir perfeicao; o objetivo e deixar o experimento audivel, reproduzivel e honesto.
+
+Todas as phases, plans, validacoes e rastros de execucao ficam disponiveis em `.planning/` para analise do processo e dos prompts que conduziram cada entrega.
 
 ## What This Project Is
 
