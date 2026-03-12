@@ -19,7 +19,6 @@
 </div>
 
 ---
-
 ## Overview
 
 **EN**
@@ -35,6 +34,12 @@ The core question is not whether AI can ship software. It is whether security fa
 3. or AI negligence even when secure behavior should be inferred.
 
 This project turns that question into something inspectable: a real Rails API, a visible repository history, explicit security gates, and a codebase that can be reviewed without the usual "someone cleaned it up later" ambiguity.
+
+## AI-Assisted Unit Tests
+
+- Current total of AI-assisted unit tests: 211
+- Count considered from `marketplace_backend/test/models`, `marketplace_backend/test/services`, `marketplace_backend/test/serializers`, and `marketplace_backend/test/config`
+
 
 **PT-BR**
 
